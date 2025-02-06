@@ -27,6 +27,12 @@ class Controller_Medicines extends Admin_Controller
         $this->render_template('medicines/index', $this->data);
     }
 
+    public function getActiveMedicineData()
+    {
+        $sql = "SELECT * FROM medicines WHERE active = ?";
+        $query = $this->db->query($sql, array(1));
+        return $query->result_array();
+    }
 
     // public function fetchMedicinesDataById($id)
     // {

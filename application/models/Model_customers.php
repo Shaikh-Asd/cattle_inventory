@@ -58,4 +58,12 @@ class Model_customers extends CI_Model
             return ($delete == true) ? true : false;
         }
     }
+
+    public function getUserMedicineStats($userId)   
+    {
+        $sql = "SELECT * FROM customers WHERE id = ?";
+        $query = $this->db->query($sql, array($userId));
+        return $query->row_array();
+    }
 }
+

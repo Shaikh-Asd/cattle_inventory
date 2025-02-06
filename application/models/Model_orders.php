@@ -62,17 +62,17 @@ class Model_orders extends CI_Model
 				$items = array(
 					'order_id' => $order_id,
 					'product_id' => $product_names[$x],
-					'qty' => $quantities[$x]
+					'qty' => $quantities[$x],
+					'customer_id' => $this->input->post('taken_by')
 				);
-
+				// insert the order item stock
 				$this->db->insert('orders_item', $items);
-
-				// now decrease the stock from the product
-				$product_data = $this->model_products->getProductData($product_names[$x]);
+				
+				// now decrease the stock from the medicine stock
+				$product_data = $this->model_products->getMedicineId($product_names[$x]);
 				$qty = (int) $product_data['qty'] - (int) $quantities[$x];
-
 				$update_product = array('qty' => $qty);
-				$this->model_products->update($update_product, $product_names[$x]);
+				$this->model_products->updateMedicineStock($update_product, $product_names[$x]);
 			}
 		}
 
@@ -175,6 +175,22 @@ class Model_orders extends CI_Model
 		$sql = "SELECT * FROM orders WHERE paid_status = ?";
 		$query = $this->db->query($sql, array(1));
 		return $query->num_rows();
+	}
+
+	// public function countTotalmedineTaken()
+	// {
+	// 	$sql = "SELECT * FROM medicine_stock"; // Updated to fetch all records
+	// 	$query = $this->db->query($sql);
+	// 	return $query->result_array(); // Return all data as an array
+	// }
+	public function countTotalmedineGiven()
+	{
+		$sql = "SELECT ms.*, c.name AS customer_name, m.name AS medicine_name 
+	        FROM orders_item ms
+	        JOIN customers c ON ms.customer_id = c.id
+	        JOIN medicines m ON ms.product_id = m.id"; // Adjust table and column names as necessary
+		$query = $this->db->query($sql);
+		return $query->result_array(); // Return all data as an array
 	}
 
 }

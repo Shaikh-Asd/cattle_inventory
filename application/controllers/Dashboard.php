@@ -14,6 +14,8 @@ class Dashboard extends Admin_Controller
 		$this->load->model('model_orders');
 		$this->load->model('model_users');
 		$this->load->model('model_stores');
+		$this->load->model('model_customers');
+		$this->load->model('model_medicines');
 	}
 
 	/* 
@@ -31,6 +33,10 @@ class Dashboard extends Admin_Controller
 		$this->data['total_brands'] = $this->model_products->countTotalbrands();
 		$this->data['total_category'] = $this->model_products->countTotalcategory();
 		$this->data['total_attribures'] = $this->model_products->countTotalattribures();
+
+
+		$this->data['total_customers'] = $this->model_customers->getActiveCustomerData();
+		$this->data['total_medicines'] = $this->model_medicines->getActiveMedicinesData();
 		// $this->data['total_stores'] = $this->model_stores->countTotalStores();
 
 		$user_id = $this->session->userdata('id');
@@ -38,5 +44,11 @@ class Dashboard extends Admin_Controller
 
 		$this->data['is_admin'] = $is_admin;
 		$this->render_template('dashboard', $this->data);
+	}
+
+	public function getUserMedicineStats($userId)
+	{
+		$data = $this->model_customers->getUserMedicineStats($userId);
+		echo json_encode($data);
 	}
 }

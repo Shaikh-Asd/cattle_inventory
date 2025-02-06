@@ -48,13 +48,13 @@ class Controller_Products extends Admin_Controller
             // $store_data = $this->model_stores->getStoresData($value['store_id']);
 			// button
             $buttons = '';
-            if(in_array('updateProduct', $this->permission)) {
-    			$buttons .= '<a href="'.base_url('Controller_Products/update/'.$value['id']).'" class="btn btn-warning btn-sm"><i class="fa fa-pencil"></i></a>';
-            }
+            // if(in_array('updateProduct', $this->permission)) {
+    		// 	$buttons .= '<a href="'.base_url('Controller_Products/update/'.$value['id']).'" class="btn btn-warning btn-sm"><i class="fa fa-pencil"></i></a>';
+            // }
 
-            if(in_array('deleteProduct', $this->permission)) { 
-    			$buttons .= ' <button type="button" class="btn btn-danger btn-sm" onclick="removeFunc('.$value['id'].')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>';
-            }
+            // if(in_array('deleteProduct', $this->permission)) { 
+    		// 	$buttons .= ' <button type="button" class="btn btn-danger btn-sm" onclick="removeFunc('.$value['id'].')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>';
+            // }
 			
 
 			$img = '<img src="'.base_url($value['image']).'" alt="'.$value['name'].'" class="img-circle" width="50" height="50" />';
