@@ -91,4 +91,21 @@ class Model_products extends CI_Model
 		return $query->num_rows();
 	}
 
+	//added by asad
+	public function getStockByMedicineId($medicine_id, $customer_id)
+	{
+		$this->db->where('medicine_id', $medicine_id);
+		$this->db->where('customer_id', $customer_id);
+		$query = $this->db->get('medicine_stock'); // Assuming 'medicine_stock' is the name of your stock table
+		return $query->row_array(); // Return a single row as an associative array
+	}
+
+	public function updateStock($medicine_id, $customer_id, $new_qty)
+	{
+		$this->db->where('medicine_id', $medicine_id);
+		$this->db->where('customer_id', $customer_id);
+		$this->db->update('medicine_stock', array('qty' => $new_qty)); // Update the quantity
+		return $this->db->affected_rows() > 0; // Return true if the update was successful
+	}
+
 }

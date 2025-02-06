@@ -28,7 +28,7 @@ class Controller_Orders extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
-		$this->data['page_title'] = 'Manage Orders';
+		$this->data['page_title'] = 'Manage Medicine';
 		$this->render_template('orders/index', $this->data);		
 	}
 
@@ -41,7 +41,8 @@ class Controller_Orders extends Admin_Controller
 		$result = array('data' => array());
 
 		$data = $this->model_orders->getOrdersData();
-
+		// print_r($data);
+		// exit;
 		foreach ($data as $key => $value) {
 
 			$count_total_item = $this->model_orders->countOrderItem($value['id']);
@@ -55,31 +56,42 @@ class Controller_Orders extends Admin_Controller
 
 			if(in_array('viewOrder', $this->permission)) {
 				$buttons .= '<a target="__blank" href="'.base_url('Controller_Orders/printDiv/'.$value['id']).'" class="btn btn-default btn-sm"><i class="fa fa-print"></i></a>';
+				// echo "viewOrder";
 			}
 
 			if(in_array('updateOrder', $this->permission)) {
 				$buttons .= ' <a href="'.base_url('Controller_Orders/update/'.$value['id']).'" class="btn btn-warning btn-sm"><i class="fa fa-pencil"></i></a>';
+				// echo "updateOrder";
 			}
 
 			if(in_array('deleteOrder', $this->permission)) {
 				$buttons .= ' <button type="button" class="btn btn-danger btn-sm" onclick="removeFunc('.$value['id'].')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>';
+				// echo "deleteOrder";
 			}
-
 			if($value['paid_status'] == 1) {
 				$paid_status = '<span class="label label-success">Paid</span>';	
 			}
 			else {
 				$paid_status = '<span class="label label-warning">Not Paid</span>';
 			}
+			// echo "paid_status";
+			$qtys = $value['qty']; // Assuming medicine_id is a comma-separated string
 
+			$medicine_ids = explode(',', $value['medicine_id']); // Assuming medicine_id is a comma-separated string
+			$medicine_names = [];
+			foreach ($medicine_ids as $id) {
+				$medicine_data = $this->model_medicines->getMedicinesDataById($id);
+				$medicine_names[] = isset($medicine_data['name']) ? $medicine_data['name'] : 'Unknown Medicine';
+			}
+			$medicine_name = implode(', ', $medicine_names); // Join names with a comma
+			// print_r($buttons);
+			// exit;
 			$result['data'][$key] = array(
-				$value['bill_no'],
 				$value['customer_name'],
-				$value['customer_phone'],
+				$medicine_name,
+				$qtys,
 				$date_time,
-				$count_total_item,
 				$value['net_amount'],
-				// $paid_status,
 				$buttons
 			);
 		} // /foreach
@@ -98,9 +110,10 @@ class Controller_Orders extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
-		$this->data['page_title'] = 'Add Order';
+		$this->data['page_title'] = 'Give medicine';
 
 		$this->form_validation->set_rules('product[]', 'Product name', 'trim|required');
+		$this->form_validation->set_rules('qty[]', 'Quantity', 'trim|required');
 		
 	
         if ($this->form_validation->run() == TRUE) {        	
@@ -109,7 +122,8 @@ class Controller_Orders extends Admin_Controller
         	
         	if($order_id) {
         		$this->session->set_flashdata('success', 'Successfully created');
-        		redirect('Controller_Orders/update/'.$order_id, 'refresh');
+        		// redirect('Controller_Orders/update/'.$order_id, 'refresh');
+        		redirect('Controller_Orders/index', 'refresh');
         	}
         	else {
         		$this->session->set_flashdata('errors', 'Error occurred!!');

@@ -80,7 +80,7 @@
                   <tr>
                     <th>Medicine</th>
                     <th>Qty</th>
-                    <th>Rate</th>
+                    <!-- <th>Rate</th> -->
                     <!-- <th>Amount</th> -->
                     <th>Action</th>
                   </tr>
@@ -100,9 +100,9 @@
                     <td>
                       <input type="text" class="form-control" name="qty[]" placeholder="Enter Qty" autocomplete="off" />
                     </td>
-                    <td>
-                      <input type="text" class="form-control" name="price[]" placeholder="Enter price" autocomplete="off" />
-                    </td>
+                    <!-- <td>
+                      <input type="text" class="form-control" name="price[]" placeholder="Enter price" autocomplete="off" /> 
+                    </td>-->
                     <!--<td>
                       <input type="text" class="form-control" name="amount[]" placeholder="Amount" readonly /> 
                     </td>-->
@@ -194,10 +194,10 @@
           <td>
             <input type="text" class="form-control" name="qty[]" placeholder="Enter Qty" autocomplete="off" />
           </td>
-          <td>
+          <!--<td>
             <input type="text" class="form-control" name="price[]" placeholder="Enter price" autocomplete="off" />
           </td>
-          <!--<td>
+          <td>
             <input type="text" class="form-control" name="amount[]" placeholder="Amount" readonly /> 
           </td>-->
           <td>

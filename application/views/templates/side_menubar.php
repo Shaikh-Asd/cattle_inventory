@@ -72,7 +72,7 @@
               <li id="addProductNav"><a href="<?php echo base_url('Controller_Products/create') ?>"><i class="fa fa-circle-o"></i>Taken</a></li>
             <?php endif; ?>
             <?php if (in_array('updateProduct', $user_permission) || in_array('viewProduct', $user_permission) || in_array('deleteProduct', $user_permission)): ?>
-              <li id="manageProductNav"><a href="<?php echo base_url('Controller_Products') ?>"><i class="fa fa-circle-o"></i> Manage Taken</a></li>
+              <li id="manageProductNav"><a href="<?php echo base_url('Controller_Products') ?>"><i class="fa fa-circle-o"></i> Manage Taken Medicines</a></li>
             <?php endif; ?>
           </ul>
         </li>
@@ -83,7 +83,7 @@
         <li class="treeview" id="mainOrdersNav">
           <a href="#">
             <i class="fa fa-dollar"></i>
-            <span>Given Medicines</span>
+            <span>Give Medicines</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>

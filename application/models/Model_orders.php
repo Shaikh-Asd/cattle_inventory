@@ -35,51 +35,46 @@ class Model_orders extends CI_Model
 
 	public function create()
 	{
-		$user_id = $this->session->userdata('id');
-		$bill_no = 'BILPR-'.strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 4));
-    	$data = array(
-    		'bill_no' => $bill_no,
-    		'customer_name' => $this->input->post('customer_name'),
-    		'customer_address' => $this->input->post('customer_address'),
-    		'customer_phone' => $this->input->post('customer_phone'),
-    		'date_time' => strtotime(date('Y-m-d h:i:s a')),
-    		'gross_amount' => $this->input->post('gross_amount_value'),
-    		'service_charge_rate' => $this->input->post('service_charge_rate'),
-    		'service_charge' => ($this->input->post('service_charge_value') > 0) ?$this->input->post('service_charge_value'):0,
-    		'vat_charge_rate' => $this->input->post('vat_charge_rate'),
-    		'vat_charge' => ($this->input->post('vat_charge_value') > 0) ? $this->input->post('vat_charge_value') : 0,
-    		'net_amount' => $this->input->post('net_amount_value'),
-    		'discount' => $this->input->post('discount'),
-    		'paid_status' => 2,
-    		'user_id' => $user_id
-    	);
+		$product_names = $this->input->post('product');
+		$quantities = $this->input->post('qty');
+
+		// Ensure that product names and quantities are arrays of the same length
+		if (count($product_names) !== count($quantities)) {
+			return false; // or handle the error as needed
+		}
+
+		$data = array(
+			'customer_name' => $this->input->post('taken_by'),
+			'date_time' => strtotime(date('Y-m-d h:i:s a')),
+			'user_id' => $this->input->post('taken_by'),
+			'qty' => implode(',', $quantities), // Store quantities as a string
+			'medicine_id' => implode(',', $product_names) // Store product IDs as a string
+		);
 
 		$insert = $this->db->insert('orders', $data);
 		$order_id = $this->db->insert_id();
 
 		$this->load->model('model_products');
 
-		$count_product = count($this->input->post('product'));
-    	for($x = 0; $x < $count_product; $x++) {
-    		$items = array(
-    			'order_id' => $order_id,
-    			'product_id' => $this->input->post('product')[$x],
-    			'qty' => $this->input->post('qty')[$x],
-    			'rate' => $this->input->post('rate_value')[$x],
-    			'amount' => $this->input->post('amount_value')[$x],
-    		);
+		$count_product = count($product_names);
+		for ($x = 0; $x < $count_product; $x++) {
+			if ($quantities[$x] > 0) { // Check if quantity is greater than zero
+				$items = array(
+					'order_id' => $order_id,
+					'product_id' => $product_names[$x],
+					'qty' => $quantities[$x]
+				);
 
-    		$this->db->insert('orders_item', $items);
+				$this->db->insert('orders_item', $items);
 
-    		// now decrease the stock from the product
-    		$product_data = $this->model_products->getProductData($this->input->post('product')[$x]);
-    		$qty = (int) $product_data['qty'] - (int) $this->input->post('qty')[$x];
+				// now decrease the stock from the product
+				$product_data = $this->model_products->getProductData($product_names[$x]);
+				$qty = (int) $product_data['qty'] - (int) $quantities[$x];
 
-    		$update_product = array('qty' => $qty);
-
-
-    		$this->model_products->update($update_product, $this->input->post('product')[$x]);
-    	}
+				$update_product = array('qty' => $qty);
+				$this->model_products->update($update_product, $product_names[$x]);
+			}
+		}
 
 		return ($order_id) ? $order_id : false;
 	}

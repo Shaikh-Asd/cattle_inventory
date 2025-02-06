@@ -46,79 +46,55 @@
               <?php echo validation_errors(); ?>
 
               <div class="form-group">
-                <label for="gross_amount" class="col-sm-12 control-label">Date: <?php echo date('Y-m-d') ?></label>
-              </div>
-              <div class="form-group">
-                <label for="gross_amount" class="col-sm-12 control-label">Date: <?php echo date('h:i a') ?></label>
-              </div>
-
-              <div class="col-md-7 col-xs-12 pull pull-left">
-
-                <div class="form-group">
-                  <label for="gross_amount" class="col-sm-5 control-label" style="text-align:left;">Name</label>
-                  <div class="col-sm-7">
-                    <select class="form-control select_group" id="customers" name="customers">
-                      <?php foreach ($customers as $k => $v): ?>
-                        <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
-                      <?php endforeach ?>
-                    </select>
-                  </div>
+                <label for="taken_by" class="col-sm-2 control-label">Taken By</label>
+                <div class="col-sm-10">
+                  <select class="form-control" id="taken_by" name="taken_by" required>
+                    <option value="">Select a customer</option>
+                    <?php foreach ($customers as $k => $v): ?>
+                      <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
+                    <?php endforeach ?>
+                  </select>
                 </div>
-
-                <!-- <div class="form-group">
-                    <label for="gross_amount" class="col-sm-5 control-label" style="text-align:left;">Client Address</label>
-                    <div class="col-sm-7">
-                      <textarea type="text" class="form-control" id="customer_address" name="customer_address" placeholder="Enter Client Address" autocomplete="off"></textarea>
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="gross_amount" class="col-sm-5 control-label" style="text-align:left;">Client Phone</label>
-                    <div class="col-sm-7">
-                      <input type="text" class="form-control" id="customer_phone" name="customer_phone" placeholder="Enter Client Phone" autocomplete="off">
-                    </div>
-                  </div> -->
               </div>
 
+              <div class="form-group">
+                <label for="availability" class="col-sm-2 control-label">Availability</label>
+                <div class="col-sm-10">
+                  <select class="form-control" id="availability" name="availability" required>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+              </div>
 
-              <br /> <br />
+              <div class="form-group">
+                <div class="col-sm-12">
+                  <button type="button" id="add_row" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Medicine</button>
+                </div>
+              </div>
+
               <table class="table table-bordered" id="product_info_table">
                 <thead>
                   <tr>
-                    <th style="width:50%">Medicine</th>
-                    <th style="width:10%">Qty</th>
-                    <th style="width:10%">Rate</th>
-                    <th style="width:20%">Amount</th>
-                    <th style="width:10%">
-
-                      <button type="button" id="add_row" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i></button>
-                    </th>
+                    <th>Medicine</th>
+                    <th>Available Qty</th>
+                    <th>Qty</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   <tr id="row_1">
                     <td>
-                      <select class="form-control select_group product" data-row-id="row_1" id="product_1" name="product[]" style="width:100%;" onchange="getProductData(1)" required>
-                        <option value=""></option>
+                      <select class="form-control" id="product_1" name="product[]" required>
+                        <option value="">Select a medicine</option>
                         <?php foreach ($medicines as $k => $v): ?>
-                          <option value="<?php echo $v['id'] ?>" data-qty="<?php echo isset($v['qty']) ? $v['qty'] : 0; ?>" data-price="<?php echo isset($v['price']) ? $v['price'] : 0; ?>">
-                            <?php echo $v['name']; ?>
-                          </option>
+                          <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
                         <?php endforeach ?>
                       </select>
                     </td>
-                    <td>
-                      <input type="text" name="qty[]" id="qty_1" class="form-control" required onkeyup="getTotal(1)">
-                    </td>
-                    <td>
-                      <input type="text" name="rate[]" id="rate_1" class="form-control" disabled autocomplete="off">
-                      <input type="hidden" name="rate_value[]" id="rate_value_1" class="form-control" autocomplete="off">
-                    </td>
-                    <td>
-                      <input type="text" name="amount[]" id="amount_1" class="form-control" disabled autocomplete="off">
-                      <input type="hidden" name="amount_value[]" id="amount_value_1" class="form-control" autocomplete="off">
-                    </td>
+                    <td><input type="text" name="available_qty[]" id="available_qty_1" class="form-control" disabled></td>
+                    <td><input type="text" name="qty[]" id="qty_1" class="form-control" required></td>
                     <td>
                       <button type="button" class="btn btn-danger btn-sm" onclick="removeRow('1')"><i class="fa fa-close"></i></button>
                     </td>
@@ -126,59 +102,12 @@
                 </tbody>
               </table>
 
-              <br /> <br />
-
-              <div class="col-md-6 col-xs-12 pull pull-left">
-
-                <div class="form-group">
-                  <label for="gross_amount" class="col-sm-5 control-label">Gross Amount</label>
-                  <div class="col-sm-7">
-                    <input type="text" class="form-control" id="gross_amount" name="gross_amount" disabled autocomplete="off">
-                    <input type="hidden" class="form-control" id="gross_amount_value" name="gross_amount_value" autocomplete="off">
-                  </div>
+              <div class="form-group">
+                <div class="col-sm-12">
+                  <button type="submit" class="btn btn-success">Save Changes</button>
+                  <a href="<?php echo base_url('Controller_Orders/') ?>" class="btn btn-warning">Back</a>
                 </div>
-                <?php if ($is_service_enabled == true): ?>
-                  <div class="form-group">
-                    <label for="service_charge" class="col-sm-5 control-label">S-Charge <?php echo $company_data['service_charge_value'] ?> %</label>
-                    <div class="col-sm-7">
-                      <input type="text" class="form-control" id="service_charge" name="service_charge" disabled autocomplete="off">
-                      <input type="hidden" class="form-control" id="service_charge_value" name="service_charge_value" autocomplete="off">
-                    </div>
-                  </div>
-                <?php endif; ?>
-                <?php if ($is_vat_enabled == true): ?>
-                  <div class="form-group">
-                    <label for="vat_charge" class="col-sm-5 control-label">Vat <?php echo $company_data['vat_charge_value'] ?> %</label>
-                    <div class="col-sm-7">
-                      <input type="text" class="form-control" id="vat_charge" name="vat_charge" disabled autocomplete="off">
-                      <input type="hidden" class="form-control" id="vat_charge_value" name="vat_charge_value" autocomplete="off">
-                    </div>
-                  </div>
-                <?php endif; ?>
-                <div class="form-group">
-                  <label for="discount" class="col-sm-5 control-label">Discount</label>
-                  <div class="col-sm-7">
-                    <input type="text" class="form-control" id="discount" name="discount" placeholder="Discount" onkeyup="subAmount()" autocomplete="off">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="net_amount" class="col-sm-5 control-label">Net Amount</label>
-                  <div class="col-sm-7">
-                    <input type="text" class="form-control" id="net_amount" name="net_amount" disabled autocomplete="off">
-                    <input type="hidden" class="form-control" id="net_amount_value" name="net_amount_value" autocomplete="off">
-                  </div>
-                </div>
-
               </div>
-
-            </div>
-            <!-- /.box-body -->
-
-            <div class="box-footer">
-              <input type="hidden" name="service_charge_rate" value="<?php echo $company_data['service_charge_value'] ?>" autocomplete="off">
-              <input type="hidden" name="vat_charge_rate" value="<?php echo $company_data['vat_charge_value'] ?>" autocomplete="off">
-              <button type="submit" class="btn btn-primary">Sell</button>
-              <a href="<?php echo base_url('Controller_Orders/') ?>" class="btn btn-warning">Back</a>
             </div>
           </form>
           <!-- /.box-body -->
@@ -218,7 +147,7 @@
       var newRow = `
         <tr id="row_${rowCount}">
           <td>
-            <select class="form-control select_group product" data-row-id="row_${rowCount}" id="product_${rowCount}" name="product[]" style="width:100%;" onchange="getProductData(${rowCount})" required>
+            <select class="form-control select_group product" data-row-id="row_${rowCount}" id="product_${rowCount}" name="product[]" required>
               <option value=""></option>
               <?php foreach ($medicines as $k => $v): ?>
                 <option value="<?php echo $v['id'] ?>" data-qty="<?php echo isset($v['qty']) ? $v['qty'] : 0; ?>" data-price="<?php echo isset($v['price']) ? $v['price'] : 0; ?>">
@@ -227,15 +156,8 @@
               <?php endforeach ?>
             </select>
           </td>
-          <td><input type="text" name="qty[]" id="qty_${rowCount}" class="form-control" required onkeyup="getTotal(${rowCount})"></td>
-          <td>
-            <input type="text" name="rate[]" id="rate_${rowCount}" class="form-control" disabled autocomplete="off">
-            <input type="hidden" name="rate_value[]" id="rate_value_${rowCount}" class="form-control" autocomplete="off">
-          </td>
-          <td>
-            <input type="text" name="amount[]" id="amount_${rowCount}" class="form-control" disabled autocomplete="off">
-            <input type="hidden" name="amount_value[]" id="amount_value_${rowCount}" class="form-control" autocomplete="off">
-          </td>
+          <td><input type="text" name="available_qty[]" id="available_qty_${rowCount}" class="form-control" disabled></td>
+          <td><input type="text" name="qty[]" id="qty_${rowCount}" class="form-control" required></td>
           <td>
             <button type="button" class="btn btn-danger btn-sm" onclick="removeRow('${rowCount}')"><i class="fa fa-close"></i></button>
           </td>
@@ -244,14 +166,49 @@
       $("#product_info_table tbody").append(newRow); // Append new row to the table
     });
 
+    // Event delegation for product change
+    $(document).on('change', '.product', function() {
+      console.log("Product changed"); // Check if this logs
+      var row_id = $(this).data('row-id');
+      console.log("Row ID:", row_id); // Log the row ID
+      getMedicineQuantity(row_id); // Call the new function
+    });
+
+    // Define the getMedicineQuantity function
+    function getMedicineQuantity(row_id) {
+      var product_id = $("#product_" + row_id).val();
+      if (product_id) {
+        $.ajax({
+          url: base_url + 'Controller_Orders/getMedicineQuantity', // Adjust the URL as needed
+          type: 'POST',
+          data: { id: product_id },
+          dataType: 'json',
+          success: function(response) {
+            if (response.success) {
+              $("#available_qty_" + row_id).val(response.available_qty); // Set the available quantity
+              $("#rate_" + row_id).val(response.price); // Set the rate if needed
+            } else {
+              alert('Error retrieving quantity');
+            }
+          },
+          error: function() {
+            alert('Error in AJAX request');
+          }
+        });
+      } else {
+        $("#available_qty_" + row_id).val(''); // Clear the available quantity if no product is selected
+      }
+    }
+
   }); // /document
 
   function getTotal(row = null) {
     if (row) {
-      var total = Number($("#rate_value_" + row).val()) * Number($("#qty_" + row).val());
+      var total = Number($("#rate_" + row).val()) * Number($("#qty_" + row).val());
       total = total.toFixed(2);
       $("#amount_" + row).val(total);
       $("#amount_value_" + row).val(total);
+
 
       subAmount();
 
@@ -267,7 +224,6 @@
 
     if (product_id == "") {
       $("#rate_" + row_id).val("");
-      $("#rate_value_" + row_id).val("");
       $("#qty_" + row_id).val("");
       $("#amount_" + row_id).val("");
       $("#amount_value_" + row_id).val("");
@@ -276,7 +232,6 @@
       var price = selectedOption.data('price'); // Get price from data attribute
 
       $("#rate_" + row_id).val(price);
-      $("#rate_value_" + row_id).val(price);
       $("#qty_" + row_id).val(qty); // Set the quantity
       $("#amount_" + row_id).val((qty * price).toFixed(2)); // Calculate amount
       $("#amount_value_" + row_id).val((qty * price).toFixed(2)); // Set hidden amount value

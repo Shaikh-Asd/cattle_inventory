@@ -89,7 +89,7 @@ class Controller_Products extends Admin_Controller
 				$medicine_name,
                 // $value['name'],
                 $value['qty'] . ' ' . $qty_status,
-				$value['price'],
+				// $value['price'],
                 // $store_data['name'],
 				$availability,
 				$buttons
@@ -112,7 +112,7 @@ class Controller_Products extends Admin_Controller
 
         $this->form_validation->set_rules('customers', 'Customer name', 'trim|required');
         $this->form_validation->set_rules('product_name[]', 'Medicine name', 'trim|required');
-        $this->form_validation->set_rules('price[]', 'Price', 'trim|required');
+        // $this->form_validation->set_rules('price[]', 'Price', 'trim|required');
         $this->form_validation->set_rules('qty[]', 'Qty', 'trim|required');
         $this->form_validation->set_rules('availability', 'Availability', 'trim|required');
 
@@ -122,28 +122,46 @@ class Controller_Products extends Admin_Controller
             // Prepare data for multiple products
             $customer_id = $this->input->post('customers');
             $product_names = $this->input->post('product_name');
-            $prices = $this->input->post('price');
+            // $prices = $this->input->post('price');
             $quantities = $this->input->post('qty');
             $availability = $this->input->post('availability');
 
             // Concatenate values into comma-separated strings
             $product_names_str = implode(',', $product_names);
-            $prices_str = implode(',', $prices);
+            // $prices_str = implode(',', $prices);
             $quantities_str = implode(',', $quantities);
 
             // Prepare data for insertion
             $data = array(
                 'customer_id' => $customer_id,
                 'medicine_id' => $product_names_str,
-                'price' => $prices_str,
+                // 'price' => $prices_str,
                 'qty' => $quantities_str,
-                'availability' => $availability,
             );
-            // print_r($data);
-            // exit;   
-
+            // print_r($data); 
+            // exit;
             // Insert the data
             $create = $this->model_products->create($data);
+
+            // Loop through each product to create or update stock entries
+            foreach ($product_names as $index => $product_name) {
+                // Check if the medicine already exists in stock
+                $existing_stock = $this->model_products->getStockByMedicineId($product_name, $customer_id);
+                
+                if ($existing_stock) {
+                    // Update the existing stock entry
+                    $new_qty = $existing_stock['qty'] + $quantities[$index]; // Increase quantity
+                    $this->model_products->updateStock($product_name, $customer_id, $new_qty);
+                } else {
+                    // Create a new stock entry
+                    $dataStock = array(
+                        'customer_id' => $customer_id,
+                        'medicine_id' => $product_name,
+                        'qty' => $quantities[$index],
+                    );
+                    $this->model_products->createStock($dataStock);
+                }
+            }
 
             if ($create) {
                 $this->session->set_flashdata('success', 'Successfully created');
@@ -357,7 +375,7 @@ class Controller_Products extends Admin_Controller
             $result = array(
                 'customer_name' => isset($customer_data['id']) ? $customer_data['id'] : 'Unknown Customer',
                 'medicine_name' => $medicine_name,
-                'price' => $prices,
+                // 'price' => $prices,
                 'qty' => $quantities,
                 'availability' => $product_data['availability'],
                 'id' => $product_data['id'],

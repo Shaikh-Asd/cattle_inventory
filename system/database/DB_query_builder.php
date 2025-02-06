@@ -1643,25 +1643,31 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 	 */
 	public function insert($table = '', $set = NULL, $escape = NULL)
 	{
+		// If a set of values is provided, set them for insertion
 		if ($set !== NULL)
 		{
 			$this->set($set, '', $escape);
 		}
 
+		// Validate the table and ensure it is set for insertion
 		if ($this->_validate_insert($table) === FALSE)
 		{
-			return FALSE;
+			return FALSE; // Return false if validation fails
 		}
 
+		// Prepare the SQL insert statement
 		$sql = $this->_insert(
 			$this->protect_identifiers(
 				$this->qb_from[0], TRUE, $escape, FALSE
 			),
-			array_keys($this->qb_set),
-			array_values($this->qb_set)
+			array_keys($this->qb_set), // Get the keys for the insert
+			array_values($this->qb_set) // Get the values for the insert
 		);
 
+		// Reset the write values after the insert
 		$this->_reset_write();
+		
+		// Execute the query and return the result
 		return $this->query($sql);
 	}
 

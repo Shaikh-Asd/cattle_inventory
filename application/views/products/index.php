@@ -56,7 +56,7 @@
                   <th>Taken By</th>
                   <th>Medicine Name</th>
                   <th>Qty</th>
-                  <th>Price</th>
+                  <!-- <th>Price</th> -->
                   <th>Availability</th>
                   <!-- <th>Warehouse</th> -->
                   <?php if (in_array('updateProduct', $user_permission) || in_array('deleteProduct', $user_permission)): ?>
