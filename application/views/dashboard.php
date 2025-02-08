@@ -1,4 +1,5 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
 
 
 <!-- Content Wrapper. Contains page content -->
@@ -81,40 +82,159 @@
             <a href="<?php echo base_url('brands/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
+      </div>
+      <div class="row">
         <div class="col-lg-12">
-          <h3>User-wise Data</h3>
-          <div id="userMedicineStats"></div>
+          <div class="box">
+            <div class="box-body">
+              
+              <div class="col-lg-6">
+                <h3>Given Medicine Stock</h3>
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Customer Name</th>
+                      <th>Medicine Name</th>
+                      <th>Stock Given</th>
+                    </tr>
+  
+  
+                  </thead>
+                  <tbody>
+                    <?php
+                    // Query to fetch stock statistics data with customer and medicine names
+                    $stock_data = $this->model_orders->countTotalmedineGiven(); // This will now include names
+                    foreach ($stock_data as $item) {
+                      echo "<tr>  
+                                <td>{$item['customer_name']}</td>
+                                <td>{$item['medicine_name']}</td>
+                                <td>{$item['qty']}</td>
+                              </tr>";
+                    }
+                    ?>
+                  </tbody>
+                </table>
+              </div>
+  
+              <div class="col-lg-6">
+            
+                  <h3>Taken Medicine Stock</h3>
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Customer Name</th>
+                        <th>Medicine Name</th>
+                        <th>Stock Taken</th>
+                      </tr>
+  
+                    </thead>
+                    <tbody>
+                      <?php
+                      // Query to fetch stock statistics data with customer and medicine names
+                      $stock_data = $this->model_products->countTotalmedineTaken(); // This will now include names
+                      foreach ($stock_data as $item) {
+                        echo "<tr>  
+                                  <td>{$item['customer_name']}</td>
+                                  <td>{$item['medicine_name']}</td>
+                                  <td>{$item['qty']}</td>
+                                </tr>";
+                      }
+                      ?>
+                    </tbody>
+                  </table>
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- New dropdown for user selection -->
-        <div class="col-lg-3 col-xs-6">
-          <label for="userSelect">Select Customer:</label>
-          <select id="userSelect" class="form-control">
-            <option value="">-- Select Customer --</option>
-            <?php foreach ($total_customers as $customer): ?>
-              <option value="<?php echo $customer['id']; ?>"><?php echo $customer['name']; ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <!-- End of dropdown -->
+      </div>
+      
+      <div class="row">
+        <div class="col-lg-12">
+            <div class="box">
+              <div class="box-body">
+                <div class="col-lg-12">
+                  <h2>Customer-wise Data</h2>
+                  <!-- New dropdown for user selection -->
+                  <div class="col-lg-3 col-xs-6">
+                    <label for="userSelect">Select Customer:</label>
+                    <select id="userSelect" class="form-control">
+                      <option value="">-- Select Customer --</option>
+                      <?php foreach ($total_customers as $customer): ?>
+                        <option value="<?php echo $customer['id']; ?>"><?php echo $customer['name']; ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                  </div>
+                  <!-- End of dropdown -->
+                    <div class="col-lg-12 mt-2" style="margin-top: 5px;">
+                    <table id="userMedicineStatsTable" class="table table-bordered table-striped">
+                        <thead>
+                          <tr>
+                            <th>Sr No.</th>
+                            <th>Medicine</th>
+                            <th>Created At</th>
+                          </tr>
+                        </thead>
+                      <tbody id="userMedicineStatsTableBody">
+        
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
 
-        <script type="text/javascript">
-          $(document).ready(function() {
-            $("#userSelect").change(function() {
-              var userId = $(this).val();
-              if (userId) {
-                $.ajax({
-                  url: "<?php echo base_url('dashboard/getUserMedicineStats/'); ?>" + userId,
-                  method: "GET",
-                  success: function(data) {
-                    $("#userMedicineStats").html(data);
-                  }
-                });
-              } else {
-                $("#userMedicineStats").html('');
-              }
-            });
-          });
-        </script>
+      <div class="row">
+        <div class="col-lg-6">
+            <div class="box">
+              <div class="box-body">
+                <div class="col-lg-12">
+                  <h2>Most Ordered Medicine</h2>
+                    <div class="col-lg-12 mt-2" style="margin-top: 5px;">
+                    <table id="mostOrderedProductTable" class="table table-bordered table-striped">
+                        <thead>
+                          <tr>
+                            <th>Sr No.</th>
+                            <th>Medicine</th>
+                            <th>Order Count</th>
+                          </tr>
+                        </thead>
+                      <tbody id="mostOrderedProductTableBody">
+        
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="box">
+              <div class="box-body">
+                <div class="col-lg-12">
+                  <h2>Most Ordered Medicine By Quantity</h2>
+                    <div class="col-lg-12 mt-2" style="margin-top: 5px;">
+                    <table id="MostOrderedProductByQuantityTable" class="table table-bordered table-striped">
+                        <thead>
+                          <tr>
+                            <th>Sr No.</th>
+                            <th>Medicine</th>
+                            <th>Order Quantity</th>
+                          </tr>
+                        </thead>
+                      <tbody id="MostOrderedProductByQuantityTableBody">
+        
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+
         <!-- ./col -->
         <!-- <div class="col-lg-3 col-xs-6">
           small box
@@ -178,69 +298,10 @@
             </div>
           </div> -->
         <!-- ./col -->
-      </div>
       <!-- /.row -->
     <?php endif; ?>
 
-    <!-- New section for customer medicine stock statistics -->
-    <div class="row">
-      <div class="col-lg-12">
-        <h3>Taken Medicine Stock</h3>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Customer Name</th>
-              <th>Medicine Name</th>
-              <th>Stock Taken</th>
-            </tr>
-
-          </thead>
-          <tbody>
-            <?php
-            // Query to fetch stock statistics data with customer and medicine names
-            $stock_data = $this->model_products->countTotalmedineTaken(); // This will now include names
-            foreach ($stock_data as $item) {
-              echo "<tr>  
-                        <td>{$item['customer_name']}</td>
-                        <td>{$item['medicine_name']}</td>
-                        <td>{$item['qty']}</td>
-                      </tr>";
-            }
-            ?>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-12">
-        <h3>Given Medicine Stock</h3>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Customer Name</th>
-              <th>Medicine Name</th>
-              <th>Stock Given</th>
-            </tr>
-
-
-          </thead>
-          <tbody>
-            <?php
-            // Query to fetch stock statistics data with customer and medicine names
-            $stock_data = $this->model_orders->countTotalmedineGiven(); // This will now include names
-            foreach ($stock_data as $item) {
-              echo "<tr>  
-                        <td>{$item['customer_name']}</td>
-                        <td>{$item['medicine_name']}</td>
-                        <td>{$item['qty']}</td>
-                      </tr>";
-            }
-            ?>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <!-- End of new section -->
+       <!-- End of new section -->
 
   </section>
   <!-- /.content -->
@@ -249,6 +310,137 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
-    $("#dashboardMainMenu").addClass('active');
+    $("#userSelect").change(function() {
+      var userId = $(this).val();  // Get the selected user ID from the dropdown
+
+      if (userId) {
+          $.ajax({
+              url: "<?php echo base_url('dashboard/getUserMedicineStats/'); ?>" + userId,
+              method: "GET",
+              success: function(data) {
+                  // Assuming the response 'data' is in JSON format and contains user medicine stats
+                  var response = JSON.parse(data);  // Parse the response if it's a JSON string
+              console.log("response",response);
+                  // Example: Displaying the data in a table
+                  var output = '';
+                  var i = 1 ;
+
+                  if (response && response.length > 0) {
+                    
+                    $.each(response, function(index, row) {
+                      var date = new Date(row.created_at);
+                      var formattedDate = date.toLocaleDateString('en-GB', { 
+                            day: '2-digit', 
+                            month: 'long', 
+                            year: 'numeric' 
+                        });
+
+                        output += '<tr>';
+                        output += '<td>' + i + '</td>';
+                        output += '<td>' + row.name + '</td>';
+                        output += '<td>' + formattedDate  + '</td>';
+                        output += '</tr>';
+                        i++;
+                    });
+
+                    $('#userMedicineStatsTableBody').html(output);
+                  }else{
+                    $('#userMedicineStatsTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
+                  }
+              },
+              error: function() {
+                  alert('Error retrieving data!');
+              }
+          });
+      } else {
+          // If no user is selected, you can display a message or hide the container
+          $('#userMedicineStatsTableBody').html('<p>Please select a user.</p>');
+      }
+  });
+
+  manageTable = $('#userMedicineStatsTable').DataTable({
+    dom: 'Bfrtip',
+    buttons: [
+      'copy', 'csv', 'excel', 'print'
+    ],
+    'order': []
+  });
   });
 </script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#dashboardMainMenu").addClass('active');
+
+    $.ajax({
+        url: "<?php echo base_url('dashboard/most_ordered_product/'); ?>",
+        method: "GET",
+        success: function(data) {
+            // Assuming the response 'data' is in JSON format and contains user medicine stats
+            var response = JSON.parse(data);  // Parse the response if it's a JSON string
+            console.log("response",response);
+            // Example: Displaying the data in a table
+            var output = '';
+            var i = 1 ;
+
+            if (response) {
+          
+              var tableRows = '';
+                        
+              // Loop through the products and create a table row for each product
+              $.each(response, function(index, product) {
+                  tableRows += `
+                      <tr>
+                          <td>${i}</td>
+                          <td>${product.name}</td>
+                          <td>${product.order_count}</td>
+                      </tr>
+                  `;
+              });
+              $('#mostOrderedProductTableBody').html(tableRows);
+            }else{
+              $('#mostOrderedProductTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
+            }
+        },
+        error: function() {
+            alert('Error retrieving data!');
+        }
+    });
+
+    $.ajax({
+        url: "<?php echo base_url('dashboard/getMostOrderedProductByQuantity/'); ?>",
+        method: "GET",
+        success: function(data) {
+            // Assuming the response 'data' is in JSON format and contains user medicine stats
+            var response = JSON.parse(data);  // Parse the response if it's a JSON string
+            console.log("response",response);
+            // Example: Displaying the data in a table
+            var output = '';
+            var i = 1 ;
+
+            if (response) {
+          
+              var tableRows = '';
+                        
+              // Loop through the products and create a table row for each product
+              $.each(response, function(index, product) {
+                  tableRows += `
+                      <tr>
+                          <td>${i}</td>
+                          <td>${product.name}</td>
+                          <td>${product.total_quantity}</td>
+                      </tr>
+                  `;
+              });
+              $('#MostOrderedProductByQuantityTableBody').html(tableRows);
+            }else{
+              $('#MostOrderedProductByQuantityTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
+            }
+        },
+        error: function() {
+            alert('Error retrieving data!');
+        }
+    });
+
+  });
+</script>
+<script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>

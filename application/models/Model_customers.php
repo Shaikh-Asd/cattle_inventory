@@ -59,11 +59,17 @@ class Model_customers extends CI_Model
         }
     }
 
-    public function getUserMedicineStats($userId)   
+    public function getUserMedicineStats($customerName)   
     {
-        $sql = "SELECT * FROM customers WHERE id = ?";
-        $query = $this->db->query($sql, array($userId));
-        return $query->row_array();
+        $this->db->select('o.id, o.customer_name, o.created_at,  m.id, m.name');
+        $this->db->from('orders o');
+        $this->db->join('medicines m', 'FIND_IN_SET(m.id, o.medicine_id) > 0', 'inner');
+        $this->db->where('o.customer_name', $customerName);
+        
+        $query = $this->db->get();
+        
+        return $query->result();
     }
+
 }
 

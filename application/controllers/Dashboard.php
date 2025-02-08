@@ -51,4 +51,25 @@ class Dashboard extends Admin_Controller
 		$data = $this->model_customers->getUserMedicineStats($userId);
 		echo json_encode($data);
 	}
+
+	public function most_ordered_product() {
+
+        $result = $this->model_products->get_most_ordered_product();
+
+        // if ($result) {
+        //     // Display the most ordered product's details
+        //     echo 'Product Name: ' . $result->name;
+        //     echo '<br>Order Count: ' . $result->order_count;
+        // } else {
+        //     echo 'No orders found.';
+        // }
+		echo json_encode($result);
+    }
+	
+	public function getMostOrderedProductByQuantity() {
+
+        $result = $this->model_products->get_most_ordered_product_by_quantity();
+
+		echo json_encode($result);
+    }
 }

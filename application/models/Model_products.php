@@ -125,11 +125,38 @@ class Model_products extends CI_Model
 	public function countTotalmedineTaken()
 	{
 		$sql = "SELECT ms.*, c.name AS customer_name, m.name AS medicine_name 
-	        FROM medicine_stock ms
-	        JOIN customers c ON ms.customer_id = c.id
-	        JOIN medicines m ON ms.medicine_id = m.id"; // Adjust table and column names as necessary
+				FROM medicine_stock ms
+				JOIN customers c ON ms.customer_id = c.id
+				JOIN medicines m ON ms.medicine_id = m.id"; 
 		$query = $this->db->query($sql);
-		return $query->result_array(); // Return all data as an array
+		return $query->result_array();
 	}
 
+
+	public function get_most_ordered_product() {
+        // Join the orders and medicines table to get the product name
+        $this->db->select('orders_item.product_id, COUNT(orders_item.product_id) AS order_count, medicines.name');
+        $this->db->from('orders_item');
+        $this->db->join('medicines', 'medicines.id = orders_item.product_id');
+        $this->db->group_by('orders_item.product_id');
+        $this->db->order_by('order_count', 'DESC');
+        $this->db->limit(3);
+
+        $query = $this->db->get();
+        return $query->result_array();  
+    }
+
+	public function get_most_ordered_product_by_quantity() {
+
+		$this->db->select('orders_item.product_id, SUM(orders_item.qty) AS total_quantity, medicines.name');
+		$this->db->from('orders_item');
+		$this->db->join('medicines', 'medicines.id = orders_item.product_id');
+		$this->db->group_by('orders_item.product_id');
+		$this->db->order_by('total_quantity', 'DESC');
+		$this->db->limit(3);
+	
+		$query = $this->db->get();
+		return $query->result_array();
+	}
+	
 }
