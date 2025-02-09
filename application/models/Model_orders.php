@@ -183,7 +183,7 @@ class Model_orders extends CI_Model
 	// 	$query = $this->db->query($sql);
 	// 	return $query->result_array(); // Return all data as an array
 	// }
-	public function countTotalmedineGiven()
+	public function count_total_medicine_given()
 	{
 		$sql = "SELECT ms.*, c.name AS customer_name, m.name AS medicine_name 
 	        FROM orders_item ms

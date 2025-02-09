@@ -122,7 +122,7 @@ class Model_products extends CI_Model
 		return $this->db->affected_rows() > 0; // Return true if the update was successful
 	}
 
-	public function countTotalmedineTaken()
+	public function count_total_medicine_taken()
 	{
 		$sql = "SELECT ms.*, c.name AS customer_name, m.name AS medicine_name 
 				FROM medicine_stock ms

@@ -155,18 +155,8 @@
   
   
                   </thead>
-                  <tbody>
-                    <?php
-                    // Query to fetch stock statistics data with customer and medicine names
-                    $stock_data = $this->model_orders->countTotalmedineGiven(); // This will now include names
-                    foreach ($stock_data as $item) {
-                      echo "<tr>  
-                                <td>{$item['customer_name']}</td>
-                                <td>{$item['medicine_name']}</td>
-                                <td>{$item['qty']}</td>
-                              </tr>";
-                    }
-                    ?>
+                  <tbody id="givenMedicineTableBody">
+                  `
                   </tbody>
                 </table>
               </div>
@@ -183,18 +173,8 @@
                       </tr>
   
                     </thead>
-                    <tbody>
-                      <?php
-                      // Query to fetch stock statistics data with customer and medicine names
-                      $stock_data = $this->model_products->countTotalmedineTaken(); // This will now include names
-                      foreach ($stock_data as $item) {
-                        echo "<tr>  
-                                  <td>{$item['customer_name']}</td>
-                                  <td>{$item['medicine_name']}</td>
-                                  <td>{$item['qty']}</td>
-                                </tr>";
-                      }
-                      ?>
+                    <tbody  id="countTotalmedicineTakenTableBody">
+                     
                     </tbody>
                   </table>
               </div>
@@ -226,6 +206,7 @@
                           <tr>
                             <th>Sr No.</th>
                             <th>Medicine</th>
+                            <th>Quantity</th>
                             <th>Created At</th>
                           </tr>
                         </thead>
@@ -393,6 +374,7 @@
                         output += '<tr>';
                         output += '<td>' + i + '</td>';
                         output += '<td>' + row.name + '</td>';
+                        output += '<td>' + row.total_quantity_ordered  + '</td>';
                         output += '<td>' + formattedDate  + '</td>';
                         output += '</tr>';
                         i++;
@@ -426,6 +408,73 @@
   $(document).ready(function() {
     $("#dashboardMainMenu").addClass('active');
 
+    //Given Medicine
+    $.ajax({
+        url: "<?php echo base_url('dashboard/countTotalmedineGiven/'); ?>",
+        method: "GET",
+        success: function(data) {
+            var response = JSON.parse(data); 
+            
+            var output = '';
+            var i = 1 ;
+
+            if (response) {
+          
+              var tableRows = '';
+                        
+              $.each(response, function(index, item) {
+                  tableRows += `
+                                <tr>  
+                                  <td>${item.customer_name}</td>
+                                  <td>${item.medicine_name}</td>
+                                  <td>${item.qty}</td>
+                                </tr>
+                  `;
+              });
+              $('#givenMedicineTableBody').html(tableRows);
+            }else{
+              $('#givenMedicineTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
+            }
+        },
+        error: function() {
+            alert('Error retrieving data!');
+        }
+    });
+
+    //Taken Medicine
+    $.ajax({
+        url: "<?php echo base_url('dashboard/countTotalmedicineTaken/'); ?>",
+        method: "GET",
+        success: function(data) {
+            var response = JSON.parse(data); 
+            
+            var output = '';
+            var i = 1 ;
+            console.log(response);
+
+            if (response) {
+          
+              var tableRows = '';
+                        
+              $.each(response, function(index, item) {
+                  tableRows += `
+                                <tr>  
+                                  <td>${item.customer_name}</td>
+                                  <td>${item.medicine_name}</td>
+                                  <td>${item.qty}</td>
+                                </tr>
+                  `;
+              });
+              $('#countTotalmedicineTakenTableBody').html(tableRows);
+            }else{
+              $('#countTotalmedicineTakenTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
+            }
+        },
+        error: function() {
+            alert('Error retrieving data!');
+        }
+    });
+    
     //most_ordered_product
     $.ajax({
         url: "<?php echo base_url('dashboard/most_ordered_product/'); ?>",
@@ -544,7 +593,6 @@
         method: "GET",
         success: function(data) {
             var response = JSON.parse(data); 
-            console.log(response);
             var output = '';
             var i = 1 ;
 

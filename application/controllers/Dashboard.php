@@ -52,6 +52,18 @@ class Dashboard extends Admin_Controller
 		echo json_encode($data);
 	}
 
+	public function countTotalmedineGiven() {
+		
+		$data = $this->model_orders->count_total_medicine_given();
+		echo json_encode($data);
+	}
+	
+	public function countTotalmedicineTaken() {
+
+		$data = $this->model_products->count_total_medicine_taken();
+		echo json_encode($data);
+	}
+
 	public function most_ordered_product() {
 
         $result = $this->model_products->get_most_ordered_product();
