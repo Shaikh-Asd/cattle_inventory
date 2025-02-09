@@ -17,7 +17,7 @@
     </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Taken</li>
+      <li class="active">Inward Medicines</li>
     </ol>
   </section>
 
@@ -63,9 +63,9 @@
               <!-- <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Enter product name" autocomplete="off"/> -->
 
               <div class="form-group">
-                <label for="product_name">Taken By</label>
+                <label for="product_name">Inward By</label>
                 <select class="form-control" id="customers" name="customers">
-                  <option value="">Select a customer</option>
+                  <option value="">Select a user</option>
                   <?php foreach ($customers as $k => $v): ?>
                     <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
                   <?php endforeach ?>

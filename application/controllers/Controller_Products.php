@@ -10,7 +10,7 @@ class Controller_Products extends Admin_Controller
 
 		$this->not_logged_in();
 
-		$this->data['page_title'] = 'Products';
+		$this->data['page_title'] = 'Inward Medicines';
 
 		$this->load->model('model_products');
 		$this->load->model('model_brands');

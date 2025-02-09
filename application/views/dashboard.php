@@ -1,5 +1,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 
 <style>
   .negative-stock { color: red; }
@@ -28,30 +29,29 @@
       <div class="row">
         <div class="col-lg-3 col-xs-6">
           <!-- small box -->
-          <div class="small-box bg-green">
+          <div class="small-box bg-info">
             <div class="inner">
               <h3><?php echo count($total_customers) ?></h3>
               <h4><b>Total Customers</b></h4>
             </div>
             <div class="icon">
-
-              <i class="fa fa-dollar"></i>
+              <i class="fa fa-users"></i>
             </div>
-            <a href="<?php echo base_url('customers/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="<?php echo base_url('Controller_Customer/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
 
         <div class="col-lg-3 col-xs-6">
           <!-- small box -->
-          <div class="small-box bg-green">
+          <div class="small-box bg-success">
             <div class="inner">
               <h3><?php echo count($total_medicines) ?></h3>
               <h4><b>Total Medicines</b></h4>
             </div>
             <div class="icon">
-              <i class="fa fa-dollar"></i>
+              <i class="fa fa-medkit"></i>
             </div>
-            <a href="<?php echo base_url('medicines/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="<?php echo base_url('Controller_Medicines/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
 
@@ -67,7 +67,7 @@
             <div class="icon">
               <i class="fa fa-cube"></i>
             </div>
-            <a href="<?php echo base_url('products/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="<?php echo base_url('Controller_Products/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
 
@@ -83,7 +83,7 @@
               <i class="fa fa-cart-arrow-down"></i>
 
             </div>
-            <a href="<?php echo base_url('brands/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="<?php echo base_url('Controller_Orders/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
       </div>
@@ -575,3 +575,84 @@
   });
 </script>
 <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+<!-- Update for DataTables initialization to include search and pagination -->
+<script type="text/javascript">
+  $(document).ready(function() {
+    // Initialize DataTables with search and pagination
+    if (!$.fn.DataTable.isDataTable('#medicineStockTable')) {
+      $('#medicineStockTable').DataTable({
+        responsive: true, // Make the table responsive
+        dom: 'Bfrtip',
+        buttons: [
+          'copy', 'csv', 'excel', 'print'
+        ],
+        'order': [],
+        'paging': true,
+        'searching': true
+      });
+    }
+
+    if (!$.fn.DataTable.isDataTable('#TopCustomersWithProductsTable')) {
+      $('#TopCustomersWithProductsTable').DataTable({
+        responsive: true, // Make the table responsive
+        dom: 'Bfrtip',
+        buttons: [
+          'copy', 'csv', 'excel', 'print'
+        ],
+        'order': [],
+        'paging': true,
+        'searching': true
+      });
+    }
+
+    if (!$.fn.DataTable.isDataTable('#userMedicineStatsTable')) {
+      $('#userMedicineStatsTable').DataTable({
+        responsive: true, // Make the table responsive
+        dom: 'Bfrtip',
+        buttons: [
+          'copy', 'csv', 'excel', 'print'
+        ],
+        'order': [],
+        'paging': true,
+        'searching': true
+      });
+    }
+
+    if (!$.fn.DataTable.isDataTable('#mostOrderedProductTable')) {
+      $('#mostOrderedProductTable').DataTable({
+        responsive: true, // Make the table responsive
+        dom: 'Bfrtip',
+        buttons: [
+          'copy', 'csv', 'excel', 'print'
+        ],
+        'order': [],
+        'paging': true,
+        'searching': true
+      });
+    }
+
+    if (!$.fn.DataTable.isDataTable('#MostOrderedProductByQuantityTable')) {
+      $('#MostOrderedProductByQuantityTable').DataTable({
+        responsive: true, // Make the table responsive
+        dom: 'Bfrtip',
+        buttons: [
+          'copy', 'csv', 'excel', 'print'
+        ],
+        'order': [],
+        'paging': true,
+        'searching': true
+      });
+    }
+  });
+</script>
+
+<!-- Ensure sidebar collapse functionality is working -->
+<script type="text/javascript">
+  $(document).ready(function() {
+    // Add click event for sidebar toggle
+    $('.sidebar-toggle').click(function() {
+      $('.main-sidebar').toggleClass('collapsed'); // Toggle the collapsed class
+    });
+  });
+</script>

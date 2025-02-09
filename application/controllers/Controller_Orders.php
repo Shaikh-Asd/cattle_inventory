@@ -10,7 +10,7 @@ class Controller_Orders extends Admin_Controller
 
 		$this->not_logged_in();
 
-		$this->data['page_title'] = 'Orders';
+		$this->data['page_title'] = 'Outward Medicines';
 
 		$this->load->model('model_orders');
 		$this->load->model('model_products');
@@ -28,7 +28,7 @@ class Controller_Orders extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
-		$this->data['page_title'] = 'Manage Medicine';
+		$this->data['page_title'] = 'Manage Outward Medicines';
 		$this->render_template('orders/index', $this->data);		
 	}
 
@@ -84,10 +84,12 @@ class Controller_Orders extends Admin_Controller
 				$medicine_names[] = isset($medicine_data['name']) ? $medicine_data['name'] : 'Unknown Medicine';
 			}
 			$medicine_name = implode(', ', $medicine_names); // Join names with a comma
-			// print_r($buttons);
+			$customer_data = $this->model_customers->getCustomerDataById($value['customer_name']);
+			$customer_name = $customer_data['name'];
+			// print_r($value);
 			// exit;
 			$result['data'][$key] = array(
-				$value['customer_name'],
+				$customer_name,
 				$medicine_name,
 				$qtys,
 				$date_time,
@@ -110,7 +112,7 @@ class Controller_Orders extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
-		$this->data['page_title'] = 'Give medicine';
+		$this->data['page_title'] = 'Outward Medicines';
 
 		$this->form_validation->set_rules('product[]', 'Product name', 'trim|required');
 		$this->form_validation->set_rules('qty[]', 'Quantity', 'trim|required');

@@ -25,7 +25,7 @@ class Model_customers extends CI_Model
     /* get the attribute data */
     public function getCustomerData()
     {
-        $sql = "SELECT * FROM customers";   
+        $sql = "SELECT * FROM customers where active = 1";   
         $query = $this->db->query($sql);
         return $query->result_array();
     }

@@ -23,7 +23,7 @@ class Model_medicines extends CI_Model
     /* get the attribute data */
     public function getMedicinesData()
     {
-        $sql = "SELECT * FROM medicines";   
+        $sql = "SELECT * FROM medicines where active = 1";   
         $query = $this->db->query($sql);
         return $query->result_array();
     }

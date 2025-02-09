@@ -8,13 +8,13 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Manage Medicine
+      Manage Outward Medicines
      
 
     </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Medicine</li>
+      <li class="active">Outward Medicines</li>
     </ol>
   </section>
 
@@ -40,9 +40,10 @@
         <?php endif; ?>
 
         <?php if(in_array('createOrder', $user_permission)): ?>
-          <a href="<?php echo base_url('Controller_Orders/create') ?>" class="btn btn-primary">Give Medicine</a>
+          <a href="<?php echo base_url('Controller_Orders/create') ?>" class="btn btn-primary">Outward Medicines</a>
           <br /> <br />
         <?php endif; ?>
+
 
         <div class="box">
           
@@ -52,17 +53,18 @@
               <thead>
               <tr>
                 <!-- <th>Bill no</th> -->
-                <th>Given Name</th>
+                <th>Outward By</th>
                 <th>Medicine Name</th>
                 <th>Quantity</th>
                 <th>Date Time</th>
                 <!-- <th>Total Products</th>
                 <th>Total Amount</th> -->
 
+
              
-                <?php if(in_array('updateOrder', $user_permission) || in_array('viewOrder', $user_permission) || in_array('deleteOrder', $user_permission)): ?>
+                <!-- <?php if(in_array('updateOrder', $user_permission) || in_array('viewOrder', $user_permission) || in_array('deleteOrder', $user_permission)): ?>
                   <th>Action</th>
-                <?php endif; ?>
+                <?php endif; ?> -->
               </tr>
               </thead>
 

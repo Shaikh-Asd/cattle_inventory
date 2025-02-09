@@ -9,14 +9,16 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Edit Taken Medicines
+      Edit Inward Medicines
+
 
     </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Taken Medicines</li>
+      <li class="active">Inward Medicines</li>
     </ol>
   </section>
+
 
   <!-- Main content -->
   <section class="content">
@@ -62,10 +64,11 @@
                 </div> -->
 
               <div class="form-group">
-                <label for="customers">Taken By</label>
+                <label for="customers">Inward By</label>
                 <select class="form-control" id="customers" name="customers">
-                  <option value="">Select a customer</option>
+                  <option value="">Select a user</option>
                   <?php foreach ($customers as $k => $v): ?>
+
 
                     <option value="<?php echo $v['id'] ?>" <?php if ($product_data['customer_id'] == $v['id']) { echo "selected='selected'";} ?>><?php echo $v['name'] ?></option>
                   <?php endforeach ?>

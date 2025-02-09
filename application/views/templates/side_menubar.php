@@ -45,34 +45,35 @@
       <?php if (in_array('createCustomers', $user_permission) || in_array('updateCustomers', $user_permission) || in_array('viewCustomers', $user_permission) || in_array('deleteCustomers', $user_permission)): ?>
         <li id="customerNav">
           <a href="<?php echo base_url('Controller_Customer/') ?>">
-            <i class="fa fa-users"></i> <span>Customers</span>
+            <i class="fa fa-users"></i> <span>Users</span>
           </a>
         </li>
       <?php endif; ?>
 
       <?php if (in_array('createMedicines', $user_permission) || in_array('updateMedicines', $user_permission) || in_array('viewMedicines', $user_permission) || in_array('deleteMedicines', $user_permission)): ?>
-        <li id="customerNav">
+        <li id="medicineNav">
           <a href="<?php echo base_url('Controller_Medicines/') ?>">
-            <i class="fa fa-users"></i> <span>Medicines</span>
+            <i class="fa fa-medkit"></i> <span>Medicines</span>
           </a>
         </li>
       <?php endif; ?>
+
 
       <?php if (in_array('createProduct', $user_permission) || in_array('updateProduct', $user_permission) || in_array('viewProduct', $user_permission) || in_array('deleteProduct', $user_permission)): ?>
         <li class="treeview" id="mainProductNav">
           <a href="#">
             <i class="fa fa-cube"></i>
-            <span>Taken</span>
+            <span>Inward Medicines</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
             <?php if (in_array('createProduct', $user_permission)): ?>
-              <li id="addProductNav"><a href="<?php echo base_url('Controller_Products/create') ?>"><i class="fa fa-circle-o"></i>Taken</a></li>
+              <li id="addProductNav"><a href="<?php echo base_url('Controller_Products/create') ?>"><i class="fa fa-circle-o"></i>Inward Medicines</a></li>
             <?php endif; ?>
             <?php if (in_array('updateProduct', $user_permission) || in_array('viewProduct', $user_permission) || in_array('deleteProduct', $user_permission)): ?>
-              <li id="manageProductNav"><a href="<?php echo base_url('Controller_Products') ?>"><i class="fa fa-circle-o"></i> Manage Taken Medicines</a></li>
+              <li id="manageProductNav"><a href="<?php echo base_url('Controller_Products') ?>"><i class="fa fa-circle-o"></i> Manage Inward Medicines</a></li>
             <?php endif; ?>
           </ul>
         </li>
@@ -83,17 +84,17 @@
         <li class="treeview" id="mainOrdersNav">
           <a href="#">
             <i class="fa fa-dollar"></i>
-            <span>Give Medicines</span>
+            <span>Outward Medicines</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
             <?php if (in_array('createOrder', $user_permission)): ?>
-              <li id="addOrderNav"><a href="<?php echo base_url('Controller_Orders/create') ?>"><i class="fa fa-circle-o"></i>Given Medicines</a></li>
+              <li id="addOrderNav"><a href="<?php echo base_url('Controller_Orders/create') ?>"><i class="fa fa-circle-o"></i> Outward Medicines</a></li>
             <?php endif; ?>
             <?php if (in_array('updateOrder', $user_permission) || in_array('viewOrder', $user_permission) || in_array('deleteOrder', $user_permission)): ?>
-              <li id="manageOrdersNav"><a href="<?php echo base_url('Controller_Orders') ?>"><i class="fa fa-circle-o"></i> Manage Given Medicines</a></li>
+              <li id="manageOrdersNav"><a href="<?php echo base_url('Controller_Orders') ?>"><i class="fa fa-circle-o"></i> Manage Outward Medicines</a></li>
             <?php endif; ?>
           </ul>
         </li>

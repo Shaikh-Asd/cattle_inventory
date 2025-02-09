@@ -7,14 +7,16 @@
    <!-- Content Header (Page header) -->
    <section class="content-header">
      <h1>
-       Manage Customers
+       Manage Users
+
 
      </h1>
      <ol class="breadcrumb">
        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-       <li class="active">Customers</li>
+       <li class="active">Users</li>
      </ol>
    </section>
+
 
    <!-- Main content -->
    <section class="content">
@@ -38,10 +40,11 @@
 
          <?php //if(in_array('createGroup', $user_permission)): 
           ?>
-         <button class="btn btn-primary" data-toggle="modal" data-target="#addModal">Add Customer</button>
+         <button class="btn btn-primary" data-toggle="modal" data-target="#addModal">Add User</button>
          <br /> <br />
          <?php //endif; 
           ?>
+
 
          <div class="box">
 
@@ -50,10 +53,11 @@
              <table id="manageTable" class="table table-bordered table-striped">
                <thead>
                  <tr>
-                   <th>Customer Name</th>
+                   <th>User Name</th>
                    <th>Status</th>
                    <?php //if(in_array('updateGroup', $user_permission) || in_array('deleteGroup', $user_permission)): 
                     ?>
+
                    <th>Action</th>
                    <?php //endif; 
                     ?>
@@ -83,18 +87,20 @@
      <div class="modal-content">
        <div class="modal-header">
          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-         <h4 class="modal-title">Add Customer</h4>
+         <h4 class="modal-title">Add User</h4>
        </div>
+
 
        <form role="form" action="<?php echo base_url('Controller_Customer/create') ?>" method="post" id="createForm">
 
          <div class="modal-body">
 
            <div class="form-group">
-             <label for="brand_name">Customer Name</label>
-             <input type="text" class="form-control" id="customer_name" name="customer_name" placeholder="Enter customer name" autocomplete="off" value="<?php echo set_value('customer_name'); ?>">
+             <label for="brand_name">User Name</label>
+             <input type="text" class="form-control" id="customer_name" name="customer_name" placeholder="Enter user name" autocomplete="off" value="<?php echo set_value('customer_name'); ?>">
            </div>
            <div class="form-group">
+
              <label for="active">Status</label>
              <select class="form-control" id="active" name="active">
                <option value="1">Active</option>

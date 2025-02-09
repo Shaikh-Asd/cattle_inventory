@@ -7,14 +7,16 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Given Medicines
+      Outward Medicines
       <small></small>
     </h1>
     <ol class="breadcrumb">
+
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Given Medicines</li>
+      <li class="active">Outward Medicines</li>
     </ol>
   </section>
+
 
   <!-- Main content -->
   <section class="content">
@@ -46,10 +48,10 @@
               <?php echo validation_errors(); ?>
 
               <div class="form-group">
-                <label for="taken_by" class="col-sm-2 control-label">Taken By</label>
+                <label for="taken_by" class="col-sm-2 control-label">Outward By</label>
                 <div class="col-sm-10">
                   <select class="form-control" id="taken_by" name="taken_by" required>
-                    <option value="">Select a customer</option>
+                    <option value="">Select a user</option>
                     <?php foreach ($customers as $k => $v): ?>
                       <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
                     <?php endforeach ?>
@@ -69,7 +71,7 @@
 
               <div class="form-group">
                 <div class="col-sm-12">
-                  <button type="button" id="add_row" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Medicine</button>
+                  <button type="button" id="add_row" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i></button>
                 </div>
               </div>
 
@@ -148,7 +150,7 @@
         <tr id="row_${rowCount}">
           <td>
             <select class="form-control select_group product" data-row-id="row_${rowCount}" id="product_${rowCount}" name="product[]" required>
-              <option value=""></option>
+              <option value="">Select a medicine</option>
               <?php foreach ($medicines as $k => $v): ?>
                 <option value="<?php echo $v['id'] ?>" data-qty="<?php echo isset($v['qty']) ? $v['qty'] : 0; ?>" data-price="<?php echo isset($v['price']) ? $v['price'] : 0; ?>">
                   <?php echo $v['name']; ?>
@@ -181,7 +183,9 @@
         $.ajax({
           url: base_url + 'Controller_Orders/getMedicineQuantity', // Adjust the URL as needed
           type: 'POST',
-          data: { id: product_id },
+          data: {
+            id: product_id
+          },
           dataType: 'json',
           success: function(response) {
             if (response.success) {

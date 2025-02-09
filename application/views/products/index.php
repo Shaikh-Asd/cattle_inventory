@@ -9,12 +9,13 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Manage Taken
+      Manage Inward Medicines
+
 
     </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Taken</li>
+      <li class="active">Inward Medicines</li>
     </ol>
   </section>
 
@@ -40,9 +41,10 @@
         <?php endif; ?>
 
         <?php if (in_array('createProduct', $user_permission)): ?>
-          <a href="<?php echo base_url('Controller_Products/create') ?>" class="btn btn-primary">Taken</a>
+          <a href="<?php echo base_url('Controller_Products/create') ?>" class="btn btn-primary">Inward Medicines</a>
           <br /> <br />
         <?php endif; ?>
+
 
 
         <div class="box">
@@ -53,15 +55,17 @@
               <thead>
                 <tr>
                   <!-- <th>Image</th> -->
-                  <th>Taken By</th>
+                  <th>Inward By</th>
                   <th>Medicine Name</th>
-                  <th>Qty</th>
+                  <th>Quantity</th>
                   <!-- <th>Price</th> -->
                   <th>Availability</th>
                   <!-- <th>Warehouse</th> -->
-                  <?php if (in_array('updateProduct', $user_permission) || in_array('deleteProduct', $user_permission)): ?>
+
+
+                  <!-- <?php if (in_array('updateProduct', $user_permission) || in_array('deleteProduct', $user_permission)): ?>
                     <th>Action</th>
-                  <?php endif; ?>
+                  <?php endif; ?> -->
                 </tr>
               </thead>
 
