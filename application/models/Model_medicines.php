@@ -56,4 +56,18 @@ class Model_medicines extends CI_Model
             return ($delete == true) ? true : false;
         }
     }
+
+    public function get_medicine_stock() {
+        $this->db->select('medicine_stock.qty, medicines.name'); 
+        $this->db->from('medicine_stock');
+        $this->db->join('medicines', 'medicines.id = medicine_stock.medicine_id'); 
+        $query = $this->db->get(); 
+        return $query->result();
+    }
+
+    // public function get_medicine_stock_by_id($medicine_id) {
+    //     $this->db->where('medicine_id', $medicine_id);  
+    //     $query = $this->db->get('medicine_stock');
+    //     return $query->row(); 
+    // }
 }

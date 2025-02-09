@@ -72,4 +72,18 @@ class Dashboard extends Admin_Controller
 
 		echo json_encode($result);
     }
+
+	public function getMedicineStock(){
+		
+		$result = $this->model_medicines->get_medicine_stock();
+
+		echo json_encode($result);
+	}
+
+	public function getTopCustomersWithProducts(){
+		
+		$result = $this->model_customers->get_top_customers_with_products();
+
+		echo json_encode($result);
+	}
 }

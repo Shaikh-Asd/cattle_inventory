@@ -1,7 +1,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
 
-
+<style>
+  .negative-stock { color: red; }
+.low-stock { color: orange; }
+.in-stock { color: green; }
+</style>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
@@ -83,13 +87,64 @@
           </div>
         </div>
       </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="box">
+            <div class="box-body">
+                <div class="col-lg-12">
+                    <h3>Medicines Stock</h3>
+                    <table id="medicineStockTable" class="table table-bordered table-striped">
+                        <thead>
+                          <tr>
+                            <th>Sr No.</th>
+                            <th>Medicine</th>
+                            <th>Stock Quantity</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                      <tbody id="medicineStockTableBody">
+        
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="box">
+            <div class="box-body">
+                <div class="col-lg-12">
+                    <h3>Top Customers With Products</h3>
+                    <table id="TopCustomersWithProductsTable" class="table table-bordered table-striped">
+                        <thead>
+                          <tr>
+                            <th>Sr No.</th>
+                            <th>Custoemr Name</th>
+                            <th>Medicine Name</th>
+                            <th>Total Ordered</th>
+                          </tr>
+                        </thead>
+                      <tbody id="TopCustomersWithProductsTableBody">
+        
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="row">
         <div class="col-lg-12">
           <div class="box">
             <div class="box-body">
               
               <div class="col-lg-6">
-                <h3>Given Medicine Stock</h3>
+                <h3>Given Medicines</h3>
                 <table class="table table-bordered">
                   <thead>
                     <tr>
@@ -118,7 +173,7 @@
   
               <div class="col-lg-6">
             
-                  <h3>Taken Medicine Stock</h3>
+                  <h3>Taken Medicines</h3>
                   <table class="table table-bordered">
                     <thead>
                       <tr>
@@ -319,8 +374,8 @@
               method: "GET",
               success: function(data) {
                   // Assuming the response 'data' is in JSON format and contains user medicine stats
-                  var response = JSON.parse(data);  // Parse the response if it's a JSON string
-              console.log("response",response);
+                  var response = JSON.parse(data); 
+              
                   // Example: Displaying the data in a table
                   var output = '';
                   var i = 1 ;
@@ -371,14 +426,13 @@
   $(document).ready(function() {
     $("#dashboardMainMenu").addClass('active');
 
+    //most_ordered_product
     $.ajax({
         url: "<?php echo base_url('dashboard/most_ordered_product/'); ?>",
         method: "GET",
         success: function(data) {
-            // Assuming the response 'data' is in JSON format and contains user medicine stats
-            var response = JSON.parse(data);  // Parse the response if it's a JSON string
-            console.log("response",response);
-            // Example: Displaying the data in a table
+            var response = JSON.parse(data); 
+            
             var output = '';
             var i = 1 ;
 
@@ -386,7 +440,6 @@
           
               var tableRows = '';
                         
-              // Loop through the products and create a table row for each product
               $.each(response, function(index, product) {
                   tableRows += `
                       <tr>
@@ -406,14 +459,13 @@
         }
     });
 
+    //getMostOrderedProductByQuantity
     $.ajax({
         url: "<?php echo base_url('dashboard/getMostOrderedProductByQuantity/'); ?>",
         method: "GET",
         success: function(data) {
-            // Assuming the response 'data' is in JSON format and contains user medicine stats
-            var response = JSON.parse(data);  // Parse the response if it's a JSON string
-            console.log("response",response);
-            // Example: Displaying the data in a table
+            var response = JSON.parse(data); 
+            
             var output = '';
             var i = 1 ;
 
@@ -421,7 +473,6 @@
           
               var tableRows = '';
                         
-              // Loop through the products and create a table row for each product
               $.each(response, function(index, product) {
                   tableRows += `
                       <tr>
@@ -441,6 +492,86 @@
         }
     });
 
+    // getMedicineStock
+
+    $.ajax({
+        url: "<?php echo base_url('dashboard/getMedicineStock/'); ?>",
+        method: "GET",
+        success: function(data) {
+            var response = JSON.parse(data); 
+            var output = '';
+            var i = 1 ;
+
+            if (response) {
+          
+              var tableRows = '';
+              const lowStockThreshold = 10;
+              $.each(response, function(index, medicine) {
+                let stockStatus = '';
+                if (medicine.qty < 0) {
+                    stockStatus = 'Out of Stock';
+                    stockStatusClass = 'negative-stock';  
+                } else if (medicine.qty <= lowStockThreshold) {
+                    stockStatus = 'Low Stock';
+                    stockStatusClass = 'low-stock';  
+                } else {
+                    stockStatus = 'In Stock';
+                    stockStatusClass = 'in-stock'; 
+                }
+                  tableRows += `
+                      <tr>
+                          <td>${i}</td>
+                          <td>${medicine.name}</td>
+                          <td>${medicine.qty}</td>
+                          <td class="${stockStatusClass}">${stockStatus}</td>
+                      </tr>
+                  `;
+                  i++;
+              });
+              $('#medicineStockTableBody').html(tableRows);
+            }else{
+              $('#medicineStockTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
+            }
+        },
+        error: function() {
+            alert('Error retrieving data!');
+        }
+    });
+ 
+    //TopCustomersWithProducts
+    $.ajax({
+        url: "<?php echo base_url('dashboard/getTopCustomersWithProducts/'); ?>",
+        method: "GET",
+        success: function(data) {
+            var response = JSON.parse(data); 
+            console.log(response);
+            var output = '';
+            var i = 1 ;
+
+            if (response) {
+          
+              var tableRows = '';
+              
+              $.each(response, function(index, product) {
+                  tableRows += `
+                      <tr>
+                          <td>${i}</td>
+                          <td>${product.customer_name}</td>
+                          <td>${product.medicine_name}</td>
+                          <td>${product.total_ordered}</td>
+                      </tr>
+                  `;
+              });
+              $('#TopCustomersWithProductsTableBody').html(tableRows);
+            }else{
+              $('#TopCustomersWithProductsTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
+              
+            }
+        },
+        error: function() {
+            alert('Error retrieving data!');
+        }
+    });
   });
 </script>
 <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>

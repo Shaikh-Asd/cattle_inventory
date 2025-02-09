@@ -61,15 +61,42 @@ class Model_customers extends CI_Model
 
     public function getUserMedicineStats($customerName)   
     {
-        $this->db->select('o.id, o.customer_name, o.created_at,  m.id, m.name');
+        $this->db->select('o.id, o.customer_name, o.created_at, m.id AS medicine_id, m.name, SUM(o.qty) AS total_quantity_ordered');
         $this->db->from('orders o');
         $this->db->join('medicines m', 'FIND_IN_SET(m.id, o.medicine_id) > 0', 'inner');
         $this->db->where('o.customer_name', $customerName);
-        
+        $this->db->group_by('m.id');
         $query = $this->db->get();
-        
         return $query->result();
     }
 
+    public function getMostOrderedMedicineByCustomer()   
+    {
+        $this->db->select('o.id, o.customer_name, o.created_at, m.id AS medicine_id, m.name, SUM(o.quantity_ordered) AS total_quantity_ordered');
+        $this->db->from('orders o');
+        $this->db->join('medicines m', 'FIND_IN_SET(m.id, o.medicine_id) > 0', 'inner');
+        $this->db->where('o.customer_name', $customerName);
+        $this->db->group_by('m.id');
+        $this->db->order_by('total_quantity_ordered', 'DESC');
+        $this->db->limit(1);
+        $query = $this->db->get();
+        return $query->row();  // Return the single result (most ordered medicine)
+    }
+
+    public function get_top_customers_with_products() {
+        // Query to get the top 5 customers with their ordered products
+        $this->db->select('customers.id as customer_id, customers.name as customer_name, 
+                           medicines.id as medicine_id, medicines.name as medicine_name, 
+                           SUM(orders_item.qty) as total_ordered');
+        $this->db->from('orders_item');
+        $this->db->join('customers', 'customers.id = orders_item.customer_id');
+        $this->db->join('medicines', 'medicines.id = orders_item.product_id');
+        $this->db->group_by('orders_item.customer_id, orders_item.product_id');
+        $this->db->order_by('total_ordered', 'DESC'); // Order by total quantity ordered
+        $this->db->limit(5); // Get top 5 customers
+        $query = $this->db->get();
+        
+        return $query->result(); // Return the result as an array of objects
+    }
 }
 
