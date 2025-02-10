@@ -50,10 +50,13 @@
              <table id="manageTable" class="table table-bordered table-striped">
                <thead>
                  <tr>
+                   <th>Medicine id</th>
                    <th>Medicine Name</th>
+                   <th>Dead Stock</th>
                    <th>Status</th>
                    <?php //if(in_array('updateGroup', $user_permission) || in_array('deleteGroup', $user_permission)): 
                     ?>
+
                    <th>Action</th>
                    <?php //endif; 
                     ?>
@@ -95,6 +98,11 @@
              <input type="text" class="form-control" id="medicine_name" name="medicine_name" placeholder="Enter medicine name" autocomplete="off" value="<?php echo set_value('medicine_name'); ?>">
            </div>
            <div class="form-group">
+             <label for="dead_stock">Dead Stock</label>
+             <input type="number" class="form-control" id="dead_stock" name="dead_stock" placeholder="Enter dead stock" autocomplete="off" value="<?php echo set_value('dead_stock'); ?>">
+           </div>
+
+           <div class="form-group">
              <label for="active">Status</label>
              <select class="form-control" id="active" name="active">
                <option value="1">Active</option>
@@ -134,8 +142,13 @@
              <input type="text" class="form-control" id="edit_medicine_name" name="edit_medicine_name" placeholder="Enter medicine name" autocomplete="off">
            </div>
            <div class="form-group">
+             <label for="edit_dead_stock">Dead Stock</label>
+             <input type="number" class="form-control" id="edit_dead_stock" name="edit_dead_stock" placeholder="Enter dead stock" autocomplete="off">
+           </div>
+           <div class="form-group">
              <label for="edit_active">Status</label>
              <select class="form-control" id="edit_active" name="edit_active">
+
                <option value="1">Active</option>
                <option value="2">Inactive</option>
              </select>
@@ -277,7 +290,8 @@
           console.log(response.name);
            $("#edit_medicine_name").val(response.name);
            $("#edit_active").val(response.active);
-           
+           $("#edit_dead_stock").val(response.dead_stock);
+
          } else {
            console.error("Invalid response data:", response);
          }

@@ -55,12 +55,14 @@
               <thead>
                 <tr>
                   <!-- <th>Image</th> -->
-                  <th>Inward By</th>
+                  <th>Sr no</th>
+                  <th>Vendor Name</th>
                   <th>Medicine Name</th>
                   <th>Quantity</th>
+                  <th>Status</th>
                   <!-- <th>Price</th> -->
-                  <th>Availability</th>
-                  <!-- <th>Warehouse</th> -->
+                  <th>Date Time</th>
+
 
 
                   <!-- <?php if (in_array('updateProduct', $user_permission) || in_array('deleteProduct', $user_permission)): ?>

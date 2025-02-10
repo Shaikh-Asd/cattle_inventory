@@ -63,10 +63,11 @@
               <!-- <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Enter product name" autocomplete="off"/> -->
 
               <div class="form-group">
-                <label for="product_name">Inward By</label>
-                <select class="form-control" id="customers" name="customers">
+                <label for="customers">Vendor Name</label>
+                <select class="form-control select2" id="customers" name="customers">
                   <option value="">Select a user</option>
                   <?php foreach ($customers as $k => $v): ?>
+
                     <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
                   <?php endforeach ?>
                 </select>
@@ -80,17 +81,13 @@
                   <tr>
                     <th>Medicine</th>
                     <th>Qty</th>
-                    <!-- <th>Rate</th> -->
-                    <!-- <th>Amount</th> -->
                     <th>Action</th>
                   </tr>
                 </thead>
-
                 <tbody id="productFields">
                   <tr class="product-entry">
-
                     <td>
-                      <select class="form-control" name="product_name[]">
+                      <select class="form-control select2" name="product_name[]">
                         <option value="">Select a medicine</option>
                         <?php foreach ($medicines as $k => $v): ?>
                           <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
@@ -100,24 +97,13 @@
                     <td>
                       <input type="text" class="form-control" name="qty[]" placeholder="Enter Qty" autocomplete="off" />
                     </td>
-                    <!-- <td>
-                      <input type="text" class="form-control" name="price[]" placeholder="Enter price" autocomplete="off" /> 
-                    </td>-->
-                    <!--<td>
-                      <input type="text" class="form-control" name="amount[]" placeholder="Amount" readonly /> 
-                    </td>-->
                     <td>
                       <button type="button" class="btn btn-danger removeProduct">−</button>
-
                     </td>
                   </tr>
                 </tbody>
               </table>
 
-              <!-- <div class="form-group"> -->
-              <!-- <label for="sku">SKU</label> -->
-              <!-- <input type="text" class="form-control" id="sku" name="sku" placeholder="Enter sku" autocomplete="off" /> -->
-              <!-- </div> -->
               <div class="form-group">
                 <label for="store">Availability</label>
                 <select class="form-control" id="availability" name="availability">
@@ -150,7 +136,7 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
-    $(".select_group").select2();
+    $(".select2").select2();
     $("#description").wysihtml5();
 
     $("#mainProductNav").addClass('active');
@@ -179,12 +165,18 @@
       allowedFileExtensions: ["jpg", "png", "gif"]
     });
 
+    // Initialize Select2 for existing select elements
+    $(".select2").select2({
+      placeholder: "Select an option",
+      allowClear: true
+    });
+
     // Add this script to handle adding and removing product fields
     $("#addProduct").click(function() {
       var newProductEntry = `
         <tr class="product-entry">
           <td>
-            <select class="form-control" name="product_name[]">
+            <select class="form-control select2" name="product_name[]">
               <option value="">Select a medicine</option>
               <?php foreach ($medicines as $k => $v): ?>
                 <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
@@ -194,18 +186,17 @@
           <td>
             <input type="text" class="form-control" name="qty[]" placeholder="Enter Qty" autocomplete="off" />
           </td>
-          <!--<td>
-            <input type="text" class="form-control" name="price[]" placeholder="Enter price" autocomplete="off" />
-          </td>
-          <td>
-            <input type="text" class="form-control" name="amount[]" placeholder="Amount" readonly /> 
-          </td>-->
           <td>
             <button type="button" class="btn btn-danger removeProduct">−</button>
-
           </td>
         </tr>`;
       $("#productFields").append(newProductEntry);
+
+      // Re-initialize Select2 for the newly added select elements
+      $(".select2").select2({
+        placeholder: "Select a medicine",
+        allowClear: true
+      });
     });
 
     // Remove product entry

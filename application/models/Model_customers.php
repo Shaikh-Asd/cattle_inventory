@@ -23,12 +23,23 @@ class Model_customers extends CI_Model
     }
 
     /* get the attribute data */
-    public function getCustomerData()
+    public function getCustomerData($type)
     {
-        $sql = "SELECT * FROM customers where active = 1";   
+        $sql = "SELECT * FROM customers where active = 1 AND user_type = ? order by id desc";   
+        $query = $this->db->query($sql, array($type));
+        return $query->result_array();
+    }
+
+
+
+    public function getAllCustomerData()
+    {
+        $sql = "SELECT * FROM customers order by id desc";
         $query = $this->db->query($sql);
         return $query->result_array();
     }
+
+
 
     
 

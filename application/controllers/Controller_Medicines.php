@@ -44,7 +44,7 @@ class Controller_Medicines extends Admin_Controller
     public function fetchMedicinesDataById($id)
     {
         if ($id) {
-            $data = $this->Model_medicines->getMedicinesData($id);
+            $data = $this->Model_medicines->getMedicinesDataById($id);
             echo json_encode($data);
         }
     }
@@ -54,7 +54,7 @@ class Controller_Medicines extends Admin_Controller
 	{
 		$result = array('data' => array());
 
-		$data = $this->Model_medicines->getMedicinesData();
+		$data = $this->Model_medicines->getAllMedicinesData();
 
 		foreach ($data as $key => $value) {
 
@@ -66,9 +66,12 @@ class Controller_Medicines extends Admin_Controller
 			';
 
 			$status = ($value['active'] == 1) ? '<span class="label label-success">Active</span>' : '<span class="label label-warning">Inactive</span>';
-
+            $count = $key + 1;
 			$result['data'][$key] = array(
+				$count,
 				$value['name'],
+
+                $value['dead_stock'],
 				$status,
 				$buttons
 			);
@@ -89,6 +92,7 @@ class Controller_Medicines extends Admin_Controller
 
         $this->form_validation->set_rules('medicine_name', 'Medicine name', 'trim|required');
         $this->form_validation->set_rules('active', 'Active', 'trim|required');
+        $this->form_validation->set_rules('dead_stock', 'Dead Stock', 'trim|required');
 
         $this->form_validation->set_error_delimiters('<p class="text-danger">', '</p>');
 
@@ -96,6 +100,7 @@ class Controller_Medicines extends Admin_Controller
             $data = array(
                 'name' => $this->input->post('medicine_name'),
                 'active' => $this->input->post('active'),
+                'dead_stock' => $this->input->post('dead_stock'),
             );
 
             $create = $this->Model_medicines->create($data);
@@ -130,13 +135,14 @@ class Controller_Medicines extends Admin_Controller
         if ($id) {
             $this->form_validation->set_rules('edit_medicine_name', 'Medicine name', 'trim|required');
             $this->form_validation->set_rules('edit_active', 'Active', 'trim|required');
-
+            $this->form_validation->set_rules('edit_dead_stock', 'Dead Stock', 'trim|required');
             $this->form_validation->set_error_delimiters('<p class="text-danger">', '</p>');
 
             if ($this->form_validation->run() == TRUE) {
                 $data = array(
                     'name' => $this->input->post('edit_medicine_name'),
                     'active' => $this->input->post('edit_active'),
+                    'dead_stock' => $this->input->post('edit_dead_stock'),
                 );
 
                 $update = $this->Model_medicines->update($data, $id);
@@ -190,5 +196,10 @@ class Controller_Medicines extends Admin_Controller
         echo json_encode($response);
     }
 
-    
+    public function getMedicineQuantitys()
+    {
+        $id = $this->input->post('id');
+        $quantity = $this->Model_medicines->getMedicineQuantity($id);
+        echo json_encode($quantity);
+    }
 }

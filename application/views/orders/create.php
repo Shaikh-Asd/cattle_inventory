@@ -50,7 +50,7 @@
               <div class="form-group">
                 <label for="taken_by" class="col-sm-2 control-label">Outward By</label>
                 <div class="col-sm-10">
-                  <select class="form-control" id="taken_by" name="taken_by" required>
+                  <select class="form-control select2" id="taken_by" name="taken_by" required>
                     <option value="">Select a user</option>
                     <?php foreach ($customers as $k => $v): ?>
                       <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
@@ -88,10 +88,12 @@
                 <tbody>
                   <tr id="row_1">
                     <td>
-                      <select class="form-control" id="product_1" name="product[]" required>
+                      <select class="form-control select2 product" data-row-id="1" id="product_1" name="product[]" required>
                         <option value="">Select a medicine</option>
                         <?php foreach ($medicines as $k => $v): ?>
-                          <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
+                          <option value="<?php echo $v['id'] ?>" data-qty="<?php echo isset($v['qty']) ? $v['qty'] : 0; ?>" data-price="<?php echo isset($v['price']) ? $v['price'] : 0; ?>">
+                            <?php echo $v['name']; ?>
+                          </option>
                         <?php endforeach ?>
                       </select>
                     </td>
@@ -149,7 +151,7 @@
       var newRow = `
         <tr id="row_${rowCount}">
           <td>
-            <select class="form-control select_group product" data-row-id="row_${rowCount}" id="product_${rowCount}" name="product[]" required>
+            <select class="form-control select_group product" data-row-id="${rowCount}" id="product_${rowCount}" name="product[]" required>
               <option value="">Select a medicine</option>
               <?php foreach ($medicines as $k => $v): ?>
                 <option value="<?php echo $v['id'] ?>" data-qty="<?php echo isset($v['qty']) ? $v['qty'] : 0; ?>" data-price="<?php echo isset($v['price']) ? $v['price'] : 0; ?>">
@@ -170,29 +172,52 @@
 
     // Event delegation for product change
     $(document).on('change', '.product', function() {
-      console.log("Product changed"); // Check if this logs
       var row_id = $(this).data('row-id');
-      console.log("Row ID:", row_id); // Log the row ID
-      getMedicineQuantity(row_id); // Call the new function
+      var id = $(this).find("option:selected").val();
+      // Check if the row_id is valid
+      if (id) {
+        getMedicineQuantity(row_id, id); // Call the new function
+      } else {
+        console.error("Invalid row ID");
+      }
+    });
+
+    // Event delegation for qty change
+    $(document).on('input', 'input[name="qty[]"]', function() {
+      var row_id = $(this).closest('tr').attr('id').split('_')[1]; // Get the row ID
+      var qty = Number($(this).val()); // Get the new quantity
+      var available_qty = Number($("#available_qty_" + row_id).val()); // Get the available quantity
+
+      // Calculate the new available quantity
+      var new_available_qty = available_qty - qty;
+
+      // Update the available quantity field
+      $("#available_qty_" + row_id).val(new_available_qty >= 0 ? new_available_qty : 0); // Ensure it doesn't go below 0
+
+      // Call getMedicineQuantity to update available quantity if qty is cleared
+      if ($(this).val() === "") {
+        var product_id = $("#product_" + row_id).val(); // Get the selected product ID
+        if (product_id) {
+          getMedicineQuantity(row_id, product_id); // Update available quantity based on selected product
+        }
+      }
     });
 
     // Define the getMedicineQuantity function
-    function getMedicineQuantity(row_id) {
-      var product_id = $("#product_" + row_id).val();
-      if (product_id) {
+    function getMedicineQuantity(row_id, id) {
+      if (id) {
         $.ajax({
-          url: base_url + 'Controller_Orders/getMedicineQuantity', // Adjust the URL as needed
+          url: base_url + 'Controller_Medicines/getMedicineQuantitys', // Adjust the URL as needed
           type: 'POST',
           data: {
-            id: product_id
+            id: id
           },
           dataType: 'json',
           success: function(response) {
-            if (response.success) {
-              $("#available_qty_" + row_id).val(response.available_qty); // Set the available quantity
-              $("#rate_" + row_id).val(response.price); // Set the rate if needed
+            if (response.qty > 0) {
+              $("#available_qty_" + row_id).val(response.qty); // Set the available quantity
             } else {
-              alert('Error retrieving quantity');
+              $("#available_qty_" + row_id).val(0); // Clear the available quantity if no product is selected
             }
           },
           error: function() {
@@ -203,6 +228,20 @@
         $("#available_qty_" + row_id).val(''); // Clear the available quantity if no product is selected
       }
     }
+
+    // Call getMedicineQuantity for existing rows on page load
+    $(document).ready(function() {
+      $('#product_info_table tbody tr').each(function() {
+        var row_id = $(this).attr('id').split('_')[1]; // Get the row ID
+        var product_id = $("#product_" + row_id).val(); // Get the selected product ID
+        if (product_id) {
+          getMedicineQuantity(row_id, product_id); // Call the function to set available quantity
+        }
+      });
+    });
+
+    // Add this line to initialize Select2 for all select elements
+    $(".select2").select2(); // Initialize Select2 for all select elements
 
   }); // /document
 

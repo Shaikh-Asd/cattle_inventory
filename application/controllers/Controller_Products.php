@@ -10,7 +10,7 @@ class Controller_Products extends Admin_Controller
 
 		$this->not_logged_in();
 
-		$this->data['page_title'] = 'Inward Medicines';
+		$this->data['page_title'] = 'Manage Inward Medicines';
 
 		$this->load->model('model_products');
 		$this->load->model('model_brands');
@@ -82,9 +82,11 @@ class Controller_Products extends Admin_Controller
             // Check if 'name' key exists in the returned data
             $customer_name = isset($customer_data['name']) ? $customer_data['name'] : 'Unknown Customer';
 
+            $count = $key + 1;
 			$result['data'][$key] = array(
 				// $img,
 				// $value['sku'],
+                $count,
 				$customer_name,
 				$medicine_name,
                 // $value['name'],
@@ -92,6 +94,7 @@ class Controller_Products extends Admin_Controller
 				// $value['price'],
                 // $store_data['name'],
 				$availability,
+                $value['created_at'],
 				$buttons
 			);
 		} // /foreach
@@ -137,6 +140,8 @@ class Controller_Products extends Admin_Controller
                 'medicine_id' => $product_names_str,
                 // 'price' => $prices_str,
                 'qty' => $quantities_str,
+                'availability' => $availability
+
             );
             // print_r($data); 
             // exit;
@@ -171,12 +176,13 @@ class Controller_Products extends Admin_Controller
                 redirect('Controller_Products/create', 'refresh');
             }
         } else {
+            $type = 2;
             // Load necessary data for the view
             $this->data['attributes'] = $this->model_attributes->getActiveAttributeData();
             $this->data['brands'] = $this->model_brands->getActiveBrands();
             $this->data['category'] = $this->model_category->getActiveCategroy();
             $this->data['stores'] = $this->model_stores->getActiveStore();
-            $this->data['customers'] = $this->model_customers->getCustomerData();
+            $this->data['customers'] = $this->model_customers->getCustomerData($type);
             $this->data['medicines'] = $this->model_medicines->getMedicinesData();
             $this->render_template('products/create', $this->data);
         }
@@ -384,5 +390,5 @@ class Controller_Products extends Admin_Controller
 
         echo json_encode($result);
     }
-
+    
 }

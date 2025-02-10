@@ -62,7 +62,7 @@
             <div class="inner">
               <h3><?php echo $total_products ?></h3>
 
-              <h4><b>Total Taken</b></h4>
+              <h4><b>Total Inward</b></h4>
             </div>
             <div class="icon">
               <i class="fa fa-cube"></i>
@@ -75,12 +75,13 @@
           <!-- small box -->
           <div class="small-box bg-aqua">
             <div class="inner">
-              <h3><?php echo $total_brands ?></h3>
+              <h3><?php echo $total_orders ?></h3>
 
-              <h4><b>Total Given</b></h4>
+              <h4><b>Total Outward</b></h4>
             </div>
             <div class="icon">
               <i class="fa fa-cart-arrow-down"></i>
+
 
             </div>
             <a href="<?php echo base_url('Controller_Orders/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
@@ -144,16 +145,18 @@
             <div class="box-body">
               
               <div class="col-lg-6">
-                <h3>Given Medicines</h3>
+                <h3>Outward Medicines</h3>
                 <table class="table table-bordered">
                   <thead>
                     <tr>
+
                       <th>Customer Name</th>
                       <th>Medicine Name</th>
-                      <th>Stock Given</th>
+                      <th>Stock Outward</th>
                     </tr>
   
   
+
                   </thead>
                   <tbody id="givenMedicineTableBody">
                   `
@@ -163,13 +166,13 @@
   
               <div class="col-lg-6">
             
-                  <h3>Taken Medicines</h3>
+                  <h3>Inward Medicines</h3>
                   <table class="table table-bordered">
                     <thead>
                       <tr>
                         <th>Customer Name</th>
                         <th>Medicine Name</th>
-                        <th>Stock Taken</th>
+                        <th>Stock Inward  </th>
                       </tr>
   
                     </thead>

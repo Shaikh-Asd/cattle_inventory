@@ -53,6 +53,7 @@
               <thead>
               <tr>
                 <!-- <th>Bill no</th> -->
+                <th>Sr no</th>
                 <th>Outward By</th>
                 <th>Medicine Name</th>
                 <th>Quantity</th>

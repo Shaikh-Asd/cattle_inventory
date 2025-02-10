@@ -23,12 +23,24 @@ class Model_medicines extends CI_Model
     /* get the attribute data */
     public function getMedicinesData()
     {
-        $sql = "SELECT * FROM medicines where active = 1";   
+        $sql = "SELECT * FROM medicines where active = 1 order by id desc";   
         $query = $this->db->query($sql);
         return $query->result_array();
     }
 
-    
+    public function getAllMedicinesData()
+    {
+        $sql = "SELECT * FROM medicines order by id desc";
+        $query = $this->db->query($sql);
+        return $query->result_array();
+    }
+
+    public function getMedicineQuantity($id)
+    {
+        $sql = "SELECT qty FROM medicine_stock WHERE medicine_id = ?";
+        $query = $this->db->query($sql, array($id));
+        return $query->row_array();
+    }
 
     public function create($data)
     {

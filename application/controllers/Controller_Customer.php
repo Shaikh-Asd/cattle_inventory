@@ -31,7 +31,7 @@ class Controller_Customer extends Admin_Controller
     public function fetchCustomerDataById($id)
     {
         if ($id) {
-            $data = $this->Model_customers->getCustomerData($id);
+            $data = $this->Model_customers->getCustomerDataById($id);
             echo json_encode($data);
         }
     }
@@ -42,7 +42,7 @@ class Controller_Customer extends Admin_Controller
 	{
 		$result = array('data' => array());
 
-		$data = $this->Model_customers->getCustomerData();
+		$data = $this->Model_customers->getAllCustomerData();
 
 		foreach ($data as $key => $value) {
 
@@ -54,12 +54,17 @@ class Controller_Customer extends Admin_Controller
 			';
 
 			$status = ($value['active'] == 1) ? '<span class="label label-success">Active</span>' : '<span class="label label-warning">Inactive</span>';
-
-			$result['data'][$key] = array(
+            $user_type = ($value['user_type'] == 1) ? '<span class="label label-success">User</span>' : '<span class="label label-warning">Vendor</span>';
+            $count = $key + 1;
+            $result['data'][$key] = array(
+				$count,
 				$value['name'],
 				$status,
+				$user_type,
 				$buttons
 			);
+
+
 		} // /foreach
 
 		echo json_encode($result);
@@ -76,7 +81,9 @@ class Controller_Customer extends Admin_Controller
         $response = array();
 
         $this->form_validation->set_rules('customer_name', 'Customer name', 'trim|required');
+        $this->form_validation->set_rules('user_type', 'User Type', 'trim|required');
         $this->form_validation->set_rules('active', 'Active', 'trim|required');
+
 
         $this->form_validation->set_error_delimiters('<p class="text-danger">', '</p>');
 
@@ -84,6 +91,7 @@ class Controller_Customer extends Admin_Controller
             $data = array(
                 'name' => $this->input->post('customer_name'),
                 'active' => $this->input->post('active'),
+                'user_type' => $this->input->post('user_type'),
             );
 
             $create = $this->Model_customers->create($data);
@@ -107,7 +115,7 @@ class Controller_Customer extends Admin_Controller
     /* 
 	* update the attribute value via attribute id 
 	*/
-    public function update($id)
+    public function update()
     {
         if (!in_array('updateCustomers', $this->permission)) {
             redirect('dashboard', 'refresh');
@@ -115,36 +123,41 @@ class Controller_Customer extends Admin_Controller
 
         $response = array();
 
-        if ($id) {
+        // if ($id) {
             $this->form_validation->set_rules('edit_customer_name', 'Customer name', 'trim|required');
             $this->form_validation->set_rules('edit_active', 'Active', 'trim|required');
+            $this->form_validation->set_rules('edit_user_type', 'User Type', 'trim|required');
 
             $this->form_validation->set_error_delimiters('<p class="text-danger">', '</p>');
 
             if ($this->form_validation->run() == TRUE) {
                 $data = array(
                     'name' => $this->input->post('edit_customer_name'),
+                    'user_type' => $this->input->post('edit_user_type'),
                     'active' => $this->input->post('edit_active'),
                 );
-
+                $id = $this->input->post('customer_id');
                 $update = $this->Model_customers->update($data, $id);
                 if ($update == true) {
                     $response['success'] = true;
                     $response['messages'] = 'Succesfully updated';
+                    
+                    redirect('Controller_Customer/index');
                 } else {
                     $response['success'] = false;
                     $response['messages'] = 'Error in the database while updated the customer information';
                 }
+
             } else {
                 $response['success'] = false;
                 foreach ($_POST as $key => $value) {
                     $response['messages'][$key] = form_error($key);
                 }
             }
-        } else {
-            $response['success'] = false;
-            $response['messages'] = 'Error please refresh the page again!!';
-        }
+        // } else {
+        //     $response['success'] = false;
+        //     $response['messages'] = 'Error please refresh the page again!!';
+        // }
 
         echo json_encode($response);
     }

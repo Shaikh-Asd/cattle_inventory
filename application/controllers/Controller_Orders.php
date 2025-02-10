@@ -88,7 +88,9 @@ class Controller_Orders extends Admin_Controller
 			$customer_name = $customer_data['name'];
 			// print_r($value);
 			// exit;
+			$count = $key + 1;
 			$result['data'][$key] = array(
+				$count,
 				$customer_name,
 				$medicine_name,
 				$qtys,
@@ -119,9 +121,10 @@ class Controller_Orders extends Admin_Controller
 		
 	
         if ($this->form_validation->run() == TRUE) {        	
-        	
+			
         	$order_id = $this->model_orders->create();
-        	
+        	// print_r($order_id);
+        	// exit;
         	if($order_id) {
         		$this->session->set_flashdata('success', 'Successfully created');
         		// redirect('Controller_Orders/update/'.$order_id, 'refresh');
@@ -134,13 +137,14 @@ class Controller_Orders extends Admin_Controller
         }
         else {
             // false case
+			$type = 1;
         	$company = $this->model_company->getCompanyData(1);
         	$this->data['company_data'] = $company;
         	$this->data['is_vat_enabled'] = ($company['vat_charge_value'] > 0) ? true : false;
         	$this->data['is_service_enabled'] = ($company['service_charge_value'] > 0) ? true : false;
 
         	$this->data['products'] = $this->model_products->getActiveProductData();      	
-        	$this->data['customers'] = $this->model_customers->getCustomerData();	
+        	$this->data['customers'] = $this->model_customers->getCustomerData($type);	
 			$this->data['medicines'] = $this->model_medicines->getMedicinesData();
 
             $this->render_template('orders/create', $this->data);
