@@ -60,7 +60,7 @@
             <table id="manageTable" class="table table-bordered table-striped">
               <thead>
                 <tr>
-                  <th>User ID</th>
+                  <th>Sr no</th>
                   <th>User Name</th>
                   <th>Status</th>
                   <?php //if(in_array('updateGroup', $user_permission) || in_array('deleteGroup', $user_permission)): 
@@ -235,11 +235,11 @@
           return json.data.map(function(item) {
             return {
               id: item[0],
-              name: item[1],
-              status: item[2],
-              user: item[3],
-              action: '<button type="button" class="btn btn-warning btn-sm" onclick="editFunc(' + item[0] + ')" data-toggle="modal" data-target="#editModal"><i class="fa fa-pencil"></i></button>' +
-                '<button type="button" class="btn btn-danger btn-sm" onclick="removeFunc(' + item[0] + ')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>'
+              name: item[2],
+              status: item[3],
+              user: item[4],
+              action: '<button type="button" class="btn btn-warning btn-sm" onclick="editFunc(' + item[1] + ')" data-toggle="modal" data-target="#editModal"><i class="fa fa-pencil"></i></button>' +
+                '<button type="button" class="btn btn-danger btn-sm" onclick="removeFunc(' + item[1] + ')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>'
             };
           });
         }

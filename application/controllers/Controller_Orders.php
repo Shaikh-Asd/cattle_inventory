@@ -139,9 +139,9 @@ class Controller_Orders extends Admin_Controller
             // false case
 			$type = 1;
         	$company = $this->model_company->getCompanyData(1);
-        	$this->data['company_data'] = $company;
-        	$this->data['is_vat_enabled'] = ($company['vat_charge_value'] > 0) ? true : false;
-        	$this->data['is_service_enabled'] = ($company['service_charge_value'] > 0) ? true : false;
+        	// $this->data['company_data'] = $company;
+        	// $this->data['is_vat_enabled'] = ($company['vat_charge_value'] > 0) ? true : false;
+        	// $this->data['is_service_enabled'] = ($company['service_charge_value'] > 0) ? true : false;
 
         	$this->data['products'] = $this->model_products->getActiveProductData();      	
         	$this->data['customers'] = $this->model_customers->getCustomerData($type);	

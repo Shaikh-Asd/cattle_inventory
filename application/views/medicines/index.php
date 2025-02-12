@@ -50,7 +50,7 @@
              <table id="manageTable" class="table table-bordered table-striped">
                <thead>
                  <tr>
-                   <th>Medicine id</th>
+                   <th>Sr no</th>
                    <th>Medicine Name</th>
                    <th>Dead Stock</th>
                    <th>Status</th>

@@ -58,6 +58,7 @@ class Controller_Customer extends Admin_Controller
             $count = $key + 1;
             $result['data'][$key] = array(
 				$count,
+                $value['id'],
 				$value['name'],
 				$status,
 				$user_type,

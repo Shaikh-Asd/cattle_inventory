@@ -12,11 +12,12 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Inward Medicines
+      Used Medicines
+
     </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Inward Medicines</li>
+      <li class="active">Used Medicines</li>
     </ol>
   </section>
 
@@ -44,25 +45,14 @@
         <div class="box">
 
           <!-- /.box-header -->
-          <form role="form" action="<?php base_url('users/create') ?>" method="post" enctype="multipart/form-data">
+          <form role="form" action="<?php echo base_url('Controller_Used/create') ?>" method="post" enctype="multipart/form-data">
             <div class="box-body">
 
               <?php echo validation_errors(); ?>
 
-              <!-- <div class="form-group">
-
-                  <label for="product_image">Image</label>
-                  <div class="kv-avatar">
-                      <div class="file-loading">
-                          <input id="product_image" name="product_image" type="file">
-                      </div>
-                  </div>
-                </div> -->
-              <!-- <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Enter product name" autocomplete="off"/> -->
-              <!-- <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Enter product name" autocomplete="off"/> -->
 
               <div class="form-group">
-                <label for="customers">Vendor Name</label>
+                <label for="customers">User Name</label>
                 <select class="form-control select2" id="customers" name="customers">
                   <option value="">Select a user</option>
                   <?php foreach ($customers as $k => $v): ?>
@@ -73,7 +63,7 @@
               </div>
 
               <!-- Add a button to add more products -->
-              <button type="button" id="addProduct" class="btn btn-info">+</button>
+              <button type="button" id="addUsed" class="btn btn-info" aria-label="Add more products">+</button>
 
               <table class="table">
                 <thead>
@@ -83,8 +73,8 @@
                     <th>Action</th>
                   </tr>
                 </thead>
-                <tbody id="productFields">
-                  <tr class="product-entry">
+                <tbody id="usedFields">
+                  <tr class="used-entry">
                     <td>
                       <select class="form-control select2" name="product_name[]">
                         <option value="">Select a medicine</option>
@@ -101,26 +91,18 @@
                       <input type="text" class="form-control" name="qty[]" placeholder="Enter Qty" autocomplete="off" />
                     </td>
                     <td>
-                      <button type="button" class="btn btn-danger removeProduct">−</button>
+                      <button type="button" class="btn btn-danger removeProduct" aria-label="Remove product">−</button>
                     </td>
                   </tr>
                 </tbody>
               </table>
-
-              <div class="form-group">
-                <label for="store">Availability</label>
-                <select class="form-control" id="availability" name="availability">
-                  <option value="1">Yes</option>
-                  <option value="2">No</option>
-                </select>
-              </div>
 
             </div>
             <!-- /.box-body -->
 
             <div class="box-footer">
               <button type="submit" class="btn btn-primary">Save Changes</button>
-              <a href="<?php echo base_url('Controller_Products/') ?>" class="btn btn-warning">Back</a>
+              <a href="<?php echo base_url('Controller_Used/') ?>" class="btn btn-warning">Back</a>
             </div>
           </form>
           <!-- /.box-body -->
@@ -142,8 +124,8 @@
     $(".select2").select2();
     $("#description").wysihtml5();
 
-    $("#mainProductNav").addClass('active');
-    $("#addProductNav").addClass('active');
+    $("#usedNav").addClass('active');
+    $("#addUsedNav").addClass('active');
 
     var btnCust = '<button type="button" class="btn btn-secondary" title="Add picture tags" ' +
       'onclick="alert(\'Call your custom code here.\')">' +
@@ -170,14 +152,14 @@
 
     // Initialize Select2 for existing select elements
     $(".select2").select2({
-      placeholder: "Select an option",
+      placeholder: "Select a medicine",
       allowClear: true
     });
 
     // Add this script to handle adding and removing product fields
-    $("#addProduct").click(function() {
+    $("#addUsed").click(function() {
       var newProductEntry = `
-        <tr class="product-entry">
+        <tr class="used-entry">
           <td>
             <select class="form-control select2" name="product_name[]">
               <option value="">Select a medicine</option>
@@ -194,10 +176,10 @@
             <input type="text" class="form-control" name="qty[]" placeholder="Enter Qty" autocomplete="off" />
           </td>
           <td>
-            <button type="button" class="btn btn-danger removeProduct">−</button>
+            <button type="button" class="btn btn-danger removeProduct" aria-label="Remove product">−</button>
           </td>
         </tr>`;
-      $("#productFields").append(newProductEntry);
+      $("#usedFields").append(newProductEntry);
 
       // Re-initialize Select2 for the newly added select elements
       $(".select2").select2({

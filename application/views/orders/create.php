@@ -91,9 +91,11 @@
                       <select class="form-control select2 product" data-row-id="1" id="product_1" name="product[]" required>
                         <option value="">Select a medicine</option>
                         <?php foreach ($medicines as $k => $v): ?>
-                          <option value="<?php echo $v['id'] ?>" data-qty="<?php echo isset($v['qty']) ? $v['qty'] : 0; ?>" data-price="<?php echo isset($v['price']) ? $v['price'] : 0; ?>">
-                            <?php echo $v['name']; ?>
-                          </option>
+                          <?php
+                          $quantityData = $this->model_medicines->getMedicineQuantity($v['id']);
+                          $quantity = isset($quantityData['qty']) ? $quantityData['qty'] : 0; // Access the 'qty' key
+                          ?>
+                          <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] . ' (' . $quantity . ')' ?></option>
                         <?php endforeach ?>
                       </select>
                     </td>
@@ -154,9 +156,11 @@
             <select class="form-control select_group product" data-row-id="${rowCount}" id="product_${rowCount}" name="product[]" required>
               <option value="">Select a medicine</option>
               <?php foreach ($medicines as $k => $v): ?>
-                <option value="<?php echo $v['id'] ?>" data-qty="<?php echo isset($v['qty']) ? $v['qty'] : 0; ?>" data-price="<?php echo isset($v['price']) ? $v['price'] : 0; ?>">
-                  <?php echo $v['name']; ?>
-                </option>
+                <?php
+                $quantityData = $this->model_medicines->getMedicineQuantity($v['id']);
+                $quantity = isset($quantityData['qty']) ? $quantityData['qty'] : 0; // Access the 'qty' key
+                ?>
+                <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] . ' (' . $quantity . ')' ?></option>
               <?php endforeach ?>
             </select>
           </td>
@@ -183,25 +187,25 @@
     });
 
     // Event delegation for qty change
-    $(document).on('input', 'input[name="qty[]"]', function() {
-      var row_id = $(this).closest('tr').attr('id').split('_')[1]; // Get the row ID
-      var qty = Number($(this).val()); // Get the new quantity
-      var available_qty = Number($("#available_qty_" + row_id).val()); // Get the available quantity
+    // $(document).on('input', 'input[name="qty[]"]', function() {
+    //   var row_id = $(this).closest('tr').attr('id').split('_')[1]; // Get the row ID
+    //   var qty = Number($(this).val()); // Get the new quantity
+    //   var available_qty = Number($("#available_qty_" + row_id).val()); // Get the available quantity
 
-      // Calculate the new available quantity
-      var new_available_qty = available_qty - qty;
+    //   // Calculate the new available quantity
+    //   var new_available_qty = available_qty - qty;
 
-      // Update the available quantity field
-      $("#available_qty_" + row_id).val(new_available_qty >= 0 ? new_available_qty : 0); // Ensure it doesn't go below 0
+    //   // Update the available quantity field
+    //   $("#available_qty_" + row_id).val(new_available_qty >= 0 ? new_available_qty : 0); // Ensure it doesn't go below 0
 
-      // Call getMedicineQuantity to update available quantity if qty is cleared
-      if ($(this).val() === "") {
-        var product_id = $("#product_" + row_id).val(); // Get the selected product ID
-        if (product_id) {
-          getMedicineQuantity(row_id, product_id); // Update available quantity based on selected product
-        }
-      }
-    });
+    //   // Call getMedicineQuantity to update available quantity if qty is cleared
+    //   if ($(this).val() === "") {
+    //     var product_id = $("#product_" + row_id).val(); // Get the selected product ID
+    //     if (product_id) {
+    //       getMedicineQuantity(row_id, product_id); // Update available quantity based on selected product
+    //     }
+    //   }
+    // });
 
     // Define the getMedicineQuantity function
     function getMedicineQuantity(row_id, id) {
@@ -214,10 +218,12 @@
           },
           dataType: 'json',
           success: function(response) {
-            if (response.qty > 0) {
-              $("#available_qty_" + row_id).val(response.qty); // Set the available quantity
-            } else {
-              $("#available_qty_" + row_id).val(0); // Clear the available quantity if no product is selected
+            if (response) {
+              if (response.qty > 0) { 
+                $("#available_qty_" + row_id).val(response.qty); // Set the available quantity
+              } else {
+                $("#available_qty_" + row_id).val(0); // Clear the available quantity if no product is selected
+              }
             }
           },
           error: function() {
@@ -245,97 +251,7 @@
 
   }); // /document
 
-  function getTotal(row = null) {
-    if (row) {
-      var total = Number($("#rate_" + row).val()) * Number($("#qty_" + row).val());
-      total = total.toFixed(2);
-      $("#amount_" + row).val(total);
-      $("#amount_value_" + row).val(total);
-
-
-      subAmount();
-
-    } else {
-      alert('no row !! please refresh the page');
-    }
-  }
-
-  // get the product information from the server
-  function getProductData(row_id) {
-    var product_id = $("#product_" + row_id).val();
-    var selectedOption = $("#product_" + row_id + " option:selected");
-
-    if (product_id == "") {
-      $("#rate_" + row_id).val("");
-      $("#qty_" + row_id).val("");
-      $("#amount_" + row_id).val("");
-      $("#amount_value_" + row_id).val("");
-    } else {
-      var qty = selectedOption.data('qty'); // Get quantity from data attribute
-      var price = selectedOption.data('price'); // Get price from data attribute
-
-      $("#rate_" + row_id).val(price);
-      $("#qty_" + row_id).val(qty); // Set the quantity
-      $("#amount_" + row_id).val((qty * price).toFixed(2)); // Calculate amount
-      $("#amount_value_" + row_id).val((qty * price).toFixed(2)); // Set hidden amount value
-
-      subAmount(); // Update the subtotal
-    }
-  }
-
-  // calculate the total amount of the order
-  function subAmount() {
-    var service_charge = <?php echo ($company_data['service_charge_value'] > 0) ? $company_data['service_charge_value'] : 0; ?>;
-    var vat_charge = <?php echo ($company_data['vat_charge_value'] > 0) ? $company_data['vat_charge_value'] : 0; ?>;
-
-    var tableProductLength = $("#product_info_table tbody tr").length;
-    var totalSubAmount = 0;
-    for (x = 0; x < tableProductLength; x++) {
-      var tr = $("#product_info_table tbody tr")[x];
-      var count = $(tr).attr('id');
-      count = count.substring(4);
-
-      totalSubAmount = Number(totalSubAmount) + Number($("#amount_" + count).val());
-    } // /for
-
-    totalSubAmount = totalSubAmount.toFixed(2);
-
-    // sub total
-    $("#gross_amount").val(totalSubAmount);
-    $("#gross_amount_value").val(totalSubAmount);
-
-    // vat
-    var vat = (Number($("#gross_amount").val()) / 100) * vat_charge;
-    vat = vat.toFixed(2);
-    $("#vat_charge").val(vat);
-    $("#vat_charge_value").val(vat);
-
-    // service
-    var service = (Number($("#gross_amount").val()) / 100) * service_charge;
-    service = service.toFixed(2);
-    $("#service_charge").val(service);
-    $("#service_charge_value").val(service);
-
-    // total amount
-    var totalAmount = (Number(totalSubAmount) + Number(vat) + Number(service));
-    totalAmount = totalAmount.toFixed(2);
-    // $("#net_amount").val(totalAmount);
-    // $("#totalAmountValue").val(totalAmount);
-
-    var discount = $("#discount").val();
-    if (discount) {
-      var grandTotal = Number(totalAmount) - Number(discount);
-      grandTotal = grandTotal.toFixed(2);
-      $("#net_amount").val(grandTotal);
-      $("#net_amount_value").val(grandTotal);
-    } else {
-      $("#net_amount").val(totalAmount);
-      $("#net_amount_value").val(totalAmount);
-
-    } // /else discount 
-
-  } // /sub total amount
-
+  
   // Function to remove a row
   function removeRow(row_id) {
     $("#product_info_table tbody tr#row_" + row_id).remove();
