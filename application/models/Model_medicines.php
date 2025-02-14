@@ -82,4 +82,5 @@ class Model_medicines extends CI_Model
     //     $query = $this->db->get('medicine_stock');
     //     return $query->row(); 
     // }
+    
 }

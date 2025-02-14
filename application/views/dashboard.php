@@ -114,7 +114,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <!-- <div class="row" >
         <div class="col-lg-12">
           <div class="box">
             <div class="box-body">
@@ -137,7 +137,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div class="row">
         <div class="col-lg-12">
@@ -224,7 +224,10 @@
           </div>
       </div>
 
-      <div class="row">
+      
+
+
+      <!-- <div class="row">
         <div class="col-lg-6">
             <div class="box">
               <div class="box-body">
@@ -272,7 +275,7 @@
               </div>
             </div>
           </div>
-      </div>
+      </div> -->
 
         <!-- ./col -->
         <!-- <div class="col-lg-3 col-xs-6">
@@ -479,70 +482,70 @@
     });
     
     //most_ordered_product
-    $.ajax({
-        url: "<?php echo base_url('dashboard/most_ordered_product/'); ?>",
-        method: "GET",
-        success: function(data) {
-            var response = JSON.parse(data); 
+    // $.ajax({
+    //     url: "<?php echo base_url('dashboard/most_ordered_product/'); ?>",
+    //     method: "GET",
+    //     success: function(data) {
+    //         var response = JSON.parse(data); 
             
-            var output = '';
-            var i = 1 ;
+    //         var output = '';
+    //         var i = 1 ;
 
-            if (response) {
+    //         if (response) {
           
-              var tableRows = '';
+    //           var tableRows = '';
                         
-              $.each(response, function(index, product) {
-                  tableRows += `
-                      <tr>
-                          <td>${i}</td>
-                          <td>${product.name}</td>
-                          <td>${product.order_count}</td>
-                      </tr>
-                  `;
-              });
-              $('#mostOrderedProductTableBody').html(tableRows);
-            }else{
-              $('#mostOrderedProductTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
-            }
-        },
-        error: function() {
-            alert('Error retrieving data!');
-        }
-    });
+    //           $.each(response, function(index, product) {
+    //               tableRows += `
+    //                   <tr>
+    //                       <td>${i}</td>
+    //                       <td>${product.name}</td>
+    //                       <td>${product.order_count}</td>
+    //                   </tr>
+    //               `;
+    //           });
+    //           $('#mostOrderedProductTableBody').html(tableRows);
+    //         }else{
+    //           $('#mostOrderedProductTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
+    //         }
+    //     },
+    //     error: function() {
+    //         alert('Error retrieving data!');
+    //     }
+    // });
 
     //getMostOrderedProductByQuantity
-    $.ajax({
-        url: "<?php echo base_url('dashboard/getMostOrderedProductByQuantity/'); ?>",
-        method: "GET",
-        success: function(data) {
-            var response = JSON.parse(data); 
+    // $.ajax({
+    //     url: "<?php echo base_url('dashboard/getMostOrderedProductByQuantity/'); ?>",
+    //     method: "GET",
+    //     success: function(data) {
+    //         var response = JSON.parse(data); 
             
-            var output = '';
-            var i = 1 ;
+    //         var output = '';
+    //         var i = 1 ;
 
-            if (response) {
+    //         if (response) {
           
-              var tableRows = '';
+    //           var tableRows = '';
                         
-              $.each(response, function(index, product) {
-                  tableRows += `
-                      <tr>
-                          <td>${i}</td>
-                          <td>${product.name}</td>
-                          <td>${product.total_quantity}</td>
-                      </tr>
-                  `;
-              });
-              $('#MostOrderedProductByQuantityTableBody').html(tableRows);
-            }else{
-              $('#MostOrderedProductByQuantityTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
-            }
-        },
-        error: function() {
-            alert('Error retrieving data!');
-        }
-    });
+    //           $.each(response, function(index, product) {
+    //               tableRows += `
+    //                   <tr>
+    //                       <td>${i}</td>
+    //                       <td>${product.name}</td>
+    //                       <td>${product.total_quantity}</td>
+    //                   </tr>
+    //               `;
+    //           });
+    //           $('#MostOrderedProductByQuantityTableBody').html(tableRows);
+    //         }else{
+    //           $('#MostOrderedProductByQuantityTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
+    //         }
+    //     },
+    //     error: function() {
+    //         alert('Error retrieving data!');
+    //     }
+    // });
 
     // getMedicineStock
 
@@ -591,38 +594,38 @@
     });
  
     //TopCustomersWithProducts
-    $.ajax({
-        url: "<?php echo base_url('dashboard/getTopCustomersWithProducts/'); ?>",
-        method: "GET",
-        success: function(data) {
-            var response = JSON.parse(data); 
-            var output = '';
-            var i = 1 ;
+    // $.ajax({
+    //     url: "<?php echo base_url('dashboard/getTopCustomersWithProducts/'); ?>",
+    //     method: "GET",
+    //     success: function(data) {
+    //         var response = JSON.parse(data); 
+    //         var output = '';
+    //         var i = 1 ;
 
-            if (response) {
+    //         if (response) {
           
-              var tableRows = '';
+    //           var tableRows = '';
               
-              $.each(response, function(index, product) {
-                  tableRows += `
-                      <tr>
-                          <td>${i}</td>
-                          <td>${product.customer_name}</td>
-                          <td>${product.medicine_name}</td>
-                          <td>${product.total_ordered}</td>
-                      </tr>
-                  `;
-              });
-              $('#TopCustomersWithProductsTableBody').html(tableRows);
-            }else{
-              $('#TopCustomersWithProductsTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
+    //           $.each(response, function(index, product) {
+    //               tableRows += `
+    //                   <tr>
+    //                       <td>${i}</td>
+    //                       <td>${product.customer_name}</td>
+    //                       <td>${product.medicine_name}</td>
+    //                       <td>${product.total_ordered}</td>
+    //                   </tr>
+    //               `;
+    //           });
+    //           $('#TopCustomersWithProductsTableBody').html(tableRows);
+    //         }else{
+    //           $('#TopCustomersWithProductsTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
               
-            }
-        },
-        error: function() {
-            alert('Error retrieving data!');
-        }
-    });
+    //         }
+    //     },
+    //     error: function() {
+    //         alert('Error retrieving data!');
+    //     }
+    // });
   });
 </script>
 <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
