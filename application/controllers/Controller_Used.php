@@ -41,10 +41,11 @@ class Controller_Used extends Admin_Controller
 	{
 		$result = array('data' => array());
 		$data = $this->model_used->getUsedData();
+       
 		foreach ($data as $key => $value) {
 			// button
             $buttons = '';
-            $availability = ($value['availability'] == 1) ? '<span class="label label-success">Active</span>' : '<span class="label label-warning">Inactive</span>';
+            // $availability = ($value['availability'] == 1) ? '<span class="label label-success">Active</span>' : '<span class="label label-warning">Inactive</span>';
 
             $qty_status = '';
             if($value['qty'] <= 10) {
@@ -54,28 +55,34 @@ class Controller_Used extends Admin_Controller
             }
 
             // Fetch customer data by ID
-            $customer_data = $this->model_customers->getCustomerDataById($value['customer_id']);
+            $used_by = $this->model_customers->getCustomerDataById($value['used_by']);
             // Fetch medicine data by multiple IDs
             $medicine_ids = explode(',', $value['medicine_id']); // Assuming medicine_id is a comma-separated string
             $medicine_names = [];
+            
             foreach ($medicine_ids as $id) {
+              
                 $medicine_data = $this->model_medicines->getMedicinesDataById($id);
+               
                 $medicine_names[] = isset($medicine_data['name']) ? $medicine_data['name'] : 'Unknown Medicine';
             }
+           
             $medicine_name = implode(', ', $medicine_names); // Join names with a comma
-
+           
             // Check if 'name' key exists in the returned data
-            $customer_name = isset($customer_data['name']) ? $customer_data['name'] : 'Unknown Customer';
-
+            $customer_name = isset($used_by['name']) ? $used_by['name'] : 'Unknown Customer';
+            // print_r($customer_name);
+            // die();
             $count = $key + 1;
 			$result['data'][$key] = array(
                 $count,
 				$customer_name,
 				$medicine_name,
                 $value['qty'] . ' ' . $qty_status,
-				$availability,
+                // $availability,
+                $qty_status,
                 $value['created_at'],
-				$buttons
+				// $buttons
 			);
 		} // /foreach
 
@@ -93,26 +100,61 @@ class Controller_Used extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
-        $this->form_validation->set_rules('customers', 'Customer name', 'trim|required');
-        $this->form_validation->set_rules('medicine_name[]', 'Medicine name', 'trim|required');
+        $this->form_validation->set_rules('used_by', 'User name', 'trim|required');
+        $this->form_validation->set_rules('medicine_used[]', 'Medicine name', 'trim|required');
         $this->form_validation->set_rules('qty[]', 'Qty', 'trim|required');
 
         if ($this->form_validation->run() == TRUE) {
-            // Improved error handling for image upload
-            $upload_image = $this->upload_image();
-            if (!$upload_image) {
-                $this->session->set_flashdata('errors', 'Image upload failed!');
-                redirect('Controller_Used/create', 'refresh');
-                return; // Early return to avoid further processing
-            }
-
             // Prepare data for multiple products
-            $customer_id = $this->input->post('customers');
-            $medicine_names = $this->input->post('medicine_name');
+            $used_by = $this->input->post('used_by');
+            $medicine_names = $this->input->post('medicine_used');
             $quantities = $this->input->post('qty');
 
-            // Use a helper method to handle medicine and quantity processing
-            $this->processMedicinesAndQuantities($medicine_names, $quantities, $customer_id);
+            // Concatenate values into comma-separated strings
+            $medicine_names_str = implode(',', $medicine_names);
+            $quantities_str = implode(',', $quantities);
+
+            // Prepare data for insertion
+            $data = array(
+                'used_by' => $used_by,
+                'medicine_id' => $medicine_names_str,
+                'qty' => $quantities_str,
+            );
+            // Insert the data
+            $create = $this->model_used->create($data);
+		    $used_id = $this->db->insert_id();
+
+
+            $count_medicines = count($medicine_names);
+            for ($x = 0; $x < $count_medicines; $x++) {
+                if ($quantities[$x] > 0) { // Check if quantity is greater than zero
+                    // $customer_id = $this->input->post('used_by');
+                    $medicine_id = $medicine_names[$x];
+                    $existing_item = $this->db->get_where('orders_item', array('product_id' => $medicine_id))->row_array();
+                    // print_r($existing_item);
+                    // exit;
+                    if ($existing_item) {
+                        // now decrease the stock from the medicine stock
+                        $new_qty = $existing_item['qty'] - $quantities[$x];
+                        $this->db->where('id', $existing_item['id']);
+                        $this->db->update('orders_item', array('qty' => $new_qty));
+                    } 
+                    // else {
+                    //     $items = array(
+                    //             'order_id' => $used_id,
+                    //             'product_id' => $medicine_id,
+                    //             'qty' => $quantities[$x],
+                    //             'customer_id' => $used_by
+                    //         );
+                    //     // insert the order item stock
+                    //     $this->db->insert('orders_item', $items);
+                    // }
+
+                   
+                }
+            }
+
+            
 
             if ($create) {
                 $this->session->set_flashdata('success', 'Successfully created');
@@ -134,7 +176,7 @@ class Controller_Used extends Admin_Controller
         }
     }
 
-    private function processMedicinesAndQuantities($medicine_names, $quantities, $customer_id)
+    private function processUsedQty($medicine_names, $quantities, $used_by)
     {
         // Concatenate values into comma-separated strings
         $medicine_names_str = implode(',', $medicine_names);
@@ -142,7 +184,7 @@ class Controller_Used extends Admin_Controller
 
         // Prepare data for insertion
         $data = array(
-            'customer_id' => $customer_id,
+            'used_by' => $used_by,
             'medicine_id' => $medicine_names_str,
             'qty' => $quantities_str,
         );
@@ -178,50 +220,50 @@ class Controller_Used extends Admin_Controller
     * If the validation is successfully then it updates the data into the database 
     * and it stores the operation message into the session flashdata and display on the manage product page
     */
-	public function update($used_id)
-	{      
-        if(!in_array('updateUsed', $this->permission)) {
-            redirect('dashboard', 'refresh');
-        }
+	// public function update($used_id)
+	// {      
+    //     if(!in_array('updateUsed', $this->permission)) {
+    //         redirect('dashboard', 'refresh');
+    //     }
 
-        if(!$used_id) {
-            redirect('dashboard', 'refresh');
-        }
+    //     if(!$used_id) {
+    //         redirect('dashboard', 'refresh');
+    //     }
 
-        $this->form_validation->set_rules('customers', 'Customer name', 'trim|required');
-        $this->form_validation->set_rules('medicine_name[]', 'Medicine name', 'trim|required');
-        $this->form_validation->set_rules('qty[]', 'Qty', 'trim|required');
+    //     $this->form_validation->set_rules('customers', 'Customer name', 'trim|required');
+    //     $this->form_validation->set_rules('medicine_name[]', 'Medicine name', 'trim|required');
+    //     $this->form_validation->set_rules('qty[]', 'Qty', 'trim|required');
 
-        if ($this->form_validation->run() == TRUE) {
-            // Prepare data for multiple products
-            $customer_id = $this->input->post('customers');
-            $medicine_names = $this->input->post('medicine_name');
-            $quantities = $this->input->post('qty');
+    //     if ($this->form_validation->run() == TRUE) {
+    //         // Prepare data for multiple products
+    //         $customer_id = $this->input->post('customers');
+    //         $medicine_names = $this->input->post('medicine_name');
+    //         $quantities = $this->input->post('qty');
 
-            // Use a helper method to handle medicine and quantity processing
-            $this->processMedicinesAndQuantities($medicine_names, $quantities, $customer_id);
+    //         // Use a helper method to handle medicine and quantity processing
+    //         $this->processMedicinesAndQuantities($medicine_names, $quantities, $customer_id);
 
-            if($update == true) {
-                $this->session->set_flashdata('success', 'Successfully updated');
-                redirect('Controller_Used/', 'refresh');
-            } else {
-                $this->session->set_flashdata('errors', 'Error occurred!!');
-                redirect('Controller_Used/update/'.$used_id, 'refresh');
-            }
-        } else {
-            // Load existing product data for the form
-            $used_data = $this->model_used->getUsedData($used_id);
-            $this->data['used_data'] = $used_data;
-            $this->data['customers'] = $this->model_customers->getCustomerData();
-            $this->data['medicines'] = $this->model_medicines->getMedicinesData();
-            $this->data['attributes'] = $this->model_attributes->getActiveAttributeData();
-            $this->data['brands'] = $this->model_brands->getActiveBrands();         
-            $this->data['category'] = $this->model_category->getActiveCategroy();           
-            $this->data['stores'] = $this->model_stores->getActiveStore();          
+    //         if($update == true) {
+    //             $this->session->set_flashdata('success', 'Successfully updated');
+    //             redirect('Controller_Used/', 'refresh');
+    //         } else {
+    //             $this->session->set_flashdata('errors', 'Error occurred!!');
+    //             redirect('Controller_Used/update/'.$used_id, 'refresh');
+    //         }
+    //     } else {
+    //         // Load existing product data for the form
+    //         $used_data = $this->model_used->getUsedData($used_id);
+    //         $this->data['used_data'] = $used_data;
+    //         $this->data['customers'] = $this->model_customers->getCustomerData();
+    //         $this->data['medicines'] = $this->model_medicines->getMedicinesData();
+    //         $this->data['attributes'] = $this->model_attributes->getActiveAttributeData();
+    //         $this->data['brands'] = $this->model_brands->getActiveBrands();         
+    //         $this->data['category'] = $this->model_category->getActiveCategroy();           
+    //         $this->data['stores'] = $this->model_stores->getActiveStore();          
 
-            $this->render_template('used/edit', $this->data); 
-        }   
-	}
+    //         $this->render_template('used/edit', $this->data); 
+    //     }   
+	// }
 
     /*
     * It removes the data from the database
@@ -312,5 +354,12 @@ class Controller_Used extends Admin_Controller
 
         echo json_encode($result);
     }
-    
+    // public function getUserMedicineQuantity()
+    // {
+    //     $id = $this->input->post('id');
+    //     echo $id;
+    //     die();
+    //     $quantity = $this->model_orders->getProductsQuantity($id);
+    //     echo json_encode($quantity);
+    // }
 }

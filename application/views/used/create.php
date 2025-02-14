@@ -53,10 +53,9 @@
 
               <div class="form-group">
                 <label for="customers">User Name</label>
-                <select class="form-control select2" id="customers" name="customers">
+                <select class="form-control select2" id="used_by" name="used_by" required>
                   <option value="">Select a user</option>
                   <?php foreach ($customers as $k => $v): ?>
-
                     <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
                   <?php endforeach ?>
                 </select>
@@ -76,7 +75,8 @@
                 <tbody id="usedFields">
                   <tr class="used-entry">
                     <td>
-                      <select class="form-control select2" name="product_name[]">
+                      <select class="form-control select2 product" data-row-id="1" id="product_1" name="medicine_used[]" required>
+                        <!-- <select class="form-control select2 product" data-row-id="1" id="product_1" name="product[]" required onchange="medicineChanged(this)"> -->
                         <option value="">Select a medicine</option>
                         <?php foreach ($medicines as $k => $v): ?>
                           <?php
@@ -120,6 +120,8 @@
 <!-- /.content-wrapper -->
 
 <script type="text/javascript">
+  var base_url = "<?php echo base_url(); ?>";
+
   $(document).ready(function() {
     $(".select2").select2();
     $("#description").wysihtml5();
@@ -161,16 +163,16 @@
       var newProductEntry = `
         <tr class="used-entry">
           <td>
-            <select class="form-control select2" name="product_name[]">
-              <option value="">Select a medicine</option>
-              <?php foreach ($medicines as $k => $v): ?>
-                <?php
-                $quantityData = $this->model_medicines->getMedicineQuantity($v['id']);
-                $quantity = isset($quantityData['qty']) ? $quantityData['qty'] : 0; // Access the 'qty' key
-                ?>
-                <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] . ' (' . $quantity . ')' ?></option>
-              <?php endforeach ?>
-            </select>
+           <select class="form-control select2 product" data-row-id="1" id="product_1" name="medicine_used[]" required onchange="medicineChanged(this)">
+                        <option value="">Select a medicine</option>
+                        <?php foreach ($medicines as $k => $v): ?>
+                          <?php
+                          $quantityData = $this->model_medicines->getMedicineQuantity($v['id']);
+                          $quantity = isset($quantityData['qty']) ? $quantityData['qty'] : 0; // Access the 'qty' key
+                          ?>
+                          <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] . ' (' . $quantity . ')' ?></option>
+                        <?php endforeach ?>
+                      </select>
           </td>
           <td>
             <input type="text" class="form-control" name="qty[]" placeholder="Enter Qty" autocomplete="off" />
@@ -192,6 +194,58 @@
     $(document).on('click', '.removeProduct', function() {
       $(this).closest('tr').remove();
     });
+
+    $(document).on('change', '.product', function() {
+      var row_id = $(this).data('row-id');
+      var id = $(this).find("option:selected").val();
+      console.log(row_id);
+      console.log(id);
+      // Check if the row_id is valid
+      if (id) {
+        // getUserMedicineQuantity(row_id, id); // Call the new function
+      } else {
+        console.error("Invalid row ID");
+      }
+    });
+
+    // Add this function to handle medicine selection change
+    // window.medicineChanged = function(selectElement) {
+
+    //   var medicineId = selectElement.value; // Get the selected medicine ID
+    //   if (medicineId) {
+    //     alert("Selected Medicine ID: " + medicineId); // Alert the selected ID
+    //   } else {
+    //     alert("No medicine selected.");
+    //   }
+    // };
+
+    // Define the getMedicineQuantity function
+    // function getUserMedicineQuantity(row_id, id) {
+    //   if (id) {
+    //     $.ajax({
+    //       url: base_url + 'Controller_Used/getUserMedicineQuantity', // Adjust the URL as needed
+    //       type: 'POST',
+    //       data: {
+    //         id: id
+    //       },
+    //       dataType: 'json',
+    //       success: function(response) {
+    //         if (response) {
+    //           if (response.qty > 0) {
+    //             $("#available_qty_" + row_id).val(response.qty); // Set the available quantity
+    //           } else {
+    //             $("#available_qty_" + row_id).val(0); // Clear the available quantity if no product is selected
+    //           }
+    //         }
+    //       },
+    //       error: function() {
+    //         alert('Error in AJAX request');
+    //       }
+    //     });
+    //   } else {
+    //     $("#available_qty_" + row_id).val(''); // Clear the available quantity if no product is selected
+    //   }
+    // }
 
   });
 </script>
