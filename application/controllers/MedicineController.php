@@ -10,6 +10,8 @@ class MedicineController extends CI_Controller {
         $data['customers'] = $this->Medicine_model->get_customers();
         $data['medicines'] = $this->Medicine_model->get_medicines();
         $this->load->view('add_transaction_view', $data);
+		// $this->render_template('add_transaction_view', $this->data);	
+
     }
 
     // public function add_transaction() {
