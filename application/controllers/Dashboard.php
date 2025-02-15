@@ -16,6 +16,7 @@ class Dashboard extends Admin_Controller
 		$this->load->model('model_stores');
 		$this->load->model('model_customers');
 		$this->load->model('model_medicines');
+		$this->load->model('Medicine_model');
 	}
 
 	/* 
@@ -37,6 +38,7 @@ class Dashboard extends Admin_Controller
 
 		$this->data['total_customers'] = $this->model_customers->getActiveCustomerData();
 		$this->data['total_medicines'] = $this->model_medicines->getActiveMedicinesData();
+		$this->data['low_stock_medicines'] = $this->Medicine_model->get_low_stock_medicines();
 		// $this->data['total_stores'] = $this->model_stores->countTotalStores();
 
 		$user_id = $this->session->userdata('id');

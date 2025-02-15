@@ -224,7 +224,23 @@
           </div>
       </div>
 
-      
+      <div class="row">
+        <div class="col-lg-12">
+        <a href="<?= base_url('ReportsController/generate_customer_report/9') ?>">Download PDF</a>
+
+        </div>
+        <?php if (!empty($low_stock_medicines)): ?>
+            <div style="color: red;">
+                <h3>⚠️ Low Stock Alert</h3>
+                <ul>
+                    <?php foreach ($low_stock_medicines as $medicine): ?>
+                        <li><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?> left)</li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+
+      </div>
 
 
       <!-- <div class="row">
