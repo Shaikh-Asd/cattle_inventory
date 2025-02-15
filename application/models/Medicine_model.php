@@ -130,7 +130,12 @@ class Medicine_model extends CI_Model {
         $this->db->from('medicines');
         return $this->db->get()->result();
     }
-    
+   
+     // Update medicine usage and return details
+     public function update_transaction_details($id, $data) {
+        $this->db->where('id', $id);
+        return $this->db->update('medicine_transaction_details', $data);
+    }
 }
 
 ?>
