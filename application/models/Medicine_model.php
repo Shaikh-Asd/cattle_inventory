@@ -69,6 +69,7 @@ class Medicine_model extends CI_Model {
             medicine_transactions.transaction_date, 
             medicine_transactions.updated_at,
             customers.name as customer_name, 
+            customers.id as customer_id, 
             medicines.name as medicine_name, 
             medicine_transaction_details.*,
             (medicine_transaction_details.quantity_given - (medicine_transaction_details.quantity_used + medicine_transaction_details.quantity_returned)) AS balance_quantity
@@ -78,7 +79,6 @@ class Medicine_model extends CI_Model {
         $this->db->join('medicines', 'medicines.id = medicine_transaction_details.medicine_id');
         $this->db->join('customers', 'customers.id = medicine_transactions.customer_id');
         $this->db->group_by('medicine_transactions.id, customers.name, medicine_transactions.transaction_date, medicine_transactions.updated_at');
-    
         return $this->db->get()->result();
     }
     

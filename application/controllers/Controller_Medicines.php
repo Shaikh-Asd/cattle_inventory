@@ -109,7 +109,7 @@ class Controller_Medicines extends Admin_Controller
                 $response['messages'] = 'Succesfully created';
             } else {
                 $response['success'] = false;
-                $response['messages'] = 'Error in the database while creating the customer information';
+                $response['messages'] = 'Something went wrong or Medicine already exists';
             }
         } else {
             $response['success'] = false;

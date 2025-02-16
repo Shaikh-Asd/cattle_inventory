@@ -140,10 +140,10 @@ class MedicineController extends Admin_Controller {
             $start_date = $this->input->get('start_date');
             $end_date = $this->input->get('end_date');
         
-            $data['customer'] = $this->Medicine_model->get_customer_by_id($customer_id);
-            $data['transactions'] = $this->Medicine_model->get_customer_transactions($customer_id, $start_date, $end_date);
+            $this->data['customer'] = $this->Medicine_model->get_customer_by_id($customer_id);
+            $this->data['transactions'] = $this->Medicine_model->get_customer_transactions($customer_id, $start_date, $end_date);
         
-            $this->load->view('customer_transactions_view', $data);
+            $this->render_template('customer_transactions_view', $this->data);
         }
         
         public function view_medicine_stock() {

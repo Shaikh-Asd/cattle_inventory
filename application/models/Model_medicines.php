@@ -46,8 +46,15 @@ class Model_medicines extends CI_Model
     {
       
         if ($data) {
-            $insert = $this->db->insert('medicines', $data);
-            return ($insert == true) ? true : false;
+            $this->db->where('name', $data['name']);
+            $query = $this->db->get('medicines');
+
+        if ($query->num_rows() > 0) {
+            return false;
+        }
+
+        $insert = $this->db->insert('medicines', $data);
+        return ($insert == true) ? true : false;
         }
     }
 

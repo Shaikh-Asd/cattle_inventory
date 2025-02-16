@@ -65,7 +65,7 @@
                                 <?php foreach ($transactions as $transaction): ?>
                                     <tr>
                                         <td><?= $transaction->id; ?></td>
-                                        <td><?= $transaction->customer_name; ?></td>
+                                        <td><a href="<?= base_url('MedicineController/customer_transactions/' . $transaction->customer_id) ?>"><?= $transaction->customer_name; ?></a></td>
                                         <td><?= $transaction->medicine_name; ?></td>
                                         <td><?= $transaction->quantity_given; ?></td>
                                         <td><?= $transaction->quantity_used; ?></td>
