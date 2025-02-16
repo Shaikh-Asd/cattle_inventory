@@ -70,9 +70,11 @@ class Medicine_model extends CI_Model {
             medicine_transactions.updated_at,
             customers.name as customer_name, 
             customers.id as customer_id, 
-            medicines.name as medicine_name, 
-            medicine_transaction_details.*,
-            (medicine_transaction_details.quantity_given - (medicine_transaction_details.quantity_used + medicine_transaction_details.quantity_returned)) AS balance_quantity
+            GROUP_CONCAT(medicines.name SEPARATOR ", ") as medicine_names, 
+            GROUP_CONCAT(medicine_transaction_details.quantity_given SEPARATOR ", ") as quantity_given,  
+            GROUP_CONCAT(medicine_transaction_details.quantity_used SEPARATOR ", ") as quantity_used,    
+            GROUP_CONCAT(medicine_transaction_details.quantity_returned SEPARATOR ", ") as quantity_returned, 
+            GROUP_CONCAT((medicine_transaction_details.quantity_given - (medicine_transaction_details.quantity_used + medicine_transaction_details.quantity_returned)) SEPARATOR ", ") AS balance_quantity  -- Updated to show comma-separated balance quantities
         ');
         $this->db->from('medicine_transaction_details');
         $this->db->join('medicine_transactions', 'medicine_transactions.id = medicine_transaction_details.transaction_id');
