@@ -41,6 +41,8 @@ class Dashboard extends Admin_Controller
 		$this->data['low_stock_medicines'] = $this->Medicine_model->get_low_stock_medicines();
 		// $this->data['total_stores'] = $this->model_stores->countTotalStores();
 
+		// $this->data['transactions'] = $this->Medicine_model->get_transactions();
+
 		$user_id = $this->session->userdata('id');
 		$is_admin = ($user_id == 1) ? true :false;
 
