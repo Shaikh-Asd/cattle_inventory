@@ -1,16 +1,23 @@
 <?php   
-class MedicineController extends CI_Controller {
+class MedicineController extends Admin_Controller {
 
     public function __construct() {
         parent::__construct();
+        $this->not_logged_in();
+
+		$this->data['page_title'] = 'Manage History';
+
         $this->load->model('Medicine_model');
     }
     
     public function add_transaction_form() {
-        $data['customers'] = $this->Medicine_model->get_customers();
-        $data['medicines'] = $this->Medicine_model->get_medicines();
-        $this->load->view('add_transaction_view', $data);
-		// $this->render_template('add_transaction_view', $this->data);	
+        
+        
+        $this->data['customers'] = $this->Medicine_model->get_customers();
+        $this->data['medicines'] = $this->Medicine_model->get_medicines();
+        // $this->load->view('add_transaction_view', $data);
+
+		$this->render_template('add_transaction_view', $this->data);	
 
     }
 
@@ -46,8 +53,9 @@ class MedicineController extends CI_Controller {
     }
 
     public function view_transactions() {
-        $data['transactions'] = $this->Medicine_model->get_transactions();
-        $this->load->view('transactions_view', $data);
+        $this->data['transactions'] = $this->Medicine_model->get_transactions();
+
+        $this->render_template('transactions_view', $this->data);
     }
     
 //    public function update_transaction() {

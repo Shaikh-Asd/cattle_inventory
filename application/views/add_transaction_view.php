@@ -1,31 +1,7 @@
-<!-- <form action="<?= base_url('MedicineController/add_transaction') ?>" method="post">
-    <label>Customer:</label>
-    <select name="customer_id" required>
-        <?php foreach ($customers as $customer): ?>
-            <option value="<?= $customer->id; ?>"><?= $customer->name; ?></option>
-        <?php endforeach; ?>
-    </select>
-    
-    <label>Medicine:</label>
-    <select name="medicine_id" required>
-        <?php foreach ($medicines as $medicine): ?>
-            <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
-        <?php endforeach; ?>
-    </select>
-    
-    <label>Quantity Given:</label>
-    <input type="number" name="quantity_given" required>
 
-    <button type="submit">Add Transaction</button>
-</form> -->
 
 <!-- Add CSS for styling -->
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        padding: 20px;
-    }
 
     form {
         background: white;
@@ -119,32 +95,50 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
-<form action="<?= base_url('MedicineController/add_transaction') ?>" method="post">
-    <label>Customer:</label>
-    <select name="customer_id" class="select2" required>
-        <?php foreach ($customers as $customer): ?>
-            <option value="<?= $customer->id; ?>"><?= $customer->name; ?></option>
-        <?php endforeach; ?>
-    </select>
+<div class="content-wrapper">
+    <section class="content-header">
+            <h1>
+            Transaction
 
-    <label>Medicines:</label>
-    <div id="medicine_fields">
-        <div>
-            <select name="medicine_id[]" class="select2" required>
-                <?php foreach ($medicines as $medicine): ?>
-                    <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
-                <?php endforeach; ?>
-            </select>
-            <input type="number" name="quantity_given[]" placeholder="Quantity Given" required>
-            <button type="button" onclick="removeField(this)"><i class="fas fa-trash"></i> Remove</button>
+            </h1>
+            <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Add Transaction</li>
+            </ol>
+    </section>
+    <section class="content">
+        <div class="row">
+            <div class="col-lg-12">
+            <form action="<?= base_url('MedicineController/add_transaction') ?>" method="post">
+                <label>Customer:</label>
+                <select name="customer_id" class="select2" required>
+                    <?php foreach ($customers as $customer): ?>
+                        <option value="<?= $customer->id; ?>"><?= $customer->name; ?></option>
+                    <?php endforeach; ?>
+                </select>
+    
+                <label>Medicines:</label>
+                <div id="medicine_fields">
+                    <div>
+                        <select name="medicine_id[]" class="select2" required>
+                            <?php foreach ($medicines as $medicine): ?>
+                                <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
+                            <?php endforeach; ?>
+                        </select>
+                        <input type="number" name="quantity_given[]" placeholder="Quantity Given" required>
+                        <button type="button" onclick="removeField(this)"><i class="fas fa-trash"></i> Remove</button>
+                    </div>
+                </div>
+    
+                <div class="button-container">
+                    <button type="button" class="btn btn-success" onclick="addMedicineField()"><i class="fas fa-plus"></i> Add Medicine</button>
+                    <button type="submit" class="btn btn-warning"><i class="fas fa-check"></i> Add Transaction</button>
+                </div>
+            </form>
+            </div>
         </div>
-    </div>
-
-    <div class="button-container">
-        <button type="button" class="btn btn-success" onclick="addMedicineField()"><i class="fas fa-plus"></i> Add Medicine</button>
-        <button type="submit" class="btn btn-warning"><i class="fas fa-check"></i> Add Transaction</button>
-    </div>
-</form>
+    </section>
+</div>
 
 <script>
     function addMedicineField() {
