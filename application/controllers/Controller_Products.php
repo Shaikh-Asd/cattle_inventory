@@ -19,6 +19,8 @@ class Controller_Products extends Admin_Controller
 		$this->load->model('model_attributes');
 		$this->load->model('model_customers');
         $this->load->model('model_medicines');
+        $this->load->model('Medicine_model');
+        
 	}
 
     /* 
@@ -151,21 +153,32 @@ class Controller_Products extends Admin_Controller
             // Loop through each product to create or update stock entries
             foreach ($product_names as $index => $product_name) {
                 // Check if the medicine already exists in stock
-                $existing_stock = $this->model_products->getMedicineId($product_name);
-                
+                // $existing_stock = $this->model_products->getMedicineId($product_name);
+                $existing_stock = $this->model_products->getMedicineStck($product_name);
+                    
                 if ($existing_stock) {
                     // Update the existing stock entry
-                    $new_qty = $existing_stock['qty'] + $quantities[$index]; // Increase quantity
-                    $this->model_products->updateStock($product_name,$new_qty);
-                } else {
-                    // Create a new stock entry
-                    $dataStock = array(
-                        'customer_id' => $customer_id,
-                        'medicine_id' => $product_name,
-                        'qty' => $quantities[$index],
-                    );
-                    $this->model_products->createStock($dataStock);
-                }
+                    // $new_qty = $existing_stock['stock'] + $quantities[$index]; // Increase quantity
+
+                    if ($existing_stock['stock'] > 0) {
+                        // Update the existing stock entry
+
+                        $new_qty = $existing_stock['stock'] + $quantities[$index]; // Increase quantity
+                    } else {
+                        $new_qty = 0 + $quantities[$index];
+                    }
+                    // $this->model_products->updateStock($product_name,$new_qty);
+                    $this->model_products->updateMedicinesStock($product_name,$new_qty);
+                } 
+                // else {
+                //     // Create a new stock entry
+                //     $dataStock = array(
+                //         'customer_id' => $customer_id,
+                //         'medicine_id' => $product_name,
+                //         'qty' => $quantities[$index],
+                //     );
+                //     $this->model_products->createStock($dataStock);
+                // }
             }
 
             if ($create) {
@@ -183,7 +196,9 @@ class Controller_Products extends Admin_Controller
             $this->data['category'] = $this->model_category->getActiveCategroy();
             $this->data['stores'] = $this->model_stores->getActiveStore();
             $this->data['customers'] = $this->model_customers->getCustomerData($type);
-            $this->data['medicines'] = $this->model_medicines->getMedicinesData();
+            // $this->data['medicines'] = $this->model_medicines->getMedicinesData();
+            $this->data['medicines'] = $this->Medicine_model->get_medicines();
+
             $this->render_template('products/create', $this->data);
         }
     }

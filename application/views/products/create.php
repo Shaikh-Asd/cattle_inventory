@@ -88,13 +88,10 @@
                     <td>
                       <select class="form-control select2" name="product_name[]">
                         <option value="">Select a medicine</option>
-                        <?php foreach ($medicines as $k => $v): ?>
-                          <?php
-                          $quantityData = $this->model_medicines->getMedicineQuantity($v['id']);
-                          $quantity = isset($quantityData['qty']) ? $quantityData['qty'] : 0; // Access the 'qty' key
-                          ?>
-                          <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] . ' (' . $quantity . ')' ?></option>
-                        <?php endforeach ?>
+
+                        <?php foreach ($medicines as $medicine): ?>
+                          <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
+                        <?php endforeach; ?>
                       </select>
                     </td>
                     <td>
@@ -181,13 +178,9 @@
           <td>
             <select class="form-control select2" name="product_name[]">
               <option value="">Select a medicine</option>
-              <?php foreach ($medicines as $k => $v): ?>
-                <?php
-                $quantityData = $this->model_medicines->getMedicineQuantity($v['id']);
-                $quantity = isset($quantityData['qty']) ? $quantityData['qty'] : 0; // Access the 'qty' key
-                ?>
-                <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] . ' (' . $quantity . ')' ?></option>
-              <?php endforeach ?>
+                   <?php foreach ($medicines as $medicine): ?>
+                          <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
+                        <?php endforeach; ?>
             </select>
           </td>
           <td>

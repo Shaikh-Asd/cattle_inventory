@@ -32,6 +32,8 @@
         padding: 20px;
         border-radius: 5px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column; /* Stack elements vertically */
     }
 
     label {
@@ -48,17 +50,26 @@
     }
 
     button {
-        background-color: #28a745; /* Green */
+        background-color: #007bff; /* Blue */
         color: white;
         padding: 10px 15px;
         border: none;
         border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+        margin-top: 10px; /* Add margin for spacing */
+        width: auto; /* Set width to auto */
+        max-width: 200px; /* Set a maximum width */
     }
 
     button:hover {
-        background-color: #218838; /* Darker green */
+        background-color: #0056b3; /* Darker blue */
+    }
+
+    button i {
+        margin-right: 5px; /* Space between icon and text */
     }
 
     @media (max-width: 600px) {
@@ -67,7 +78,12 @@
         }
 
         button {
-            width: 100%;
+            width: auto; /* Maintain auto width on smaller screens */
+        }
+
+        /* Adjust input and select fields for smaller screens */
+        select, input[type="number"] {
+            margin-bottom: 15px; /* Increase margin for better spacing */
         }
     }
 </style>
@@ -94,12 +110,12 @@
                 <?php endforeach; ?>
             </select>
             <input type="number" name="quantity_given[]" placeholder="Quantity Given" required>
-            <button type="button" onclick="removeField(this)">Remove</button>
+            <button type="button" onclick="removeField(this)"><i class="fas fa-trash"></i> Remove</button>
         </div>
     </div>
     
-    <button type="button" onclick="addMedicineField()">Add Medicine</button>
-    <button type="submit">Add Transaction</button>
+    <button type="button" onclick="addMedicineField()"><i class="fas fa-plus"></i> Add Medicine</button>
+    <button type="submit"><i class="fas fa-check"></i> Add Transaction</button>
 </form>
 
 <script>
@@ -112,7 +128,7 @@ function addMedicineField() {
             <?php endforeach; ?>
         </select>
         <input type="number" name="quantity_given[]" placeholder="Quantity Given" required>
-        <button type="button" onclick="removeField(this)">Remove</button>`;
+        <button type="button" onclick="removeField(this)"><i class="fas fa-trash"></i> Remove</button>`;
     container.appendChild(div);
     $('.select2').select2(); // Re-initialize Select2 for new fields
 }
