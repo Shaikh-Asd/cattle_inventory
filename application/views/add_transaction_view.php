@@ -1,8 +1,5 @@
-
-
 <!-- Add CSS for styling -->
 <style>
-
     form {
         background: white;
         padding: 20px;
@@ -10,7 +7,6 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         display: flex;
         flex-direction: column;
-        /* Stack elements vertically */
     }
 
     label {
@@ -29,46 +25,33 @@
 
     button {
         background-color: #007bff;
-        /* Blue */
         color: white;
         padding: 10px 15px;
         border: none;
         border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.3s;
-        display: flex;
-        align-items: center;
-        margin-top: 10px;
-        /* Add margin for spacing */
-        width: auto;
-        /* Set width to auto */
+        width: 100%;
         max-width: 200px;
-        /* Set a maximum width */
     }
 
     button:hover {
         background-color: #0056b3;
-        /* Darker blue */
     }
-
-    button i {
-        margin-right: 5px;
-        /* Space between icon and text */
-    }
-
 
     .button-container {
         display: flex;
-        /* Use flexbox for button alignment */
         justify-content: flex-start;
-        /* Align buttons to the start */
         margin-top: 10px;
-        /* Add margin for spacing */
     }
 
     .button-container button {
         margin-right: 10px;
-        /* Add space between buttons */
+        flex: 1;
+    }
+
+    .button-container button:last-child {
+        margin-right: 0;
     }
 
     @media (max-width: 600px) {
@@ -76,17 +59,29 @@
             padding: 10px;
         }
 
-        button {
-            width: auto;
-            /* Maintain auto width on smaller screens */
-        }
-
-        /* Adjust input and select fields for smaller screens */
         select,
         input[type="number"] {
             margin-bottom: 15px;
-            /* Increase margin for better spacing */
         }
+    }
+
+    .btn-small {
+        padding: 5px 10px;
+        font-size: 12px;
+        max-width: 50px;
+    }
+
+    .table {
+        width: 100%;
+        table-layout: fixed; /* Ensures consistent column widths */
+    }
+
+    .table th, .table td {
+        text-align: center; /* Center align the text in table cells */
+    }
+
+    .table td {
+        padding: 10px; /* Add padding for better spacing */
     }
 </style>
 
@@ -97,44 +92,61 @@
 
 <div class="content-wrapper">
     <section class="content-header">
-            <h1>
-            Transaction
-
-            </h1>
-            <ol class="breadcrumb">
+        <h1>Transaction</h1>
+        <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Add Transaction</li>
-            </ol>
+        </ol>
     </section>
     <section class="content">
         <div class="row">
             <div class="col-lg-12">
-            <form action="<?= base_url('MedicineController/add_transaction') ?>" method="post">
-                <label>Customer:</label>
-                <select name="customer_id" class="select2" required>
-                    <?php foreach ($customers as $customer): ?>
-                        <option value="<?= $customer->id; ?>"><?= $customer->name; ?></option>
-                    <?php endforeach; ?>
-                </select>
-    
-                <label>Medicines:</label>
-                <div id="medicine_fields">
-                    <div>
-                        <select name="medicine_id[]" class="select2" required>
-                            <?php foreach ($medicines as $medicine): ?>
-                                <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
+                <form action="<?= base_url('MedicineController/add_transaction') ?>" method="post">
+
+                    <div class="form-group">
+
+                        <label>Customer:</label>
+                        <select name="customer_id" class="select2" required>
+                            <?php foreach ($customers as $customer): ?>
+                                <option value="<?= $customer->id; ?>"><?= $customer->name; ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <input type="number" name="quantity_given[]" placeholder="Quantity Given" required>
-                        <button type="button" onclick="removeField(this)"><i class="fas fa-trash"></i> Remove</button>
                     </div>
-                </div>
-    
-                <div class="button-container">
-                    <button type="button" class="btn btn-success" onclick="addMedicineField()"><i class="fas fa-plus"></i> Add Medicine</button>
-                    <button type="submit" class="btn btn-warning"><i class="fas fa-check"></i> Add Transaction</button>
-                </div>
-            </form>
+                        <button type="button" class="btn btn-info btn-small" onclick="addMedicineField()">+</button>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Qty</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="medicine_fields">
+                                <tr class="product-entry">
+                                    <td>
+                                        <select name="medicine_id[]" class="select2" required>
+                                            <option value="">Select a medicine</option>
+                                            <?php foreach ($medicines as $medicine): ?>
+                                                <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="quantity_given[]" placeholder="Quantity Given" required>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger" onclick="removeField(this)">−</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="button-container">
+                            <button type="submit" class="btn btn-primary ">Add Transaction</button>
+                            <a href="<?php echo base_url('Controller_Products/') ?>" class="btn btn-warning">Back</a>
+                        </div>
+                </form>
             </div>
         </div>
     </section>
@@ -142,24 +154,33 @@
 
 <script>
     function addMedicineField() {
-        let container = document.getElementById('medicine_fields');
-        let div = document.createElement('div');
-        div.innerHTML = `<select name="medicine_id[]" class="select2" required>
-            <?php foreach ($medicines as $medicine): ?>
-                <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
-            <?php endforeach; ?>
-        </select>
-        <input type="number" name="quantity_given[]" placeholder="Quantity Given" required>
-        <button type="button" onclick="removeField(this)"><i class="fas fa-trash"></i> Remove</button>`;
-        container.appendChild(div);
+        const container = document.getElementById('medicine_fields');
+        const newRow = document.createElement('tr');
+        newRow.className = 'product-entry';
+        newRow.innerHTML = `
+            <td>
+                <select name="medicine_id[]" class="select2" required>
+                    <option value="">Select a medicine</option>
+                    <?php foreach ($medicines as $medicine): ?>
+                        <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
+                    <?php endforeach; ?>
+                </select>
+            </td>
+            <td>
+                <input type="number" name="quantity_given[]" placeholder="Quantity Given" required>
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger" onclick="removeField(this)">−</button>
+            </td>
+        `;
+        container.appendChild(newRow);
         $('.select2').select2(); // Re-initialize Select2 for new fields
     }
 
     function removeField(button) {
-        button.parentElement.remove();
+        button.closest('tr').remove();
     }
 
-    // Initialize Select2 on page load
     $(document).ready(function() {
         $('.select2').select2();
     });
