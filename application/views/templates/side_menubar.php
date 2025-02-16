@@ -108,7 +108,7 @@
         </li>
       <?php endif; ?>
 
-      <?php if (in_array('createUsed', $user_permission) || in_array('updateUsed', $user_permission) || in_array('viewUsed', $user_permission) || in_array('deleteUsed', $user_permission)): ?>
+      <!-- <?php if (in_array('createUsed', $user_permission) || in_array('updateUsed', $user_permission) || in_array('viewUsed', $user_permission) || in_array('deleteUsed', $user_permission)): ?>
         <li class="treeview" id="mainUsedNav">
           <a href="#">
             <i class="fa fa-recycle"></i>
@@ -126,14 +126,14 @@
             <?php endif; ?>
           </ul>
         </li>
-      <?php endif; ?>
-      <?php if (in_array('updateStock', $user_permission) || in_array('viewStock', $user_permission) || in_array('deleteStock', $user_permission)): ?>
+      <?php endif; ?> -->
+      <!-- <?php if (in_array('updateStock', $user_permission) || in_array('viewStock', $user_permission) || in_array('deleteStock', $user_permission)): ?>
         <li id="manageStockNav"><a href="<?php echo base_url('Controller_Stock') ?>"><i class="fa fa-cubes"></i> Manage Stock</a></li>
       <?php endif; ?>
 
       <?php if (in_array('updateHistory', $user_permission) || in_array('viewHistory', $user_permission) || in_array('deleteHistory', $user_permission)): ?>
         <li id="manageHistoryNav"><a href="<?php echo base_url('Controller_History') ?>"><i class="fa fa-history"></i> Manage History</a></li>
-      <?php endif; ?>
+      <?php endif; ?> -->
 
 
       <!-- <?php if ($user_permission): ?>

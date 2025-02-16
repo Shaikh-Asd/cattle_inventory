@@ -5,6 +5,13 @@ class Medicine_model extends CI_Model {
         return $this->db->get('customers')->result();
     }
 
+    // public function get_customers($type): mixed {
+    //     // return $this->db->get('customers')->result();
+    //     $sql = "SELECT * FROM customers where active = 1 AND user_type = ? order by id desc";
+    //     $query = $this->db->query($sql, array($type));
+    //     return $query->result_array();
+    // }
+
     public function get_medicines() {
         return $this->db->get('medicines')->result();
     }

@@ -8,15 +8,13 @@ class MedicineController extends Admin_Controller {
 		$this->data['page_title'] = 'Manage History';
 
         $this->load->model('Medicine_model');
+        $this->load->model('model_customers');
     }
     
     public function add_transaction_form() {
-        
-        
-        $this->data['customers'] = $this->Medicine_model->get_customers();
+       
+        $this->data['customers'] = $this->Medicine_model->get_customers();        
         $this->data['medicines'] = $this->Medicine_model->get_medicines();
-        // $this->load->view('add_transaction_view', $data);
-
 		$this->render_template('add_transaction_view', $this->data);	
 
     }
@@ -54,6 +52,8 @@ class MedicineController extends Admin_Controller {
 
     public function view_transactions() {
         $this->data['transactions'] = $this->Medicine_model->get_transactions();
+        // print_r($this->data['transactions']);
+        // die();
 
         $this->render_template('transactions_view', $this->data);
     }

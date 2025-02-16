@@ -73,7 +73,7 @@
               </div>
 
               <!-- Add a button to add more products -->
-              <button type="button" id="addProduct" class="btn btn-info">+</button>
+              <button type="button" id="addProduct" class="btn btn-info mb-2">+</button>
 
               <table class="table">
                 <thead>
