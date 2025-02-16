@@ -5,7 +5,7 @@ class MedicineController extends Admin_Controller {
         parent::__construct();
         $this->not_logged_in();
 
-		$this->data['page_title'] = 'Manage History';
+		$this->data['page_title'] = 'Manage Transaction';
 
         $this->load->model('Medicine_model');
     }
@@ -90,11 +90,11 @@ public function check_stock($medicine_id, $quantity) {
 
 
         public function edit_transaction($transaction_id) {
-            $data['customers'] = $this->Medicine_model->get_customers();
-            $data['medicines'] = $this->Medicine_model->get_medicines();
-            $data['transaction'] = $this->Medicine_model->get_transaction_by_id($transaction_id);
-            $data['transaction_details'] = $this->Medicine_model->get_transaction_details($transaction_id);
-            $this->load->view('edit_transaction_view', $data);
+            $this->data['customers'] = $this->Medicine_model->get_customers();
+            $this->data['medicines'] = $this->Medicine_model->get_medicines();
+            $this->data['transaction'] = $this->Medicine_model->get_transaction_by_id($transaction_id);
+            $this->data['transaction_details'] = $this->Medicine_model->get_transaction_details($transaction_id);
+            $this->render_template('edit_transaction_view', $this->data);
         }
         // public function update_transaction() {
         //     $id = $this->input->post('transaction_detail_id');

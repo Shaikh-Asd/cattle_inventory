@@ -55,6 +55,7 @@ class Medicine_model extends CI_Model {
         $this->db->join('medicine_transactions', 'medicine_transactions.id = medicine_transaction_details.transaction_id');
         $this->db->join('medicines', 'medicines.id = medicine_transaction_details.medicine_id');
         $this->db->join('customers', 'customers.id = medicine_transactions.customer_id');
+        $this->db->groupBy('customers', 'customers.id = medicine_transactions.customer_id');
         return $this->db->get()->result();
     }
     
