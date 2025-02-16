@@ -79,14 +79,14 @@ class MedicineController extends Admin_Controller {
 //     redirect('MedicineController/view_transactions');
 // }
 
-public function check_stock($medicine_id, $quantity) {
-    $this->db->select('stock');
-    $this->db->from('medicines');
-    $this->db->where('id', $medicine_id);
-    $medicine = $this->db->get()->row();
+        public function check_stock($medicine_id, $quantity) {
+            $this->db->select('stock');
+            $this->db->from('medicines');
+            $this->db->where('id', $medicine_id);
+            $medicine = $this->db->get()->row();
 
-    return ($medicine && $medicine->stock >= $quantity);
-}
+            return ($medicine && $medicine->stock >= $quantity);
+        }
 
 
         public function edit_transaction($transaction_id) {
@@ -149,6 +149,20 @@ public function check_stock($medicine_id, $quantity) {
         public function view_medicine_stock() {
             $data['medicines'] = $this->Medicine_model->get_medicine_stock();
             $this->load->view('medicine_stock_view', $data);
+        }
+
+        public function get_transaction_details($transaction_id) {
+            $this->load->model('Medicine_model');
+            $transaction = $this->Medicine_model->get_single_transaction_by_id($transaction_id);
+            $medicines = $this->Medicine_model->get_transaction_medicines($transaction_id);
+        
+            $response = [
+                'customer_name' => $transaction->customer_name,
+                'transaction_date' => $transaction->transaction_date,
+                'medicines' => $medicines
+            ];
+        
+            echo json_encode($response);
         }
         
     }

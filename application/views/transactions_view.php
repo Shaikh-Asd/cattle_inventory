@@ -74,11 +74,18 @@
                                         <td><?= date('jS M Y h:i A', strtotime($transaction->transaction_date)); ?></td>
                                         <td><?= date('jS M Y h:i A', strtotime($transaction->updated_at)); ?></td>
                                         <td>
-                                            <form action="<?= base_url('MedicineController/edit_transaction/' . $transaction->transaction_id) ?>" method="get">
-                                                <button type="submit" class="btn btn-success btn-sm">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </button>
-                                            </form>
+                                            <p style="display:flex;">
+                                                <span style="margin-right: 5px">
+                                                    <a href="<?= base_url('MedicineController/edit_transaction/' . $transaction->transaction_id) ?>" >
+                                                        <button type="submit" class="btn btn-success btn-sm">
+                                                            <i class="fas fa-edit"></i> Edit
+                                                        </button>
+                                                    </a>
+                                                </span>
+                                                <span>
+                                                    <button class="btn btn-primary btn-sm" onclick="showTransactionDetails(<?= $transaction->transaction_id; ?>)">View Details</button>
+                                                </span>
+                                            </p>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -91,7 +98,12 @@
         </div>
     </section>
 </div>
-
+<!-- Transaction Details Modal -->
+<div id="transactionModal" style="display: none; position: fixed; top: 20%; left: 50%; transform: translate(-50%, 0); background: white; padding: 20px; border: 1px solid black;">
+    <h3>Transaction Details</h3>
+    <p id="transactionInfo"></p>
+    <button onclick="closeModal()">Close</button>
+</div>
 <!-- Include jQuery and DataTables -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -109,4 +121,24 @@
             "pageLength": 10 // Set default number of rows per page
         });
     });
+
+    function showTransactionDetails(transactionId) {
+    fetch("<?= base_url('MedicineController/get_transaction_details/'); ?>" + transactionId)
+        .then(response => response.json())
+        .then(data => {
+            let details = "<strong>Customer:</strong> " + data.customer_name + "<br>";
+            details += "<strong>Transaction Date:</strong> " + data.transaction_date + "<br>";
+            details += "<strong>Medicines:</strong><br><ul>";
+            data.medicines.forEach(med => {
+                details += "<li>" + med.name + " (Given: " + med.quantity_given + ", Used: " + med.quantity_used + ", Returned: " + med.quantity_returned + ", Balance: " + (med.quantity_given - (med.quantity_used + med.quantity_returned)) + ")</li>";
+            });
+            details += "</ul>";
+            document.getElementById("transactionInfo").innerHTML = details;
+            document.getElementById("transactionModal").style.display = "block";
+        });
+}
+
+function closeModal() {
+    document.getElementById("transactionModal").style.display = "none";
+}
 </script>

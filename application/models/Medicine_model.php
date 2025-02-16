@@ -36,6 +36,21 @@ class Medicine_model extends CI_Model {
         return $this->db->get_where('medicine_transactions', ['id' => $transaction_id])->row();
     }
 
+    public function get_single_transaction_by_id($transaction_id) {
+        $this->db->select('medicine_transactions.transaction_date, customers.name as customer_name');
+        $this->db->from('medicine_transactions');
+        $this->db->join('customers', 'customers.id = medicine_transactions.customer_id');
+        $this->db->where('medicine_transactions.id', $transaction_id);
+        return $this->db->get()->row();
+    }
+
+    public function get_transaction_medicines($transaction_id) {
+        $this->db->select('medicines.name, medicine_transaction_details.quantity_given, medicine_transaction_details.quantity_used, medicine_transaction_details.quantity_returned');
+        $this->db->from('medicine_transaction_details');
+        $this->db->join('medicines', 'medicines.id = medicine_transaction_details.medicine_id');
+        $this->db->where('medicine_transaction_details.transaction_id', $transaction_id);
+        return $this->db->get()->result();
+    }
 
     public function add_transaction($customer_id) {
         $this->db->insert('medicine_transactions', ['customer_id' => $customer_id]);
@@ -62,7 +77,8 @@ class Medicine_model extends CI_Model {
         $this->db->join('medicine_transactions', 'medicine_transactions.id = medicine_transaction_details.transaction_id');
         $this->db->join('medicines', 'medicines.id = medicine_transaction_details.medicine_id');
         $this->db->join('customers', 'customers.id = medicine_transactions.customer_id');
-        $this->db->groupBy('customers', 'customers.id = medicine_transactions.customer_id');
+        $this->db->group_by('medicine_transactions.id, customers.name, medicine_transactions.transaction_date, medicine_transactions.updated_at');
+    
         return $this->db->get()->result();
     }
     
