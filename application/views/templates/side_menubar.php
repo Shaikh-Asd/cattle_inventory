@@ -84,24 +84,18 @@
         <li class="treeview" id="mainOrdersNav">
           <a href="#">
             <i class="fa fa-dollar"></i>
-            <span>Manage Transaction</span>
+            <span>Outward Medicines</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
             <?php if (in_array('createOrder', $user_permission)): ?>
-              <li id="addOrderNav"><a href="<?php echo base_url('MedicineController/view_transactions') ?>"><i class="fa fa-circle-o"></i> View Transactions</a></li>
-            <?php endif; ?>
-            <?php if (in_array('createOrder', $user_permission)): ?>
-              <li id="addOrderNav"><a href="<?php echo base_url('add_transaction_form') ?>"><i class="fa fa-circle-o"></i> Add Transactions</a></li>
-            <?php endif; ?>
-            <!-- <?php if (in_array('createOrder', $user_permission)): ?>
               <li id="addOrderNav"><a href="<?php echo base_url('Controller_Orders/create') ?>"><i class="fa fa-circle-o"></i> Outward Medicines</a></li>
             <?php endif; ?>
             <?php if (in_array('updateOrder', $user_permission) || in_array('viewOrder', $user_permission) || in_array('deleteOrder', $user_permission)): ?>
               <li id="manageOrdersNav"><a href="<?php echo base_url('Controller_Orders') ?>"><i class="fa fa-circle-o"></i> Manage Outward Medicines</a></li>
-            <?php endif; ?> -->
+            <?php endif; ?>
           </ul>
         </li>
       <?php endif; ?>

@@ -33,7 +33,8 @@
         border-radius: 5px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         display: flex;
-        flex-direction: column; /* Stack elements vertically */
+        flex-direction: column;
+        /* Stack elements vertically */
     }
 
     label {
@@ -41,7 +42,8 @@
         margin: 10px 0 5px;
     }
 
-    select, input[type="number"] {
+    select,
+    input[type="number"] {
         width: 100%;
         padding: 10px;
         margin-bottom: 10px;
@@ -50,7 +52,8 @@
     }
 
     button {
-        background-color: #007bff; /* Blue */
+        background-color: #007bff;
+        /* Blue */
         color: white;
         padding: 10px 15px;
         border: none;
@@ -59,17 +62,37 @@
         transition: background-color 0.3s;
         display: flex;
         align-items: center;
-        margin-top: 10px; /* Add margin for spacing */
-        width: auto; /* Set width to auto */
-        max-width: 200px; /* Set a maximum width */
+        margin-top: 10px;
+        /* Add margin for spacing */
+        width: auto;
+        /* Set width to auto */
+        max-width: 200px;
+        /* Set a maximum width */
     }
 
     button:hover {
-        background-color: #0056b3; /* Darker blue */
+        background-color: #0056b3;
+        /* Darker blue */
     }
 
     button i {
-        margin-right: 5px; /* Space between icon and text */
+        margin-right: 5px;
+        /* Space between icon and text */
+    }
+
+
+    .button-container {
+        display: flex;
+        /* Use flexbox for button alignment */
+        justify-content: flex-start;
+        /* Align buttons to the start */
+        margin-top: 10px;
+        /* Add margin for spacing */
+    }
+
+    .button-container button {
+        margin-right: 10px;
+        /* Add space between buttons */
     }
 
     @media (max-width: 600px) {
@@ -78,12 +101,15 @@
         }
 
         button {
-            width: auto; /* Maintain auto width on smaller screens */
+            width: auto;
+            /* Maintain auto width on smaller screens */
         }
 
         /* Adjust input and select fields for smaller screens */
-        select, input[type="number"] {
-            margin-bottom: 15px; /* Increase margin for better spacing */
+        select,
+        input[type="number"] {
+            margin-bottom: 15px;
+            /* Increase margin for better spacing */
         }
     }
 </style>
@@ -113,32 +139,34 @@
             <button type="button" onclick="removeField(this)"><i class="fas fa-trash"></i> Remove</button>
         </div>
     </div>
-    
-    <button type="button" onclick="addMedicineField()"><i class="fas fa-plus"></i> Add Medicine</button>
-    <button type="submit"><i class="fas fa-check"></i> Add Transaction</button>
+
+    <div class="button-container">
+        <button type="button" class="btn btn-success" onclick="addMedicineField()"><i class="fas fa-plus"></i> Add Medicine</button>
+        <button type="submit" class="btn btn-warning"><i class="fas fa-check"></i> Add Transaction</button>
+    </div>
 </form>
 
 <script>
-function addMedicineField() {
-    let container = document.getElementById('medicine_fields');
-    let div = document.createElement('div');
-    div.innerHTML = `<select name="medicine_id[]" class="select2" required>
+    function addMedicineField() {
+        let container = document.getElementById('medicine_fields');
+        let div = document.createElement('div');
+        div.innerHTML = `<select name="medicine_id[]" class="select2" required>
             <?php foreach ($medicines as $medicine): ?>
                 <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
             <?php endforeach; ?>
         </select>
         <input type="number" name="quantity_given[]" placeholder="Quantity Given" required>
         <button type="button" onclick="removeField(this)"><i class="fas fa-trash"></i> Remove</button>`;
-    container.appendChild(div);
-    $('.select2').select2(); // Re-initialize Select2 for new fields
-}
+        container.appendChild(div);
+        $('.select2').select2(); // Re-initialize Select2 for new fields
+    }
 
-function removeField(button) {
-    button.parentElement.remove();
-}
+    function removeField(button) {
+        button.parentElement.remove();
+    }
 
-// Initialize Select2 on page load
-$(document).ready(function() {
-    $('.select2').select2();
-});
+    // Initialize Select2 on page load
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
 </script>
