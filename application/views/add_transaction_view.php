@@ -103,6 +103,7 @@
             <div class="col-lg-12">
                 <form action="<?= base_url('MedicineController/add_transaction') ?>" method="post">
 
+                <div class="col-lg-3">
                     <div class="form-group">
 
                         <label>Customer:</label>
@@ -112,7 +113,11 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-                        <button type="button" class="btn btn-info btn-small" onclick="addMedicineField()">+</button>
+                </div>
+                <div class="col-lg-9">
+                    
+                    <button type="button" class="btn btn-info btn-small" onclick="addMedicineField()">+</button>
+                </div>
 
                         <table class="table">
                             <thead>

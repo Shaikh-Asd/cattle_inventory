@@ -3,7 +3,11 @@
   var $j = jQuery.noConflict(true);
 </script>
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-
+<style>
+  .select2-container{
+    width: 100%!important;
+  }
+</style>
 
 
 
@@ -60,20 +64,26 @@
                 </div> -->
               <!-- <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Enter product name" autocomplete="off"/> -->
               <!-- <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Enter product name" autocomplete="off"/> -->
-
-              <div class="form-group">
-                <label for="customers">Vendor Name</label>
-                <select class="form-control select2" id="customers" name="customers">
-                  <option value="">Select a user</option>
-                  <?php foreach ($customers as $k => $v): ?>
-
-                    <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
-                  <?php endforeach ?>
-                </select>
+              <div class="row" style="display: flex; align-items: center;">
+                <div class="col-lg-3">
+                  <div class="form-group">
+                    <label for="customers">Vendor Name</label>
+                    <select class="form-control select2" id="customers" name="customers">
+                      <option value="">Select a user</option>
+                      <?php foreach ($customers as $k => $v): ?>
+    
+                        <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
+                      <?php endforeach ?>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="col-lg-9">
+                  <!-- Add a button to add more products -->
+                  <button type="button" id="addProduct" class="btn btn-info mb-2">+</button>
+                </div>
               </div>
 
-              <!-- Add a button to add more products -->
-              <button type="button" id="addProduct" class="btn btn-info mb-2">+</button>
 
               <table class="table">
                 <thead>
@@ -104,13 +114,13 @@
                 </tbody>
               </table>
 
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="store">Availability</label>
                 <select class="form-control" id="availability" name="availability">
                   <option value="1">Yes</option>
                   <option value="2">No</option>
                 </select>
-              </div>
+              </div> -->
 
             </div>
             <!-- /.box-body -->
@@ -194,7 +204,7 @@
 
       // Re-initialize Select2 for the newly added select elements
       $(".select2").select2({
-        placeholder: "Select a medicine",
+        // placeholder: "Select a medicine",
         allowClear: true
       });
     });

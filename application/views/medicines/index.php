@@ -235,7 +235,7 @@
                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
                '<strong> <span class="glyphicon glyphicon-ok-sign"></span> </strong>' + response.messages +
                '</div>');
-
+               swal("Good job!", "You clicked the button!", "success")
 
              // hide the modal
              $("#addModal").modal('hide').on('hidden.bs.modal', function () {
@@ -399,6 +399,8 @@
        });
      }
    }
+
+   
  </script>
  <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
