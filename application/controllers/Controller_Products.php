@@ -119,7 +119,7 @@ class Controller_Products extends Admin_Controller
         $this->form_validation->set_rules('product_name[]', 'Medicine name', 'trim|required');
         // $this->form_validation->set_rules('price[]', 'Price', 'trim|required');
         $this->form_validation->set_rules('qty[]', 'Qty', 'trim|required');
-        $this->form_validation->set_rules('availability', 'Availability', 'trim|required');
+        // $this->form_validation->set_rules('availability', 'Availability', 'trim|required');
 
         if ($this->form_validation->run() == TRUE) {
             $upload_image = $this->upload_image();
@@ -145,8 +145,7 @@ class Controller_Products extends Admin_Controller
                 'availability' => $availability
 
             );
-            // print_r($data); 
-            // exit;
+      
             // Insert the data
             $create = $this->model_products->create($data);
 

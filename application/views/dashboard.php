@@ -1,6 +1,3 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-<script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 
 <style>
   .negative-stock { color: red; }
@@ -606,13 +603,13 @@
             if (response) {
           
               var tableRows = '';
-              const lowStockThreshold = 10;
               $.each(response, function(index, medicine) {
                 let stockStatus = '';
-                if (medicine.qty < 0) {
+                let lowStockThreshold = Number(medicine.dead_stock);
+                if (Number(medicine.stock) < 0) {
                     stockStatus = 'Out of Stock';
                     stockStatusClass = 'negative-stock';  
-                } else if (medicine.qty <= lowStockThreshold) {
+                } else if (Number(medicine.stock) <= lowStockThreshold) {
                     stockStatus = 'Low Stock';
                     stockStatusClass = 'low-stock';  
                 } else {
@@ -623,7 +620,7 @@
                       <tr>
                           <td>${i}</td>
                           <td>${medicine.name}</td>
-                          <td>${medicine.qty}</td>
+                          <td>${medicine.stock}</td>
                           <td class="${stockStatusClass}">${stockStatus}</td>
                       </tr>
                   `;
@@ -680,18 +677,7 @@
 <script type="text/javascript">
   $(document).ready(function() {
     // Initialize DataTables with search and pagination
-    if (!$.fn.DataTable.isDataTable('#medicineStockTable')) {
-      $('#medicineStockTable').DataTable({
-        responsive: true, // Make the table responsive
-        dom: 'Bfrtip',
-        buttons: [
-          'copy', 'csv', 'excel', 'print'
-        ],
-        'order': [],
-        'paging': true,
-        'searching': true
-      });
-    }
+    new DataTable('#medicineStockTable');
 
     if (!$.fn.DataTable.isDataTable('#TopCustomersWithProductsTable')) {
       $('#TopCustomersWithProductsTable').DataTable({

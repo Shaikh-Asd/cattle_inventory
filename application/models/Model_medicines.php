@@ -77,9 +77,9 @@ class Model_medicines extends CI_Model
     }
 
     public function get_medicine_stock() {
-        $this->db->select('medicine_stock.qty, medicines.name'); 
-        $this->db->from('medicine_stock');
-        $this->db->join('medicines', 'medicines.id = medicine_stock.medicine_id'); 
+        $this->db->select('*'); 
+        $this->db->from('medicines');
+        $this->db->order_by('stock', 'ASC');
         $query = $this->db->get(); 
         return $query->result();
     }

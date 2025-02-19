@@ -51,7 +51,9 @@
           <form role="form" action="<?php base_url('users/create') ?>" method="post" enctype="multipart/form-data">
             <div class="box-body">
 
-              <?php echo validation_errors(); ?>
+              <div style="color: red">
+                <?php echo validation_errors(); ?>
+              </div>
 
               <!-- <div class="form-group">
 
