@@ -1,4 +1,5 @@
 
+
 <style>
   .negative-stock { color: red; }
 .low-stock { color: orange; }
@@ -121,20 +122,37 @@
           <div class="box">
             <div class="box-body">
                 <div class="col-lg-12">
+                  <div class="col-lg-6">
                     <h3>Medicines Stock</h3>
+                  </div>
+                  <div class="col-lg-2">
+                    <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchTable()" class="form-control mb-2">
+                  </div>
+                  <div class="col-lg-2">
+                    <label>Rows per page:</label>
+                  </div>
+                  <div class="col-lg-2">
+                      <select id="rowsPerPage" onchange="changeRowsPerPage()" class="form-control mb-2" style="width: 100px;">
+                          <option value="5">5</option>
+                          <option value="10" selected>10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                      </select>
+                  </div>
                     <table id="medicineStockTable" class="table table-bordered table-striped">
                         <thead>
                           <tr>
-                            <th>Sr No.</th>
-                            <th>Medicine</th>
-                            <th>Stock Quantity</th>
-                            <th>Status</th>
+                              <th onclick="sortTable(0)">Sr No. ▲</th>
+                              <th onclick="sortTable(1)">Medicine ▲</th>
+                              <th onclick="sortTable(2)">Stock Quantity ▲</th>
+                              <th onclick="sortTable(3)">Status ▲</th>
                           </tr>
                         </thead>
                       <tbody id="medicineStockTableBody">
         
                       </tbody>
                     </table>
+                    <div id="pagination"></div>
                 </div>
             </div>
           </div>
@@ -251,7 +269,7 @@
           </div>
       </div>
 
-      <div class="row">
+      <div class="row" style="display: none;">
         <div class="col-lg-12">
         <a href="<?= base_url('ReportsController/generate_customer_report/9') ?>">Download PDF</a>
 
@@ -444,13 +462,6 @@
       }
   });
 
-  manageTable = $('#userMedicineStatsTable').DataTable({
-    dom: 'Bfrtip',
-    buttons: [
-      'copy', 'csv', 'excel', 'print'
-    ],
-    'order': []
-  });
   });
 </script>
 <script type="text/javascript">
@@ -627,6 +638,7 @@
                   i++;
               });
               $('#medicineStockTableBody').html(tableRows);
+              paginateTable();
             }else{
               $('#medicineStockTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
             }
@@ -671,68 +683,74 @@
     // });
   });
 </script>
-<script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 
 <!-- Update for DataTables initialization to include search and pagination -->
 <script type="text/javascript">
   $(document).ready(function() {
-    // Initialize DataTables with search and pagination
-    new DataTable('#medicineStockTable');
-
-    if (!$.fn.DataTable.isDataTable('#TopCustomersWithProductsTable')) {
-      $('#TopCustomersWithProductsTable').DataTable({
-        responsive: true, // Make the table responsive
-        dom: 'Bfrtip',
-        buttons: [
-          'copy', 'csv', 'excel', 'print'
-        ],
-        'order': [],
-        'paging': true,
-        'searching': true
-      });
-    }
-
-    if (!$.fn.DataTable.isDataTable('#userMedicineStatsTable')) {
-      $('#userMedicineStatsTable').DataTable({
-        responsive: true, // Make the table responsive
-        dom: 'Bfrtip',
-        buttons: [
-          'copy', 'csv', 'excel', 'print'
-        ],
-        'order': [],
-        'paging': true,
-        'searching': true
-      });
-    }
-
-    if (!$.fn.DataTable.isDataTable('#mostOrderedProductTable')) {
-      $('#mostOrderedProductTable').DataTable({
-        responsive: true, // Make the table responsive
-        dom: 'Bfrtip',
-        buttons: [
-          'copy', 'csv', 'excel', 'print'
-        ],
-        'order': [],
-        'paging': true,
-        'searching': true
-      });
-    }
-
-    if (!$.fn.DataTable.isDataTable('#MostOrderedProductByQuantityTable')) {
-      $('#MostOrderedProductByQuantityTable').DataTable({
-        responsive: true, // Make the table responsive
-        dom: 'Bfrtip',
-        buttons: [
-          'copy', 'csv', 'excel', 'print'
-        ],
-        'order': [],
-        'paging': true,
-        'searching': true
-      });
-    }
+    // $('#medicineStockTable').dataTable();
+    
   });
 </script>
+<script>
+    let currentPage = 1;
+    let rowsPerPage = 5;
 
+    function searchTable() {
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let rows = document.querySelectorAll("#medicineStockTableBody tr");
+
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+    }
+
+    function sortTable(columnIndex) {
+        let table = document.getElementById("medicineStockTable");
+        let rows = Array.from(table.rows).slice(1);
+        let ascending = table.getAttribute("data-sort-order") !== "asc";
+        
+        rows.sort((rowA, rowB) => {
+            let cellA = rowA.cells[columnIndex].innerText;
+            let cellB = rowB.cells[columnIndex].innerText;
+
+            return ascending ? cellA.localeCompare(cellB, undefined, { numeric: true }) 
+                             : cellB.localeCompare(cellA, undefined, { numeric: true });
+        });
+
+        table.setAttribute("data-sort-order", ascending ? "asc" : "desc");
+
+        document.getElementById("medicineStockTableBody").append(...rows);
+    }
+
+    function changeRowsPerPage() {
+        rowsPerPage = parseInt(document.getElementById("rowsPerPage").value);
+        currentPage = 1;
+        paginateTable();
+    }
+
+    function paginateTable() {
+        let rows = document.querySelectorAll("#medicineStockTableBody tr");
+        let totalRows = rows.length;
+        let totalPages = Math.ceil(totalRows / rowsPerPage);
+
+        rows.forEach((row, index) => {
+            row.style.display = (index >= (currentPage - 1) * rowsPerPage && index < currentPage * rowsPerPage) ? "" : "none";
+        });
+
+        let paginationHTML = "";
+        for (let i = 1; i <= totalPages; i++) {
+            paginationHTML += `<button onclick="goToPage(${i})" class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-secondary'}">${i}</button> `;
+        }
+        document.getElementById("pagination").innerHTML = paginationHTML;
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        paginateTable();
+    }
+
+</script>
 <!-- Ensure sidebar collapse functionality is working -->
 <script type="text/javascript">
   $(document).ready(function() {

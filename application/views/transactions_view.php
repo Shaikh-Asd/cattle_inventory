@@ -124,19 +124,51 @@
 
     function showTransactionDetails(transactionId) {
     fetch("<?= base_url('MedicineController/get_transaction_details/'); ?>" + transactionId)
-        .then(response => response.json())
-        .then(data => {
-            let details = "<strong>Customer:</strong> " + data.customer_name + "<br>";
-            details += "<strong>Transaction Date:</strong> " + data.transaction_date + "<br>";
-            details += "<strong>Medicines:</strong><br><ul>";
-            data.medicines.forEach(med => {
-                details += "<li>" + med.name + " (Given: " + med.quantity_given + ", Used: " + med.quantity_used + ", Returned: " + med.quantity_returned + ", Balance: " + (med.quantity_given - (med.quantity_used + med.quantity_returned)) + ")</li>";
-            });
-            details += "</ul>";
-            document.getElementById("transactionInfo").innerHTML = details;
-            document.getElementById("transactionModal").style.display = "block";
+    .then(response => response.json())
+    .then(data => {
+        let details = `
+            <strong>Customer:</strong> ${data.customer_name}<br>
+            <strong>Transaction Date:</strong> ${data.transaction_date}<br>
+            <strong>Medicines:</strong>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Medicine Name</th>
+                        <th>Quantity Given</th>
+                        <th>Quantity Used</th>
+                        <th>Quantity Returned</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        // Loop through the medicines and add rows
+        data.medicines.forEach(med => {
+            let balance = med.quantity_given - (med.quantity_used + med.quantity_returned);
+            details += `
+                <tr>
+                    <td>${med.name}</td>
+                    <td>${med.quantity_given}</td>
+                    <td>${med.quantity_used}</td>
+                    <td>${med.quantity_returned}</td>
+                    <td>${balance}</td>
+                </tr>
+            `;
         });
+
+        details += `
+                </tbody>
+            </table>
+        `;
+
+        // Update modal content
+        document.getElementById("transactionInfo").innerHTML = details;
+        document.getElementById("transactionModal").style.display = "block";
+    })
+    .catch(error => console.error("Error fetching transaction details:", error));
 }
+
 
 function closeModal() {
     document.getElementById("transactionModal").style.display = "none";
