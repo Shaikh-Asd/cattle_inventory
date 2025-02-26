@@ -189,7 +189,7 @@
           <div class="box">
             <div class="box-body">
               
-              <div class="col-lg-6">
+              <!-- <div class="col-lg-6">
                 <h3>Outward Medicines</h3>
                 <table class="table table-bordered">
                   <thead>
@@ -225,7 +225,7 @@
                      
                     </tbody>
                   </table>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -279,7 +279,7 @@
                 <h3>⚠️ Low Stock Alert</h3>
                 <ul>
                     <?php foreach ($low_stock_medicines as $medicine): ?>
-                        <li><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?> left)</li>
+                        <li><?= $medicine->medicine_id; ?> (Stock: <?= $medicine->stock; ?> left)</li>
                     <?php endforeach; ?>
                 </ul>
             </div>
@@ -431,16 +431,19 @@
                   if (response && response.length > 0) {
                     
                     $.each(response, function(index, row) {
-                      var date = new Date(row.created_at);
-                      var formattedDate = date.toLocaleDateString('en-GB', { 
-                            day: '2-digit', 
-                            month: 'long', 
-                            year: 'numeric' 
-                        });
+                      var date = new Date(row.transaction_date);
+                      var formattedDate = date.toLocaleString('en-GB', {
+                        day: '2-digit', 
+                        month: 'long', 
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                      });
 
                         output += '<tr>';
                         output += '<td>' + i + '</td>';
-                        output += '<td>' + row.name + '</td>';
+                        output += '<td>' + row.medicine_name + '</td>';
                         output += '<td>' + row.total_quantity_ordered  + '</td>';
                         output += '<td>' + formattedDate  + '</td>';
                         output += '</tr>';
@@ -449,7 +452,7 @@
 
                     $('#userMedicineStatsTableBody').html(output);
                   }else{
-                    $('#userMedicineStatsTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
+                    $('#userMedicineStatsTableBody').html('<tr><td colspan="4">No data found.</td></tr>');
                   }
               },
               error: function() {
