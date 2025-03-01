@@ -159,13 +159,9 @@ class Controller_Products extends Admin_Controller
                     // Update the existing stock entry
                     // $new_qty = $existing_stock['stock'] + $quantities[$index]; // Increase quantity
 
-                    if ($existing_stock['stock'] > 0) {
                         // Update the existing stock entry
 
                         $new_qty = $existing_stock['stock'] + $quantities[$index]; // Increase quantity
-                    } else {
-                        $new_qty = 0 + $quantities[$index];
-                    }
                     // $this->model_products->updateStock($product_name,$new_qty);
                     $this->model_products->updateMedicinesStock($product_name,$new_qty);
                 } 
