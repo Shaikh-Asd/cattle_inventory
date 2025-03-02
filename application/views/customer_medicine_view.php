@@ -169,8 +169,9 @@
             type: type
         }, function(response) {
             alert("Stock updated successfully!");
-            fetchCustomerMedicine(); // Refresh the medicine summary
+            // fetchCustomerMedicine(); // Refresh the medicine summary
         }, "json");
+        fetchCustomerMedicine();
     }
 
     function viewBreakdown(customerId, medicineId) {

@@ -244,7 +244,7 @@ class Medicine_model extends CI_Model {
     //     }
     // }
 
-    public function update_breakdown_stock($detail_id, $quantity_used) {
+    public function update_breakdown_stock($detail_id, $quantity_given) {
         $this->db->where('id', $detail_id);
         $transaction = $this->db->get('medicine_transaction_details')->row();
 
@@ -253,24 +253,21 @@ class Medicine_model extends CI_Model {
             $previous_quantity_given = $transaction->quantity_given; // Get the previous quantity given
 
             // Update the given quantity in medicine transaction
-            $this->db->set('quantity_given', $quantity_used);
+            $this->db->set('quantity_given', $quantity_given);
             $this->db->where('id', $detail_id);
             $this->db->update('medicine_transaction_details');
 
             // Calculate the difference
-            $difference = $quantity_used - $previous_quantity_given; // Find the difference in quantity
-
+            $difference = $previous_quantity_given - $quantity_given; // Find the difference in quantity
+           
             // get stock then minus the difference
             $stock = $this->db->get_where('medicines', ['id' => $transaction->medicine_id])->row()->stock;
-            // print_r($stock);
-            // print_r($difference);
-
-            // die();
-            $new_stock = $stock - $difference;
+          
+            $new_stock = $stock + $difference;
             // print_r($new_stock);
             // die();
             // Update main stock in 'medicines' table
-            if ($difference != 0) { // Only update stock if there is a difference
+            if ($difference < 0) { // Only update stock if there is a difference
                 $this->db->set('stock', $new_stock, FALSE); // Adjust stock based on the difference
                 $this->db->where('id', $transaction->medicine_id);
                 $this->db->update('medicines');
