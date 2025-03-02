@@ -214,17 +214,29 @@ class MedicineController extends Admin_Controller {
             $this->Medicine_model->adjust_quantity($detail_id, $operation);
         }
 
-        public function update_stock() {
-            $updated_data = $this->input->post('updated_data');
-        
-            if (!empty($updated_data)) {
-                foreach ($updated_data as $data) {
-                    $this->Medicine_model->update_breakdown_stock($data['detail_id'], $data['quantity_given']);
-                }
-            }
-        
-            echo json_encode(["status" => "success", "message" => "Stock updated successfully"]);
-        }
+    // public function update_stock() {
+    //     $updated_data = $this->input->post('updated_data');
+
+    //     if (!empty($updated_data)) {
+    //         foreach ($updated_data as $data) {
+    //             $this->Medicine_model->update_breakdown_stock($data['detail_id'], $data['quantity_given']);
+    //         }
+    //     }
+
+    //     echo json_encode(["status" => "success", "message" => "Stock updated successfully"]);
+    // }
+    public function update_stock()
+    {
+        $type = $this->input->post('type');
+        $detail_id = $this->input->post('detail_id');
+        $quantity_given = $this->input->post('quantity_given');
+      
+        // die();
+        $this->Medicine_model->update_breakdown_stock($detail_id, $quantity_given);
+       
+
+        echo json_encode(["status" => "success", "message" => "Stock updated successfully"]);
+    }
         
         
     }

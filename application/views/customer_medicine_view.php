@@ -129,7 +129,7 @@
                         <button class="btn btn-danger" onclick="adjustStock(${med.id}, 'subtract')">-</button>
                         <span id="stock_${med.id}">${med.total_given}</span>
                         <button class="btn btn-success" onclick="adjustStock(${med.id}, 'add')">+</button>
-                        <button class="btn btn-primary" onclick="updateStock(${med.id})">Update</button>
+                        <button class="btn btn-primary" onclick="updateStock(${med.id}, ${med.total_given > 0 ? 1 : 2})">Update</button>
                     </td>
                     <td><button class="btn btn-primary" onclick="viewBreakdown(${customerId}, ${med.id})">View Details</button></td>
                 </tr>`;
@@ -152,45 +152,26 @@
         }
     }
 
-    function updateStock(medicineId) {
+    function updateStock(medicineId, type) {
         let stockElement = document.getElementById("stock_" + medicineId);
         let updatedStock = parseInt(stockElement.innerText);
 
         // Prepare the data in the expected format
         let updatedData = [{
             detail_id: medicineId,
-            quantity_given: updatedStock
+            quantity_given: updatedStock,
+            type: type // Include the type in the data
         }];
 
         $.post("<?= base_url('MedicineController/update_stock') ?>", {
-            updated_data: updatedData
+            detail_id: medicineId,
+            quantity_given: updatedStock,
+            type: type
         }, function(response) {
             alert("Stock updated successfully!");
             fetchCustomerMedicine(); // Refresh the medicine summary
         }, "json");
     }
-
-    // function updateStock() {
-    //     let updatedData = [];
-
-    //     // Collect updated given quantity data
-    //     $("input[id^='given_qty_']").each(function() {
-    //         let detailId = $(this).attr("id").split("_")[2]; // Extract ID from input field
-    //         let newGivenQuantity = $(this).val();
-    //         updatedData.push({
-    //             detail_id: detailId,
-    //             quantity_given: newGivenQuantity
-    //         });
-    //     });
-
-    //     $.post("<?= base_url('MedicineController/update_stock') ?>", {
-    //         updated_data: updatedData
-    //     }, function(response) {
-    //         alert("Stock updated successfully!");
-    //         fetchCustomerMedicine();
-    //         $("#medicineModal").hide();
-    //     }, "json");
-    // }
 
     function viewBreakdown(customerId, medicineId) {
         $.get("<?= base_url('MedicineController/get_medicine_breakdown/') ?>" + customerId + "/" + medicineId, function(data) {
