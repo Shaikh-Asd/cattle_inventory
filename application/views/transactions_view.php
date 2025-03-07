@@ -75,13 +75,13 @@
                                         <td><?= date('jS M Y h:i A', strtotime($transaction->updated_at)); ?></td>
                                         <td>
                                             <p style="display:flex;">
-                                                <span style="margin-right: 5px">
+                                                <!-- <span style="margin-right: 5px">
                                                     <a href="<?= base_url('MedicineController/edit_transaction/' . $transaction->transaction_id) ?>" >
                                                         <button type="submit" class="btn btn-success btn-sm">
                                                             <i class="fas fa-edit"></i> Edit
                                                         </button>
                                                     </a>
-                                                </span>
+                                                </span> -->
                                                 <span>
                                                     <button class="btn btn-primary btn-sm" onclick="showTransactionDetails(<?= $transaction->transaction_id; ?>)">View Details</button>
                                                 </span>

@@ -29,8 +29,8 @@
                                 <tr>
                                     <th>Sr no</th>
                                     <th>Medicine Name</th>
-                                    <th>Stock</th>
-                                    <th>Action</th>
+                                    <th>Given</th>
+                                    <!-- <th>Action</th> -->
                                 </tr>
                             </thead>
                             <tbody id="medicineSummary">
@@ -116,24 +116,28 @@
 
     function fetchCustomerMedicine() {
         let customerId = $("#customerSelect").val();
-        console.log("Selected customer id:", customerId);
         if (customerId) {
             $.get("<?= base_url('MedicineController/get_customer_medicines/') ?>" + customerId, function(data) {
                 let medicines = JSON.parse(data);
                 let rows = "";
-                medicines.forEach(med => {
-                    rows += `<tr>
-                    <td>${med.id}</td>
-                    <td>${med.name}</td>
-                    <td>
-                        <button class="btn btn-danger" onclick="adjustStock(${med.id}, 'subtract')">-</button>
-                        <span id="stock_${med.id}">${med.total_given}</span>
-                        <button class="btn btn-success" onclick="adjustStock(${med.id}, 'add')">+</button>
-                        <button class="btn btn-primary" onclick="updateStock(${med.id}, ${med.total_given > 0 ? 1 : 2})">Update</button>
-                    </td>
-                    <td><button class="btn btn-primary" onclick="viewBreakdown(${customerId}, ${med.id})">View Details</button></td>
-                </tr>`;
-                });
+                if (medicines && medicines.length > 0) {
+                    
+                    medicines.forEach(med => {
+                        rows += `<tr>
+                        <td>${med.id}</td>
+                        <td>${med.name}</td>
+                        <td>
+                            <button class="btn btn-danger btn-xs" onclick="adjustStock(${med.id}, 'subtract')">-</button>
+                            <span id="stock_${med.id}" style="font-size:20px; margin: 10px;">${med.total_given}</span>
+                            <button class="btn btn-success btn-xs" onclick="adjustStock(${med.id}, 'add')">+</button>
+                            <button class="btn btn-primary" onclick="updateStock(${med.id}, ${med.total_given > 0 ? 1 : 2})">Update</button>
+                        </td>
+                        </tr>`;
+                        // <td><button class="btn btn-primary" onclick="viewBreakdown(${customerId}, ${med.id})">View Details</button></td>
+                    });
+                }else{
+                    rows = `<tr><td colspan="4">No medicines Transaction found for this customer.</td></tr>`;
+                }
                 $("#medicineSummary").html(rows);
             });
         } else {

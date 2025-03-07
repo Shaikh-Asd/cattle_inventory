@@ -99,10 +99,11 @@
           </ul> -->
           <ul class="treeview-menu">
             <?php if (in_array('createOrder', $user_permission)): ?>
-              <li id="addOrderNav"><a href="<?php echo base_url('MedicineController/view_transactions') ?>"><i class="fa fa-circle-o"></i> View Transactions</a></li>
+              <li id="addOrderNav"><a href="<?php echo base_url('MedicineController/view_transactions') ?>"><i class="fa fa-circle-o"></i>History</a></li>
             <?php endif; ?>
             <?php if (in_array('updateOrder', $user_permission) || in_array('viewOrder', $user_permission) || in_array('deleteOrder', $user_permission)): ?>
-              <li id="manageOrdersNav"><a href="<?php echo base_url('MedicineController/add_transaction_form') ?>"><i class="fa fa-circle-o"></i> Add Transactions</a></li>
+              <li id="manageOrdersNav"><a href="<?php echo base_url('MedicineController/add_transaction_form') ?>"><i class="fa fa-circle-o"></i> Create New</a></li>
+              <li id="manageOrdersNav"><a href="<?php echo base_url('MedicineController/customer_medicine_view') ?>"><i class="fa fa-circle-o"></i> Edit</a></li>
             <?php endif; ?>
           </ul>
         </li>
