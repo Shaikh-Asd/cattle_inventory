@@ -12,8 +12,9 @@
 
         <div class="row">
             <div class="col-lg-12">
-                <div class="box">
-                    <div class="form-group col-md-3">
+                <div class="box box-primary">
+                    <div class="box-body"></div>
+                    <div class="form-group col-md-3 mb-3">
                         <label for="customerSelect">Vendor Name</label>
                         <select id="customerSelect" class="form-control select2" onchange="fetchCustomerMedicine()">
                             <option value="">Select a user</option>
@@ -46,7 +47,7 @@
 
 <!-- Modal for Medicine Breakdown -->
 <div id="medicineModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="medicineModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="medicineModalLabel">Medicine Breakdown</h5>
@@ -69,8 +70,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="updateStock()">Update Stock</button>
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+                <button type="button" class="btn btn-info" onclick="closeModal()">Close</button>
             </div>
         </div>
     </div>
@@ -127,11 +127,11 @@
                     <td>${med.name}</td>
                     <td>
                         <button class="btn btn-danger" onclick="adjustStock(${med.id}, 'subtract')">-</button>
-                        <span id="stock_${med.id}">${med.total_given}</span>
+                        <span class="badge badge-secondary" id="stock_${med.id}">${med.total_given}</span>
                         <button class="btn btn-success" onclick="adjustStock(${med.id}, 'add')">+</button>
-                        <button class="btn btn-primary" onclick="updateStock(${med.id}, ${med.total_given > 0 ? 1 : 2})">Update</button>
+                        <button class="btn btn-primary" onclick="updateStock(${med.id}, ${med.total_given > 0 ? 1 : 2},${med.detail_id})">Update</button>
                     </td>
-                    <td><button class="btn btn-primary" onclick="viewBreakdown(${customerId}, ${med.id})">View Details</button></td>
+                    <td><button class="btn btn-warning" onclick="viewBreakdown(${customerId}, ${med.id})">View Breakdown</button></td>
                 </tr>`;
                 });
                 $("#medicineSummary").html(rows);
@@ -152,24 +152,28 @@
         }
     }
 
-    function updateStock(medicineId, type) {
+    function updateStock(medicineId, type, detail_id) {
         let stockElement = document.getElementById("stock_" + medicineId);
         let updatedStock = parseInt(stockElement.innerText);
 
         // Prepare the data in the expected format
-        let updatedData = [{
-            detail_id: medicineId,
-            quantity_given: updatedStock,
-            type: type // Include the type in the data
-        }];
+        // let updatedData = [{
+        //     detail_id: medicineId,
+        //     quantity_given: updatedStock,
+        //     type: type // Include the type in the data
+        // }];
 
         $.post("<?= base_url('MedicineController/update_stock') ?>", {
-            detail_id: medicineId,
+            detail_id: detail_id,
+            medicine_id: medicineId,
             quantity_given: updatedStock,
-            type: type
+            // type: type
         }, function(response) {
-            alert("Stock updated successfully!");
-            // fetchCustomerMedicine(); // Refresh the medicine summary
+            Swal.fire({
+                title: 'Success',
+                text: 'Stock updated successfully!',
+                icon: 'success'
+            });
         }, "json");
         fetchCustomerMedicine();
     }

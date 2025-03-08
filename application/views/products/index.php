@@ -28,17 +28,17 @@
 
         <div id="messages"></div>
 
-        <?php if ($this->session->flashdata('success')): ?>
+        <!-- <?php if ($this->session->flashdata('success')): ?>
           <div class="alert alert-success alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <?php echo $this->session->flashdata('success'); ?>
           </div>
         <?php elseif ($this->session->flashdata('error')): ?>
-          <div class="alert alert-error alert-dismissible" role="alert">
+          <div class="alert alert-danger alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <?php echo $this->session->flashdata('error'); ?>
           </div>
-        <?php endif; ?>
+        <?php endif; ?> -->
 
         <?php if (in_array('createProduct', $user_permission)): ?>
           <a href="<?php echo base_url('Controller_Products/create') ?>" class="btn btn-primary">Inward Medicines</a>
@@ -59,7 +59,6 @@
                   <th>Vendor Name</th>
                   <th>Medicine Name</th>
                   <th>Quantity</th>
-                  <th>Status</th>
                   <!-- <th>Price</th> -->
                   <th>Date Time</th>
 

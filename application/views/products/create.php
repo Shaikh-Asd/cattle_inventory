@@ -4,12 +4,14 @@
 </script>
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
 <style>
-  .select2-container{
-    width: 100%!important;
+  .select2-container {
+    width: 100% !important;
   }
 </style>
 
-
+<!-- Include SweetAlert CSS and JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -32,20 +34,20 @@
 
         <div id="messages"></div>
 
-        <?php if ($this->session->flashdata('success')): ?>
+        <!-- <?php if ($this->session->flashdata('success')): ?>
           <div class="alert alert-success alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <?php echo $this->session->flashdata('success'); ?>
           </div>
         <?php elseif ($this->session->flashdata('error')): ?>
-          <div class="alert alert-error alert-dismissible" role="alert">
+          <div class="alert alert-danger alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <?php echo $this->session->flashdata('error'); ?>
           </div>
-        <?php endif; ?>
+        <?php endif; ?> -->
 
 
-        <div class="box">
+        <div class="box box-primary">
 
           <!-- /.box-header -->
           <form role="form" action="<?php base_url('users/create') ?>" method="post" enctype="multipart/form-data">
@@ -71,19 +73,16 @@
                   <div class="form-group">
                     <label for="customers">Vendor Name</label>
                     <select class="form-control select2" id="customers" name="customers">
-                      <option value="">Select a user</option>
+                      <option value="">Select a vendor</option>
                       <?php foreach ($customers as $k => $v): ?>
-    
+
                         <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
                       <?php endforeach ?>
                     </select>
                   </div>
                 </div>
-                
-                <div class="col-lg-9">
-                  <!-- Add a button to add more products -->
-                  <button type="button" id="addProduct" class="btn btn-info mb-2">+</button>
-                </div>
+
+
               </div>
 
 
@@ -91,7 +90,7 @@
                 <thead>
                   <tr>
                     <th>Medicine</th>
-                    <th>Qty</th>
+                    <th>Quantity</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -100,35 +99,27 @@
                     <td>
                       <select class="form-control select2" name="product_name[]">
                         <option value="">Select a medicine</option>
-
                         <?php foreach ($medicines as $medicine): ?>
                           <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
                         <?php endforeach; ?>
                       </select>
                     </td>
                     <td>
-                      <input type="text" class="form-control" name="qty[]" placeholder="Enter Qty" autocomplete="off" />
+                      <input type="number" class="form-control" name="qty[]" placeholder="Enter Quantity" autocomplete="off" />
                     </td>
                     <td>
+                      <button type="button" class="btn btn-info addProduct">+</button>
                       <button type="button" class="btn btn-danger removeProduct">−</button>
                     </td>
                   </tr>
                 </tbody>
               </table>
 
-              <!-- <div class="form-group">
-                <label for="store">Availability</label>
-                <select class="form-control" id="availability" name="availability">
-                  <option value="1">Yes</option>
-                  <option value="2">No</option>
-                </select>
-              </div> -->
-
             </div>
             <!-- /.box-body -->
 
             <div class="box-footer">
-              <button type="submit" class="btn btn-primary">Save Changes</button>
+              <button type="submit" class="btn btn-primary">Save Inward</button>
               <a href="<?php echo base_url('Controller_Products/') ?>" class="btn btn-warning">Back</a>
             </div>
           </form>
@@ -179,41 +170,44 @@
 
     // Initialize Select2 for existing select elements
     $(".select2").select2({
-      placeholder: "Select an option",
+      placeholder: "Select a option",
       allowClear: true
     });
 
-    // Add this script to handle adding and removing product fields
-    $("#addProduct").click(function() {
+    // Add product entry
+    $(document).on('click', '.addProduct', function() {
       var newProductEntry = `
         <tr class="product-entry">
           <td>
             <select class="form-control select2" name="product_name[]">
               <option value="">Select a medicine</option>
-                   <?php foreach ($medicines as $medicine): ?>
-                          <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
-                        <?php endforeach; ?>
+              <?php foreach ($medicines as $medicine): ?>
+                <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
+              <?php endforeach; ?>
             </select>
           </td>
           <td>
             <input type="text" class="form-control" name="qty[]" placeholder="Enter Qty" autocomplete="off" />
           </td>
           <td>
+            <button type="button" class="btn btn-info addProduct">+</button>
             <button type="button" class="btn btn-danger removeProduct">−</button>
           </td>
         </tr>`;
       $("#productFields").append(newProductEntry);
-
-      // Re-initialize Select2 for the newly added select elements
       $(".select2").select2({
-        // placeholder: "Select a medicine",
         allowClear: true
-      });
+      }); // Re-initialize Select2
     });
 
     // Remove product entry
     $(document).on('click', '.removeProduct', function() {
-      $(this).closest('tr').remove();
+      // Check if this is the last product entry
+      if ($("#productFields .product-entry").length > 1) {
+        $(this).closest('tr').remove();
+      } else {
+        swal("Warning!", "You cannot remove the last row.", "warning");
+      }
     });
 
   });

@@ -2,7 +2,7 @@
 class Medicine_model extends CI_Model {
     
     public function get_customers() {
-        return $this->db->get('customers')->result();
+        return $this->db->order_by('id', 'desc')->get('customers')->result();
     }
 
     // public function get_customers($type): mixed {
@@ -34,6 +34,13 @@ class Medicine_model extends CI_Model {
     // }
     public function get_transaction_by_id($transaction_id) {
         return $this->db->get_where('medicine_transactions', ['id' => $transaction_id])->row();
+    }
+
+    public function get_total_medicine_given()
+    {
+        $sql = "SELECT * FROM medicine_transaction_details";
+        $query = $this->db->query($sql);
+        return $query->num_rows();
     }
 
     public function get_single_transaction_by_id($transaction_id) {
@@ -191,7 +198,7 @@ class Medicine_model extends CI_Model {
     }
 
     public function get_customer_medicine_summary_details($customer_id) {
-        $this->db->select('medicines.id, medicines.name, SUM(medicine_transaction_details.quantity_given) as total_given');
+        $this->db->select('medicines.id, medicines.name,medicine_transaction_details.id as detail_id, SUM(medicine_transaction_details.quantity_given) as total_given');
         $this->db->from('medicine_transaction_details');
         $this->db->join('medicines', 'medicines.id = medicine_transaction_details.medicine_id');
         $this->db->join('medicine_transactions', 'medicine_transactions.id = medicine_transaction_details.transaction_id');
@@ -244,10 +251,12 @@ class Medicine_model extends CI_Model {
     //     }
     // }
 
-    public function update_breakdown_stock($detail_id, $quantity_given) {
+    public function update_breakdown_stock($detail_id, $medicine_id, $quantity_given) {
         $this->db->where('id', $detail_id);
         $transaction = $this->db->get('medicine_transaction_details')->row();
-
+        // print_r($transaction);
+        // print_r($quantity_given);
+        // die();
         if ($transaction) {
             // Calculate the difference in quantity
             $previous_quantity_given = $transaction->quantity_given; // Get the previous quantity given
@@ -269,7 +278,8 @@ class Medicine_model extends CI_Model {
             // Update main stock in 'medicines' table
             if ($difference < 0) { // Only update stock if there is a difference
                 $this->db->set('stock', $new_stock, FALSE); // Adjust stock based on the difference
-                $this->db->where('id', $transaction->medicine_id);
+                // $this->db->where('id', $transaction->medicine_id);
+                $this->db->where('id', $medicine_id);
                 $this->db->update('medicines');
             }
         }

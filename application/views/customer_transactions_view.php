@@ -4,28 +4,32 @@
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
 <script>
-$(document).ready(function() {
-    $('#transactionsTable').DataTable({
-        "paging": true,
-        "searching": true,
-        "responsive": true,
-        "lengthMenu": [5, 10, 25, 50, 100], // Options for number of entries to show
-        "pageLength": 10 // Default number of entries to show
+    $(document).ready(function() {
+        $('#transactionsTable').DataTable({
+            "paging": true,
+            "searching": true,
+            "responsive": true,
+            "lengthMenu": [5, 10, 25, 50, 100], // Options for number of entries to show
+            "pageLength": 10 // Default number of entries to show
+        });
     });
-});
 </script>
 
 <div class="content-wrapper">
     <section class="content-header">
-        <h1>Transaction History for <b><?= $customer->name; ?></b></h1>
+        <h1>Medicines History</h1>
     </section>
     <section class="content">
         <div class="row">
             <div class="col-lg-12">
-                <div class="box">
-                    <!-- Date Filter -->
-                    <form method="get" class="form-inline mb-3">
-                        <div class="form-group">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Medicines History of <b><?= $customer->name; ?></b></h3>
+                    </div>
+                    <div class="box-body">
+                        <!-- Date Filter -->
+                        <form method="get" class="form-inline mb-3">
+                            <div class="form-group">
                             <label for="start_date">Start Date:</label>
                             <input type="date" id="start_date" name="start_date" class="form-control" value="<?= isset($_GET['start_date']) ? $_GET['start_date'] : ''; ?>" required>
                         </div>
@@ -35,38 +39,42 @@ $(document).ready(function() {
                         </div>
                         <button type="submit" class="btn btn-primary">Filter</button>
                         <button type="button" class="btn btn-secondary" onclick="resetFilters()">Reset</button>
-                    </form>
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="transactionsTable">
-                            <thead>
+                        </form>
+                    </div>
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="transactionsTable">
+                                <thead>
                                 <tr>
-                                    <th>Transaction Date</th>
-                                    <th>Last Updated</th>
+
                                     <th>Medicine</th>
                                     <th>Quantity Given</th>
-                                    <th>Quantity Used</th>
+                                    <th>Created Date</th>
+                                    <th>Last Updated</th>
+                                    <!-- <th>Quantity Used</th>
                                     <th>Quantity Returned</th>
-                                    <th>Balance Quantity</th>
+                                    <th>Balance Quantity</th> -->
                                 </tr>
                             </thead>
                             <tbody>
-                            <?php if (!empty($transactions)): ?>
-                                <?php foreach ($transactions as $transaction): ?>
-                                    <tr>
-                                        <td><?= date('Y-m-d H:i:s', strtotime($transaction->transaction_date)); ?></td>
-                                        <td><?= date('Y-m-d H:i:s', strtotime($transaction->updated_at)); ?></td>
-                                        <td><?= $transaction->medicine_name; ?></td>
-                                        <td><?= $transaction->quantity_given; ?></td>
-                                        <td><?= $transaction->quantity_used; ?></td>
+                                <?php if (!empty($transactions)): ?>
+                                    <?php foreach ($transactions as $transaction): ?>
+                                        <tr>
+                                            <td><?= $transaction->medicine_name; ?></td>
+                                            <td><?= $transaction->quantity_given; ?></td>
+                                            <td><?= date('Y-m-d H:i:s', strtotime($transaction->transaction_date)); ?></td>
+                                            <td><?= date('Y-m-d H:i:s', strtotime($transaction->updated_at)); ?></td>
+
+                                            <!-- <td><?= $transaction->quantity_used; ?></td>
                                         <td><?= $transaction->quantity_returned; ?></td>
-                                        <td><?= $transaction->balance_quantity; ?></td>
+                                        <td><?= $transaction->balance_quantity; ?></td> -->
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="7">No transactions found for this period.</td>
                                     </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="7">No transactions found for this period.</td>
-                                </tr>
-                            <?php endif; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -77,10 +85,10 @@ $(document).ready(function() {
 </div>
 
 <script>
-function resetFilters() {
-    document.getElementById('start_date').value = '';
-    document.getElementById('end_date').value = '';
-    // Optionally, you can submit the form to refresh the page without filters
-    // document.forms[0].submit();
-}
+    function resetFilters() {
+        document.getElementById('start_date').value = '';
+        document.getElementById('end_date').value = '';
+        // Optionally, you can submit the form to refresh the page without filters
+        // document.forms[0].submit();
+    }
 </script>

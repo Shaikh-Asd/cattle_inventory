@@ -5,10 +5,11 @@ class MedicineController extends Admin_Controller {
         parent::__construct();
         $this->not_logged_in();
 
-		$this->data['page_title'] = 'Manage Transaction';
+		$this->data['page_title'] = 'Manage Medicine';
 
         $this->load->model('Medicine_model');
-        $this->load->model('model_customers');
+        $this->load->model('Model_customers');
+        
     }
     
     public function add_transaction_form() {
@@ -193,9 +194,10 @@ class MedicineController extends Admin_Controller {
         }
 
         public function customer_medicine_view() {
-            $this->data['customers'] = $this->Medicine_model->get_customers();
-            // print_r($data);die();
-            $this->render_template('customer_medicine_view', $this->data);
+        // $type = 1;
+        // $this->data['customers'] = $this->model_customers->getCustomerData($type);
+        $this->data['customers'] = $this->Medicine_model->get_customers();
+        $this->render_template('customer_medicine_view', $this->data);
         }
     
         public function get_customer_medicines($customer_id) {
@@ -227,12 +229,13 @@ class MedicineController extends Admin_Controller {
     // }
     public function update_stock()
     {
-        $type = $this->input->post('type');
+        // $type = $this->input->post('type');
         $detail_id = $this->input->post('detail_id');
+        $medicine_id = $this->input->post('medicine_id');
         $quantity_given = $this->input->post('quantity_given');
       
         // die();
-        $this->Medicine_model->update_breakdown_stock($detail_id, $quantity_given);
+        $this->Medicine_model->update_breakdown_stock($detail_id, $medicine_id, $quantity_given);
        
 
         echo json_encode(["status" => "success", "message" => "Stock updated successfully"]);

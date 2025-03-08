@@ -44,7 +44,8 @@ class Controller_Products extends Admin_Controller
 		$result = array('data' => array());
 
 		$data = $this->model_products->getProductData();
-
+        // print_r($data);
+        // die();
 		foreach ($data as $key => $value) {
          
             // $store_data = $this->model_stores->getStoresData($value['store_id']);
@@ -61,7 +62,6 @@ class Controller_Products extends Admin_Controller
 
 			$img = '<img src="'.base_url($value['image']).'" alt="'.$value['name'].'" class="img-circle" width="50" height="50" />';
 
-            $availability = ($value['availability'] == 1) ? '<span class="label label-success">Active</span>' : '<span class="label label-warning">Inactive</span>';
 
             $qty_status = '';
             if($value['qty'] <= 10) {
@@ -95,7 +95,6 @@ class Controller_Products extends Admin_Controller
                 $value['qty'] . ' ' . $qty_status,
 				// $value['price'],
                 // $store_data['name'],
-				$availability,
                 $value['created_at'],
 				$buttons
 			);
@@ -115,10 +114,10 @@ class Controller_Products extends Admin_Controller
             redirect('dashboard', 'refresh');
         }
 
-        $this->form_validation->set_rules('customers', 'Customer name', 'trim|required');
+        $this->form_validation->set_rules('customers', 'Vendor name', 'trim|required');
         $this->form_validation->set_rules('product_name[]', 'Medicine name', 'trim|required');
         // $this->form_validation->set_rules('price[]', 'Price', 'trim|required');
-        $this->form_validation->set_rules('qty[]', 'Qty', 'trim|required');
+        $this->form_validation->set_rules('qty[]', 'Quantity', 'trim|required');
         // $this->form_validation->set_rules('availability', 'Availability', 'trim|required');
 
         if ($this->form_validation->run() == TRUE) {
@@ -129,7 +128,6 @@ class Controller_Products extends Admin_Controller
             $product_names = $this->input->post('product_name');
             // $prices = $this->input->post('price');
             $quantities = $this->input->post('qty');
-            $availability = $this->input->post('availability');
 
             // Concatenate values into comma-separated strings
             $product_names_str = implode(',', $product_names);
@@ -142,7 +140,6 @@ class Controller_Products extends Admin_Controller
                 'medicine_id' => $product_names_str,
                 // 'price' => $prices_str,
                 'qty' => $quantities_str,
-                'availability' => $availability
 
             );
       

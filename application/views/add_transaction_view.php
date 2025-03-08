@@ -66,22 +66,26 @@
     }
 
     .btn-small {
-        padding: 5px 10px;
+        padding: 10px 10px;
         font-size: 12px;
         max-width: 50px;
     }
 
     .table {
         width: 100%;
-        table-layout: fixed; /* Ensures consistent column widths */
+        table-layout: fixed;
+        /* Ensures consistent column widths */
     }
 
-    .table th, .table td {
-        text-align: center; /* Center align the text in table cells */
+    .table th,
+    .table td {
+        text-align: center;
+        /* Center align the text in table cells */
     }
 
     .table td {
-        padding: 10px; /* Add padding for better spacing */
+        padding: 10px;
+        /* Add padding for better spacing */
     }
 </style>
 
@@ -89,13 +93,14 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <div class="content-wrapper">
     <section class="content-header">
-        <h1>Transaction</h1>
+        <h1>Outward Medicines</h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active">Add Transaction</li>
+            <li class="active">Outward Medicines</li>
         </ol>
     </section>
     <section class="content">
@@ -103,54 +108,52 @@
             <div class="col-lg-12">
                 <form action="<?= base_url('MedicineController/add_transaction') ?>" method="post">
 
-                <div class="col-lg-3">
-                    <div class="form-group">
+                    <div class="col-lg-3">
+                        <div class="form-group">
 
-                        <label>Customer:</label>
-                        <select name="customer_id" class="select2" required>
-                            <?php foreach ($customers as $customer): ?>
-                                <option value="<?= $customer->id; ?>"><?= $customer->name; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-lg-9">
-                    
-                    <button type="button" class="btn btn-info btn-small" onclick="addMedicineField()">+</button>
-                </div>
-
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Medicine</th>
-                                    <th>Qty</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="medicine_fields">
-                                <tr class="product-entry">
-                                    <td>
-                                        <select name="medicine_id[]" class="select2" required>
-                                            <option value="">Select a medicine</option>
-                                            <?php foreach ($medicines as $medicine): ?>
-                                                <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="number" name="quantity_given[]" placeholder="Quantity Given" required>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger" onclick="removeField(this)">−</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <div class="button-container">
-                            <button type="submit" class="btn btn-primary ">Add Transaction</button>
-                            <a href="<?php echo base_url('Controller_Products/') ?>" class="btn btn-warning">Back</a>
+                            <label>Manager:</label>
+                            <select name="customer_id" class="select2" required>
+                                <?php foreach ($customers as $customer): ?>
+                                    <option value="<?= $customer->id; ?>"><?= $customer->name; ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
+                    </div>
+
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Medicine</th>
+                                <th>Quantity</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="medicine_fields">
+                            <tr class="product-entry">
+                                <td>
+                                    <select name="medicine_id[]" class="form-control select2" required>
+                                        <option value="">Select a medicine</option>
+                                        <?php foreach ($medicines as $medicine): ?>
+                                            <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" name="quantity_given[]" class="form-control" placeholder="Quantity Given" required>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-info btn-small" onclick="addMedicineField()">+</button>
+                                    <button type="button" class="btn btn-danger btn-small" onclick="removeLastField()">−</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="button-container">
+                        <button type="submit" class="btn btn-primary ">Save Outward</button>
+                        <a href="<?php echo base_url('Controller_Products/') ?>" class="btn btn-warning">Back</a>
+                    </div>
                 </form>
             </div>
         </div>
@@ -164,7 +167,7 @@
         newRow.className = 'product-entry';
         newRow.innerHTML = `
             <td>
-                <select name="medicine_id[]" class="select2" required>
+                <select name="medicine_id[]" class="form-control select2" required>
                     <option value="">Select a medicine</option>
                     <?php foreach ($medicines as $medicine): ?>
                         <option value="<?= $medicine->id; ?>"><?= $medicine->name; ?> (Stock: <?= $medicine->stock; ?>)</option>
@@ -172,18 +175,25 @@
                 </select>
             </td>
             <td>
-                <input type="number" name="quantity_given[]" placeholder="Quantity Given" required>
+                <input type="number" name="quantity_given[]" class="form-control" placeholder="Quantity Given" required>
             </td>
             <td>
-                <button type="button" class="btn btn-danger" onclick="removeField(this)">−</button>
+                <button type="button" class="btn btn-info btn-small" onclick="addMedicineField()">+</button>
+                <button type="button" class="btn btn-danger btn-small" onclick="removeLastField()">−</button>
             </td>
         `;
         container.appendChild(newRow);
         $('.select2').select2(); // Re-initialize Select2 for new fields
     }
 
-    function removeField(button) {
-        button.closest('tr').remove();
+    function removeLastField() {
+        const container = document.getElementById('medicine_fields');
+        const rows = container.getElementsByClassName('product-entry');
+        if (rows.length > 1) {
+            rows[rows.length - 1].remove(); // Remove the last row
+        } else {
+            swal("Warning!", "You cannot remove the last row.", "warning");
+        }
     }
 
     $(document).ready(function() {

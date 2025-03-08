@@ -2,12 +2,12 @@
 <div class="content-wrapper">
     <section class="content-header">
         <h1>
-        Transaction
+        Outward Medicines
 
         </h1>
         <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">View Transaction</li>
+        <li class="active">Outward Medicines</li>
         </ol>
     </section>
     <section class="content">
@@ -50,13 +50,13 @@
                             <thead>
                                 <tr>
                                     <th>Sr no</th>
-                                    <th>Customer</th>
+                                    <th>Manager</th>
                                     <th>Medicine</th>
                                     <th>Quantity Given</th>
-                                    <th>Quantity Used</th>
+                                    <!-- <th>Quantity Used</th>
                                     <th>Quantity Returned</th>
-                                    <th>Balance Quantity</th>
-                                    <th>Transaction Created</th>
+                                    <th>Balance Quantity</th> -->
+                                    <th>Created</th>
                                     <th>Last Updated</th>
                                     <th>Actions</th>
                                 </tr>
@@ -68,20 +68,20 @@
                                         <td><a href="<?= base_url('MedicineController/customer_transactions/' . $transaction->customer_id) ?>"><?= $transaction->customer_name; ?></a></td>
                                         <td><?= $transaction->medicine_names; ?></td>
                                         <td><?= $transaction->quantity_given; ?></td>
-                                        <td><?= $transaction->quantity_used; ?></td>
+                                        <!-- <td><?= $transaction->quantity_used; ?></td>
                                         <td><?= $transaction->quantity_returned; ?></td>
-                                        <td><?= $transaction->balance_quantity; ?></td>
+                                        <td><?= $transaction->balance_quantity; ?></td> -->
                                         <td><?= date('jS M Y h:i A', strtotime($transaction->transaction_date)); ?></td>
                                         <td><?= date('jS M Y h:i A', strtotime($transaction->updated_at)); ?></td>
                                         <td>
                                             <p style="display:flex;">
-                                                <span style="margin-right: 5px">
+                                                <!-- <span style="margin-right: 5px">
                                                     <a href="<?= base_url('MedicineController/edit_transaction/' . $transaction->transaction_id) ?>" >
                                                         <button type="submit" class="btn btn-success btn-sm">
                                                             <i class="fas fa-edit"></i> Edit
                                                         </button>
                                                     </a>
-                                                </span>
+                                                </span> -->
                                                 <span>
                                                     <button class="btn btn-primary btn-sm" onclick="showTransactionDetails(<?= $transaction->transaction_id; ?>)">View Details</button>
                                                 </span>
@@ -99,8 +99,8 @@
     </section>
 </div>
 <!-- Transaction Details Modal -->
-<div id="transactionModal" style="display: none; position: fixed; top: 20%; left: 50%; transform: translate(-50%, 0); background: white; padding: 20px; border: 1px solid black;">
-    <h3>Transaction Details</h3>
+<div id="transactionModal" style="display: none; position: fixed; top: 20%; left: 50%; width: 40%; transform: translate(-50%, 0); background: white; padding: 20px; border: 1px solid black;">
+    <h3>Outward Medicines Details</h3>
     <p id="transactionInfo"></p>
     <button onclick="closeModal()">Close</button>
 </div>
@@ -127,17 +127,18 @@
     .then(response => response.json())
     .then(data => {
         let details = `
-            <strong>Customer:</strong> ${data.customer_name}<br>
-            <strong>Transaction Date:</strong> ${data.transaction_date}<br>
-            <strong>Medicines:</strong>
+            <strong>Manager:</strong> ${data.customer_name}<br>
+            <strong>Outward Date:</strong> ${data.transaction_date}<br>
+           <!-- <strong>Medicines:</strong> -->
+           <br>
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>Medicine Name</th>
                         <th>Quantity Given</th>
-                        <th>Quantity Used</th>
+                        <!-- <th>Quantity Used</th>
                         <th>Quantity Returned</th>
-                        <th>Balance</th>
+                        <th>Balance</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -150,9 +151,9 @@
                 <tr>
                     <td>${med.name}</td>
                     <td>${med.quantity_given}</td>
-                    <td>${med.quantity_used}</td>
+                    <!-- <td>${med.quantity_used}</td>
                     <td>${med.quantity_returned}</td>
-                    <td>${balance}</td>
+                    <td>${balance}</td> -->
                 </tr>
             `;
         });
