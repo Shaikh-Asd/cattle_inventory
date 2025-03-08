@@ -61,7 +61,7 @@ class Controller_Products extends Admin_Controller
 
 			$img = '<img src="'.base_url($value['image']).'" alt="'.$value['name'].'" class="img-circle" width="50" height="50" />';
 
-            $availability = ($value['availability'] == 1) ? '<span class="label label-success">Active</span>' : '<span class="label label-warning">Inactive</span>';
+            // $availability = ($value['availability'] == 1) ? '<span class="label label-success">Active</span>' : '<span class="label label-warning">Inactive</span>';
 
             $qty_status = '';
             if($value['qty'] <= 10) {
@@ -95,7 +95,7 @@ class Controller_Products extends Admin_Controller
                 $value['qty'] . ' ' . $qty_status,
 				// $value['price'],
                 // $store_data['name'],
-				$availability,
+				// $availability,
                 $value['created_at'],
 				$buttons
 			);

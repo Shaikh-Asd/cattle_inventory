@@ -59,7 +59,7 @@
                   <th>Vendor Name</th>
                   <th>Medicine Name</th>
                   <th>Quantity</th>
-                  <th>Status</th>
+                  <!-- <th>Status</th> -->
                   <!-- <th>Price</th> -->
                   <th>Date Time</th>
 
