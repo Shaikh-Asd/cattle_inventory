@@ -60,6 +60,7 @@
                         <tr>
                             <th>Medicine</th>
                             <th>Given</th>
+                            <th>Transaction Date</th>
 
                         </tr>
                     </thead>
@@ -69,7 +70,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="updateStock()">Update Stock</button>
+                <!-- <button type="button" class="btn btn-primary" onclick="updateStock()">Update Stock</button> -->
                 <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
             </div>
         </div>
@@ -104,7 +105,23 @@
         });
     }
 
+    function formatDateTime(dateString) {
+        let date = new Date(dateString);
 
+        // Extracting date parts
+        let day = String(date.getDate()).padStart(2, '0'); // Two-digit day
+        let month = date.toLocaleString('en-US', { month: 'long' }); // Full month name
+        let year = date.getFullYear();
+
+        // Extracting time parts
+        let hours = date.getHours();
+        let minutes = String(date.getMinutes()).padStart(2, '0'); // Two-digit minutes
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        
+        hours = hours % 12 || 12; // Convert 24-hour time to 12-hour format
+
+        return `${day} ${month} ${year} ${hours}:${minutes} ${ampm}`;
+    }
 
     function editMedicine(medicineId) {
         // Logic to edit medicine
@@ -130,10 +147,10 @@
                             <button class="btn btn-danger btn-xs" onclick="adjustStock(${med.id}, 'subtract')">-</button>
                             <span id="stock_${med.id}" style="font-size:20px; margin: 10px;">${med.total_given}</span>
                             <button class="btn btn-success btn-xs" onclick="adjustStock(${med.id}, 'add')">+</button>
-                            <button class="btn btn-primary" onclick="updateStock(${med.id}, ${med.total_given > 0 ? 1 : 2})">Update</button>
+                            <button class="btn btn-primary" onclick="updateStock(${med.transaction_id}, ${med.medicine_id}, ${med.total_given > 0 ? 1 : 2})">Update</button>
+                            <td><button class="btn btn-primary" onclick="viewBreakdown(${customerId}, ${med.id})">View Details</button></td>
                         </td>
                         </tr>`;
-                        // <td><button class="btn btn-primary" onclick="viewBreakdown(${customerId}, ${med.id})">View Details</button></td>
                     });
                 }else{
                     rows = `<tr><td colspan="4">No medicines Transaction found for this customer.</td></tr>`;
@@ -156,19 +173,14 @@
         }
     }
 
-    function updateStock(medicineId, type) {
+    function updateStock(transaction_id, medicineId, type) {
         let stockElement = document.getElementById("stock_" + medicineId);
         let updatedStock = parseInt(stockElement.innerText);
 
-        // Prepare the data in the expected format
-        let updatedData = [{
-            detail_id: medicineId,
-            quantity_given: updatedStock,
-            type: type // Include the type in the data
-        }];
 
         $.post("<?= base_url('MedicineController/update_stock') ?>", {
-            detail_id: medicineId,
+            transaction_id: transaction_id,
+            medicine_id: medicineId,
             quantity_given: updatedStock,
             type: type
         }, function(response) {
@@ -186,6 +198,7 @@
                 rows += `<tr>
                 <td>${med.name}</td>
                 <td>${med.quantity_given}</td>
+                <td>${formatDateTime(med.transaction_date)}</td>
                 </tr>`;
             });
             $("#medicineBreakdown").html(rows);

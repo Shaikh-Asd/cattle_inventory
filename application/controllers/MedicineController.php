@@ -228,11 +228,12 @@ class MedicineController extends Admin_Controller {
     public function update_stock()
     {
         $type = $this->input->post('type');
-        $detail_id = $this->input->post('detail_id');
+        $transaction_id = $this->input->post('transaction_id');
+        $medicine_id = $this->input->post('medicine_id');
         $quantity_given = $this->input->post('quantity_given');
       
         // die();
-        $this->Medicine_model->update_breakdown_stock($detail_id, $quantity_given);
+        $this->Medicine_model->update_breakdown_stock($transaction_id, $medicine_id, $quantity_given);
        
 
         echo json_encode(["status" => "success", "message" => "Stock updated successfully"]);

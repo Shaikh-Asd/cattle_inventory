@@ -59,6 +59,7 @@ class Medicine_model extends CI_Model {
 
     // Insert medicine details for a transaction
     public function add_transaction_details($data) {
+        $this->db->insert_batch('medicine_transaction_history', $data);
         return $this->db->insert_batch('medicine_transaction_details', $data);
     }
 
@@ -191,7 +192,7 @@ class Medicine_model extends CI_Model {
     }
 
     public function get_customer_medicine_summary_details($customer_id) {
-        $this->db->select('medicines.id, medicines.name, SUM(medicine_transaction_details.quantity_given) as total_given');
+        $this->db->select('medicines.id, medicines.name, SUM(medicine_transaction_details.quantity_given) as total_given, medicine_transaction_details.transaction_id, medicine_transaction_details.medicine_id');
         $this->db->from('medicine_transaction_details');
         $this->db->join('medicines', 'medicines.id = medicine_transaction_details.medicine_id');
         $this->db->join('medicine_transactions', 'medicine_transactions.id = medicine_transaction_details.transaction_id');
@@ -201,12 +202,12 @@ class Medicine_model extends CI_Model {
     }
 
     public function get_medicine_breakdown($customer_id, $medicine_id) {
-        $this->db->select('medicine_transaction_details.id as transaction_detail_id, medicines.name, medicine_transaction_details.quantity_given, medicine_transaction_details.quantity_used, medicine_transaction_details.quantity_returned, (medicine_transaction_details.quantity_given - (medicine_transaction_details.quantity_used + medicine_transaction_details.quantity_returned)) as balance');
-        $this->db->from('medicine_transaction_details');
-        $this->db->join('medicines', 'medicines.id = medicine_transaction_details.medicine_id');
-        $this->db->join('medicine_transactions', 'medicine_transactions.id = medicine_transaction_details.transaction_id');
+        $this->db->select('medicine_transaction_history.id as transaction_detail_id, medicines.name, medicine_transaction_history.quantity_given, medicine_transaction_history.quantity_used, medicine_transaction_history.quantity_returned, (medicine_transaction_history.quantity_given - (medicine_transaction_history.quantity_used + medicine_transaction_history.quantity_returned)) as balance, medicine_transaction_history.created_at as transaction_date');
+        $this->db->from('medicine_transaction_history');
+        $this->db->join('medicines', 'medicines.id = medicine_transaction_history.medicine_id');
+        $this->db->join('medicine_transactions', 'medicine_transactions.id = medicine_transaction_history.transaction_id');
         $this->db->where('medicine_transactions.customer_id', $customer_id);
-        $this->db->where('medicine_transaction_details.medicine_id', $medicine_id);
+        $this->db->where('medicine_transaction_history.medicine_id', $medicine_id);
         return $this->db->get()->result();
     }
 
@@ -244,8 +245,9 @@ class Medicine_model extends CI_Model {
     //     }
     // }
 
-    public function update_breakdown_stock($detail_id, $quantity_given) {
-        $this->db->where('id', $detail_id);
+    public function update_breakdown_stock($transaction_id, $medicine_id, $quantity_given) {
+        $this->db->where('transaction_id', $transaction_id);
+        $this->db->where('medicine_id', $medicine_id);
         $transaction = $this->db->get('medicine_transaction_details')->row();
 
         if ($transaction) {
@@ -254,25 +256,30 @@ class Medicine_model extends CI_Model {
 
             // Update the given quantity in medicine transaction
             $this->db->set('quantity_given', $quantity_given);
-            $this->db->where('id', $detail_id);
+            $this->db->where('transaction_id', $transaction_id);
+            $this->db->where('medicine_id', $medicine_id);
             $this->db->update('medicine_transaction_details');
 
             // Calculate the difference
-            $difference = $previous_quantity_given - $quantity_given; // Find the difference in quantity
-           
+            $difference = $quantity_given - $previous_quantity_given; // Find the difference in quantity
+
+        //    print_r($difference);die();
             // get stock then minus the difference
             $stock = $this->db->get_where('medicines', ['id' => $transaction->medicine_id])->row()->stock;
           
-            $new_stock = $stock + $difference;
+            $new_stock = $stock - $difference;
             // print_r($new_stock);
             // die();
-            // Update main stock in 'medicines' table
-            if ($difference < 0) { // Only update stock if there is a difference
+            // // Update main stock in 'medicines' table
+            if ($difference != 0 && $difference > 0 ) { // Only update stock if there is a difference
                 $this->db->set('stock', $new_stock, FALSE); // Adjust stock based on the difference
                 $this->db->where('id', $transaction->medicine_id);
                 $this->db->update('medicines');
             }
+            $this->db->insert('medicine_transaction_history', ['transaction_id' => $transaction->transaction_id, "medicine_id" => $transaction->medicine_id, "quantity_given" => $difference ]);
+            return $this->db->insert_id();
         }
+
     }
     
     
