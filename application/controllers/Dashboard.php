@@ -30,7 +30,9 @@ class Dashboard extends Admin_Controller
 		$this->data['total_paid_orders'] = $this->model_orders->countTotalPaidOrders();
 		$this->data['total_users'] = $this->model_users->countTotalUsers();
 		$this->data['total_stores'] = $this->model_stores->countTotalStores();
-		$this->data['total_orders'] = $this->model_orders->countTotalOrders();
+		// $this->data['total_orders'] = $this->model_orders->countTotalOrders();
+		$this->data['total_orders'] = $this->Medicine_model->get_total_medicine_given();
+
 		$this->data['total_brands'] = $this->model_products->countTotalbrands();
 		$this->data['total_category'] = $this->model_products->countTotalcategory();
 		$this->data['total_attribures'] = $this->model_products->countTotalattribures();

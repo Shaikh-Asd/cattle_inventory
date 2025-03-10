@@ -35,7 +35,12 @@ class Medicine_model extends CI_Model {
     public function get_transaction_by_id($transaction_id) {
         return $this->db->get_where('medicine_transactions', ['id' => $transaction_id])->row();
     }
-
+    public function get_total_medicine_given()
+    {
+        $sql = "SELECT * FROM medicine_transaction_details";
+        $query = $this->db->query($sql);
+        return $query->num_rows();
+    }
     public function get_single_transaction_by_id($transaction_id) {
         $this->db->select('medicine_transactions.transaction_date, customers.name as customer_name');
         $this->db->from('medicine_transactions');
@@ -59,6 +64,7 @@ class Medicine_model extends CI_Model {
 
     // Insert medicine details for a transaction
     public function add_transaction_details($data) {
+        $this->db->insert_batch('medicine_transaction_history', $data);
         return $this->db->insert_batch('medicine_transaction_details', $data);
     }
 
@@ -162,6 +168,126 @@ class Medicine_model extends CI_Model {
         $this->db->where('id', $id);
         return $this->db->update('medicine_transaction_details', $data);
     }
+
+    public function get_customer_medicine_summary($customer_id) {
+        $this->db->select('medicine_id, SUM(quantity_given) as total_given');
+        $this->db->from('medicine_transaction_details');
+        $this->db->where('customer_id', $customer_id);
+        $this->db->group_by('medicine_id');
+        return $this->db->get()->result();
+    }
+
+    public function get_medicine_breakup($customer_id) {
+        $this->db->select('id, medicine_id, quantity_given');
+        $this->db->from('medicine_transaction_details');
+        $this->db->where('customer_id', $customer_id);
+        return $this->db->get()->result();
+    }
+
+    public function update_medicine_stock($customer_id, $medicine_updates) {
+        foreach ($medicine_updates as $update) {
+            $this->db->where('id', $update['transaction_id']);
+            $this->db->update('medicine_transaction_details', ['quantity_given' => $update['new_quantity']]);
+            
+            // Update stock accordingly
+            $this->db->set('stock', 'stock - '.((int)$update['old_quantity'] - (int)$update['new_quantity']), FALSE);
+            $this->db->where('id', $update['medicine_id']);
+            $this->db->update('medicines');
+        }
+    }
+
+    public function get_customer_medicine_summary_details($customer_id) {
+        $this->db->select('medicines.id, medicines.name, SUM(medicine_transaction_details.quantity_given) as total_given, medicine_transaction_details.transaction_id, medicine_transaction_details.medicine_id');
+        $this->db->from('medicine_transaction_details');
+        $this->db->join('medicines', 'medicines.id = medicine_transaction_details.medicine_id');
+        $this->db->join('medicine_transactions', 'medicine_transactions.id = medicine_transaction_details.transaction_id');
+        $this->db->where('medicine_transactions.customer_id', $customer_id);
+        $this->db->group_by('medicines.id, medicines.name');
+        return $this->db->get()->result();
+    }
+
+    public function get_medicine_breakdown($customer_id, $medicine_id) {
+        $this->db->select('medicine_transaction_history.id as transaction_detail_id, medicines.name, medicine_transaction_history.quantity_given, medicine_transaction_history.quantity_used, medicine_transaction_history.quantity_returned, (medicine_transaction_history.quantity_given - (medicine_transaction_history.quantity_used + medicine_transaction_history.quantity_returned)) as balance, medicine_transaction_history.created_at as transaction_date');
+        $this->db->from('medicine_transaction_history');
+        $this->db->join('medicines', 'medicines.id = medicine_transaction_history.medicine_id');
+        $this->db->join('medicine_transactions', 'medicine_transactions.id = medicine_transaction_history.transaction_id');
+        $this->db->where('medicine_transactions.customer_id', $customer_id);
+        $this->db->where('medicine_transaction_history.medicine_id', $medicine_id);
+        return $this->db->get()->result();
+    }
+
+    public function adjust_quantity($detail_id, $operation) {
+        if ($operation === 'add') {
+            $this->db->set('quantity_used', 'quantity_used + 1', FALSE);
+        } else {
+            $this->db->set('quantity_used', 'quantity_used - 1', FALSE);
+        }
+        $this->db->where('id', $detail_id);
+        $this->db->update('medicine_transaction_details');
+    }
+
+    // public function update_breakdown_stock() {
+    //     // Get all transactions where quantity_used was modified
+    //     $this->db->select('medicine_id, transaction_id, quantity_given, quantity_used, quantity_returned');
+    //     $this->db->from('medicine_transaction_details');
+    //     $modifiedTransactions = $this->db->get()->result();
+    
+    //     foreach ($modifiedTransactions as $transaction) {
+    //         // Calculate the balance quantity
+    //         $balance_quantity = $transaction->quantity_given - ($transaction->quantity_used + $transaction->quantity_returned);
+    
+    //         // Update the customer's medicine stock
+    //         $this->db->set('quantity_used', $transaction->quantity_used);
+    //         $this->db->set('quantity_returned', $transaction->quantity_returned);
+    //         $this->db->where('medicine_id', $transaction->medicine_id);
+    //         $this->db->where('transaction_id', $transaction->transaction_id);
+    //         $this->db->update('medicine_transaction_details');
+    
+    //         // Update the main stock (reduce by used amount and add returned amount)
+    //         $this->db->set('stock', 'stock - ' . $transaction->quantity_used . ' + ' . $transaction->quantity_returned, FALSE);
+    //         $this->db->where('id', $transaction->medicine_id);
+    //         $this->db->update('medicines');
+    //     }
+    // }
+
+    public function update_breakdown_stock($transaction_id, $medicine_id, $quantity_given) {
+        $this->db->where('transaction_id', $transaction_id);
+        $this->db->where('medicine_id', $medicine_id);
+        $transaction = $this->db->get('medicine_transaction_details')->row();
+
+        if ($transaction) {
+            // Calculate the difference in quantity
+            $previous_quantity_given = $transaction->quantity_given; // Get the previous quantity given
+
+            // Update the given quantity in medicine transaction
+            $this->db->set('quantity_given', $quantity_given);
+            $this->db->where('transaction_id', $transaction_id);
+            $this->db->where('medicine_id', $medicine_id);
+            $this->db->update('medicine_transaction_details');
+
+            // Calculate the difference
+            $difference = $quantity_given - $previous_quantity_given; // Find the difference in quantity
+
+        //    print_r($difference);die();
+            // get stock then minus the difference
+            $stock = $this->db->get_where('medicines', ['id' => $transaction->medicine_id])->row()->stock;
+          
+            $new_stock = $stock - $difference;
+            // print_r($new_stock);
+            // die();
+            // // Update main stock in 'medicines' table
+            if ($difference != 0 && $difference > 0 ) { // Only update stock if there is a difference
+                $this->db->set('stock', $new_stock, FALSE); // Adjust stock based on the difference
+                $this->db->where('id', $transaction->medicine_id);
+                $this->db->update('medicines');
+            }
+            $this->db->insert('medicine_transaction_history', ['transaction_id' => $transaction->transaction_id, "medicine_id" => $transaction->medicine_id, "quantity_given" => $difference ]);
+            return $this->db->insert_id();
+        }
+
+    }
+    
+    
 }
 
 ?>

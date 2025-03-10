@@ -5,7 +5,7 @@ class MedicineController extends Admin_Controller {
         parent::__construct();
         $this->not_logged_in();
 
-		$this->data['page_title'] = 'Manage Transaction';
+		$this->data['page_title'] = 'Manage Outward Medicine';
 
         $this->load->model('Medicine_model');
         $this->load->model('model_customers');
@@ -47,7 +47,7 @@ class MedicineController extends Admin_Controller {
         }
 
         $this->Medicine_model->add_transaction_details($data);
-        redirect('MedicineController/view_transactions');
+        redirect('MedicineController/customer_medicine_view');
     }
 
     public function view_transactions() {
@@ -164,6 +164,81 @@ class MedicineController extends Admin_Controller {
         
             echo json_encode($response);
         }
+        
+        public function manage_customer_stock() {
+            $this->load->model('Medicine_model');
+            $data['customers'] = $this->Medicine_model->get_customers();
+            $this->load->view('manage_customer_stock', $data);
+        }
+    
+        public function get_customer_medicine_summary($customer_id) {
+            $this->load->model('Medicine_model');
+            $data['summary'] = $this->Medicine_model->get_customer_medicine_summary_details($customer_id);
+            echo json_encode($data);
+        }
+
+        public function get_medicine_breakup($customer_id) {
+            $this->load->model('Medicine_model');
+            $data['breakup'] = $this->Medicine_model->get_medicine_breakup($customer_id);
+            echo json_encode($data);
+        }
+    
+        public function update_medicine_stock() {
+            $customer_id = $this->input->post('customer_id');
+            $medicine_updates = $this->input->post('medicine_updates');
+            
+            $this->load->model('Medicine_model');
+            $this->Medicine_model->update_medicine_stock($customer_id, $medicine_updates);
+            echo json_encode(['status' => 'success']);
+        }
+
+        public function customer_medicine_view() {
+            $this->data['customers'] = $this->Medicine_model->get_customers();
+            // print_r($data);die();
+            $this->render_template('customer_medicine_view', $this->data);
+        }
+    
+        public function get_customer_medicines($customer_id) {
+            $medicines = $this->Medicine_model->get_customer_medicine_summary_details($customer_id);
+            echo json_encode($medicines);
+        }
+    
+        public function get_medicine_breakdown($customer_id, $medicine_id) {
+            $breakdown = $this->Medicine_model->get_medicine_breakdown($customer_id, $medicine_id);
+            echo json_encode($breakdown);
+        }
+    
+        public function adjust_quantity() {
+            $detail_id = $this->input->post('detail_id');
+            $operation = $this->input->post('operation');
+            $this->Medicine_model->adjust_quantity($detail_id, $operation);
+        }
+
+    // public function update_stock() {
+    //     $updated_data = $this->input->post('updated_data');
+
+    //     if (!empty($updated_data)) {
+    //         foreach ($updated_data as $data) {
+    //             $this->Medicine_model->update_breakdown_stock($data['detail_id'], $data['quantity_given']);
+    //         }
+    //     }
+
+    //     echo json_encode(["status" => "success", "message" => "Stock updated successfully"]);
+    // }
+    public function update_stock()
+    {
+        $type = $this->input->post('type');
+        $transaction_id = $this->input->post('transaction_id');
+        $medicine_id = $this->input->post('medicine_id');
+        $quantity_given = $this->input->post('quantity_given');
+      
+        // die();
+        $this->Medicine_model->update_breakdown_stock($transaction_id, $medicine_id, $quantity_given);
+       
+
+        echo json_encode(["status" => "success", "message" => "Stock updated successfully"]);
+    }
+        
         
     }
     

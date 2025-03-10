@@ -10,8 +10,8 @@ class Model_customers extends CI_Model
     // get the active atttributes data 
     public function getActiveCustomerData()
     {
-        $sql = "SELECT * FROM customers WHERE active = ?";
-        $query = $this->db->query($sql, array(1));
+        $sql = "SELECT * FROM customers WHERE active = ? AND user_type = ?";
+        $query = $this->db->query($sql, array(1, '1'));
         return $query->result_array();
     }
 
