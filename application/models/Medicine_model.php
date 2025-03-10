@@ -35,7 +35,12 @@ class Medicine_model extends CI_Model {
     public function get_transaction_by_id($transaction_id) {
         return $this->db->get_where('medicine_transactions', ['id' => $transaction_id])->row();
     }
-
+    public function get_total_medicine_given()
+    {
+        $sql = "SELECT * FROM medicine_transaction_details";
+        $query = $this->db->query($sql);
+        return $query->num_rows();
+    }
     public function get_single_transaction_by_id($transaction_id) {
         $this->db->select('medicine_transactions.transaction_date, customers.name as customer_name');
         $this->db->from('medicine_transactions');

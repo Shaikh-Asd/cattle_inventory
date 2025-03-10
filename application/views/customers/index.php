@@ -30,24 +30,10 @@
     <!-- Small boxes (Stat box) -->
     <div class="row">
       <div class="col-md-12 col-xs-12">
-
-        <div id="messages"></div>
-
-        <?php if ($this->session->flashdata('success')): ?>
-          <div class="alert alert-success alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <?php echo $this->session->flashdata('success'); ?>
-          </div>
-        <?php elseif ($this->session->flashdata('error')): ?>
-          <div class="alert alert-error alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <?php echo $this->session->flashdata('error'); ?>
-          </div>
-        <?php endif; ?>
-
+        
         <?php //if(in_array('createGroup', $user_permission)): 
         ?>
-        <button class="btn btn-primary" data-toggle="modal" data-target="#addModal">Add User</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#addModal">Add</button>
         <br /> <br />
         <?php //endif; 
         ?>
@@ -110,7 +96,6 @@
           </div>
           <div class="form-group">
             <label for="brand_name">User Type</label>
-            <!-- <input type="text" class="form-control" id="customer_name" name="customer_name" placeholder="Enter user name" autocomplete="off" value="<?php echo set_value('customer_name'); ?>"> -->
             <select class="form-control" id="user_type" name="user_type">
               <option value="1">User</option>
               <option value="2">Vendor</option>
@@ -120,7 +105,6 @@
 
           <div class="form-group">
             <label for="active">Status</label>
-
             <select class="form-control" id="active" name="active">
               <option value="1">Active</option>
               <option value="2">Inactive</option>
@@ -156,8 +140,8 @@
           <div id="messages"></div>
 
           <div class="form-group">
-            <label for="edit_customer_name">Customer Name</label>
-            <input type="text" class="form-control" id="edit_customer_name" name="edit_customer_name" placeholder="Enter customer name" autocomplete="off">
+            <label for="edit_customer_name">User Name</label>
+            <input type="text" class="form-control" id="edit_customer_name" name="edit_customer_name" placeholder="Enter user name" autocomplete="off">
           </div>
 
           <div class="form-group">
@@ -196,7 +180,6 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Remove Customer</h4>
       </div>
-
       <form role="form" action="<?php echo base_url('Controller_Customer/remove') ?>" method="post" id="removeForm">
         <div class="modal-body">
           <p>Do you really want to remove?</p>
@@ -206,8 +189,6 @@
           <button type="submit" class="btn btn-danger">Delete</button>
         </div>
       </form>
-
-
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
@@ -287,7 +268,7 @@
               '</div>');
 
 
-            //))))))}) hide the modal
+            //hide the modal
             $("#addModal").modal('hide').on('hidden.bs.modal', function() {
               console.log("Modal closed successfully.");
             }).on('error', function() {

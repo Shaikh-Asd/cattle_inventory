@@ -22,20 +22,6 @@
      <div class="row">
        <div class="col-md-12 col-xs-12">
 
-         <div id="messages"></div>
-
-         <?php if ($this->session->flashdata('success')): ?>
-           <div class="alert alert-success alert-dismissible" role="alert">
-             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-             <?php echo $this->session->flashdata('success'); ?>
-           </div>
-         <?php elseif ($this->session->flashdata('error')): ?>
-           <div class="alert alert-error alert-dismissible" role="alert">
-             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-             <?php echo $this->session->flashdata('error'); ?>
-           </div>
-         <?php endif; ?>
-
          <?php //if(in_array('createGroup', $user_permission)): 
           ?>
          <button class="btn btn-primary" data-toggle="modal" data-target="#addModal">Add Medicine</button>
@@ -217,7 +203,7 @@
      $("#createForm").unbind('submit').on('submit', function() {
        var form = $(this);
        // Log the form data for debugging
-        console.log(form.serialize());
+       console.log(form.serialize());
        // remove the text-danger
        $(".text-danger").remove();
 
@@ -235,12 +221,12 @@
                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
                '<strong> <span class="glyphicon glyphicon-ok-sign"></span> </strong>' + response.messages +
                '</div>');
-               swal("Good job!", "You clicked the button!", "success")
+             swal("Good job!", "You clicked the button!", "success")
 
              // hide the modal
-             $("#addModal").modal('hide').on('hidden.bs.modal', function () {
+             $("#addModal").modal('hide').on('hidden.bs.modal', function() {
                console.log("Modal closed successfully.");
-             }).on('error', function () {
+             }).on('error', function() {
                console.error("Error closing modal.");
              });
 
@@ -287,7 +273,7 @@
          // Check if response contains the expected data
          console.log("response" + response);
          if (response && response.name && response.active) {
-          console.log(response.name);
+           console.log(response.name);
            $("#edit_medicine_name").val(response.name);
            $("#edit_active").val(response.active);
            $("#edit_dead_stock").val(response.dead_stock);
@@ -399,8 +385,6 @@
        });
      }
    }
-
-   
  </script>
  <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>

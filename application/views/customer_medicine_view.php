@@ -12,9 +12,9 @@
 
         <div class="row">
             <div class="col-lg-12">
-                <div class="box">
+                <div class="box box-primary">
                     <div class="form-group col-md-3">
-                        <label for="customerSelect">Vendor Name</label>
+                        <label for="customerSelect">Manager</label>
                         <select id="customerSelect" class="form-control select2" onchange="fetchCustomerMedicine()">
                             <option value="">Select a user</option>
                             <?php foreach ($customers as $customer): ?>
@@ -30,7 +30,7 @@
                                     <th>Sr no</th>
                                     <th>Medicine Name</th>
                                     <th>Given</th>
-                                    <!-- <th>Action</th> -->
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="medicineSummary">
@@ -45,11 +45,13 @@
 </div>
 
 <!-- Modal for Medicine Breakdown -->
-<div id="medicineModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="medicineModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md" role="document">
+<!-- <div id="medicineModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="medicineModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document"> -->
+<div class="modal fade" id="medicineModal" tabindex="-1" role="dialog" aria-labelledby="medicineModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="medicineModalLabel">Medicine Breakdown</h5>
+                <h4 class="modal-title" id="medicineModalLabel">Medicine Breakdown</h4>
                 <button type="button" class="close" onclick="closeModal()" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -70,12 +72,12 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <!-- <button type="button" class="btn btn-primary" onclick="updateStock()">Update Stock</button> -->
                 <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
             </div>
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     $(document).ready(function() {
@@ -110,14 +112,16 @@
 
         // Extracting date parts
         let day = String(date.getDate()).padStart(2, '0'); // Two-digit day
-        let month = date.toLocaleString('en-US', { month: 'long' }); // Full month name
+        let month = date.toLocaleString('en-US', {
+            month: 'long'
+        }); // Full month name
         let year = date.getFullYear();
 
         // Extracting time parts
         let hours = date.getHours();
         let minutes = String(date.getMinutes()).padStart(2, '0'); // Two-digit minutes
         let ampm = hours >= 12 ? 'PM' : 'AM';
-        
+
         hours = hours % 12 || 12; // Convert 24-hour time to 12-hour format
 
         return `${day} ${month} ${year} ${hours}:${minutes} ${ampm}`;
@@ -138,7 +142,7 @@
                 let medicines = JSON.parse(data);
                 let rows = "";
                 if (medicines && medicines.length > 0) {
-                    
+
                     medicines.forEach(med => {
                         rows += `<tr>
                         <td>${med.id}</td>
@@ -147,12 +151,12 @@
                             <button class="btn btn-danger btn-xs" onclick="adjustStock(${med.id}, 'subtract')">-</button>
                             <span id="stock_${med.id}" style="font-size:20px; margin: 10px;">${med.total_given}</span>
                             <button class="btn btn-success btn-xs" onclick="adjustStock(${med.id}, 'add')">+</button>
-                            <button class="btn btn-primary" onclick="updateStock(${med.transaction_id}, ${med.medicine_id}, ${med.total_given > 0 ? 1 : 2})">Update</button>
-                            <td><button class="btn btn-primary" onclick="viewBreakdown(${customerId}, ${med.id})">View Details</button></td>
+                            <button class="btn btn-warning btn-xs" onclick="updateStock(${med.transaction_id}, ${med.medicine_id}, ${med.total_given > 0 ? 1 : 2})">Update</button>
+                            <td><button class="btn btn-info btn-xs" onclick="viewBreakdown(${customerId}, ${med.id})">View Details</button></td>
                         </td>
                         </tr>`;
                     });
-                }else{
+                } else {
                     rows = `<tr><td colspan="4">No medicines Transaction found for this customer.</td></tr>`;
                 }
                 $("#medicineSummary").html(rows);
@@ -184,8 +188,13 @@
             quantity_given: updatedStock,
             type: type
         }, function(response) {
-            alert("Stock updated successfully!");
-            // fetchCustomerMedicine(); // Refresh the medicine summary
+            // alert("Stock updated successfully!");
+            Swal.fire({
+                title: 'Success',
+                text: 'Stock updated successfully!',
+                icon: 'success'
+            });
+            fetchCustomerMedicine(); // Refresh the medicine summary
         }, "json");
         fetchCustomerMedicine();
     }

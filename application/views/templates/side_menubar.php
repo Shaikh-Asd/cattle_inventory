@@ -83,7 +83,7 @@
       <?php if (in_array('createOrder', $user_permission) || in_array('updateOrder', $user_permission) || in_array('viewOrder', $user_permission) || in_array('deleteOrder', $user_permission)): ?>
         <li class="treeview" id="mainOrdersNav">
           <a href="#">
-            <i class="fa fa-dollar"></i>
+            <i class="fa fa-medkit"></i>
             <span>Manage Transaction</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
@@ -98,12 +98,13 @@
             <?php endif; ?>
           </ul> -->
           <ul class="treeview-menu">
-            <?php if (in_array('createOrder', $user_permission)): ?>
-              <li id="addOrderNav"><a href="<?php echo base_url('MedicineController/view_transactions') ?>"><i class="fa fa-circle-o"></i>History</a></li>
-            <?php endif; ?>
+
             <?php if (in_array('updateOrder', $user_permission) || in_array('viewOrder', $user_permission) || in_array('deleteOrder', $user_permission)): ?>
               <li id="manageOrdersNav"><a href="<?php echo base_url('MedicineController/add_transaction_form') ?>"><i class="fa fa-circle-o"></i> Create New</a></li>
               <li id="manageOrdersNav"><a href="<?php echo base_url('MedicineController/customer_medicine_view') ?>"><i class="fa fa-circle-o"></i> Edit</a></li>
+            <?php endif; ?>
+            <?php if (in_array('createOrder', $user_permission)): ?>
+              <li id="addOrderNav"><a href="<?php echo base_url('MedicineController/view_transactions') ?>"><i class="fa fa-circle-o"></i>History</a></li>
             <?php endif; ?>
           </ul>
         </li>
@@ -194,9 +195,51 @@
 
     <?php endif; ?>
     <!-- user permission info -->
-    <li><a href="<?php echo base_url('auth/logout') ?>"><i class="glyphicon glyphicon-log-out"></i> <span>Logout</span></a></li>
+    <li><a href="#" onclick="confirmLogout()"><i class="glyphicon glyphicon-log-out"></i> <span>Logout</span></a></li>
 
     </ul>
   </section>
   <!-- /.sidebar -->
 </aside>
+
+<script>
+  function confirmLogout() {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You will be logged out!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, logout!',
+      customClass: {
+        popup: 'swal-popup',
+        confirmButton: 'swal-confirm-button',
+        cancelButton: 'swal-cancel-button'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "<?php echo base_url('auth/logout') ?>";
+      }
+    });
+  }
+</script>
+
+<style>
+  .swal-popup {
+    font-size: 1em;
+    /* Medium font size for the popup */
+  }
+
+  .swal-confirm-button,
+  .swal-cancel-button {
+    padding: 10px 20px;
+    /* Medium button size */
+    font-size: 1em;
+    /* Medium font size for buttons */
+  }
+</style>
+
+<!-- Include SweetAlert2 CSS and JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

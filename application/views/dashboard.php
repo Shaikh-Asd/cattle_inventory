@@ -1,9 +1,15 @@
-
-
 <style>
-  .negative-stock { color: red; }
-.low-stock { color: orange; }
-.in-stock { color: green; }
+  .negative-stock {
+    color: red;
+  }
+
+  .low-stock {
+    color: orange;
+  }
+
+  .in-stock {
+    color: green;
+  }
 </style>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -82,7 +88,8 @@
 
 
             </div>
-            <a href="<?php echo base_url('Controller_Orders/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <!-- <a href="<?php echo base_url('Controller_Orders/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a> -->
+            <a href="<?php echo base_url('MedicineController/view_transactions') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
       </div>
@@ -111,7 +118,7 @@
                   <td><?= $transaction->quantity_returned; ?></td>
                   <td><?= $transaction->balance_quantity; ?></td>
                   <td>
-                      <a href="<?= base_url('MedicineController/edit_transaction/'.$transaction->transaction_id) ?>">Edit</a>
+                      <a href="<?= base_url('MedicineController/edit_transaction/' . $transaction->transaction_id) ?>">Edit</a>
                   </td>
               </tr>
           <?php endforeach; ?>
@@ -121,39 +128,39 @@
         <div class="col-lg-12">
           <div class="box">
             <div class="box-body">
-                <div class="col-lg-12">
-                  <div class="col-lg-6">
-                    <h3>Medicines Stock</h3>
-                  </div>
-                  <div class="col-lg-2">
-                    <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchTable()" class="form-control mb-2">
-                  </div>
-                  <div class="col-lg-2">
-                    <label>Rows per page:</label>
-                  </div>
-                  <div class="col-lg-2">
-                      <select id="rowsPerPage" onchange="changeRowsPerPage()" class="form-control mb-2" style="width: 100px;">
-                          <option value="5">5</option>
-                          <option value="10" selected>10</option>
-                          <option value="25">25</option>
-                          <option value="50">50</option>
-                      </select>
-                  </div>
-                    <table id="medicineStockTable" class="table table-bordered table-striped">
-                        <thead>
-                          <tr>
-                              <th onclick="sortTable(0)">Sr No. ▲</th>
-                              <th onclick="sortTable(1)">Medicine ▲</th>
-                              <th onclick="sortTable(2)">Stock Quantity ▲</th>
-                              <th onclick="sortTable(3)">Status ▲</th>
-                          </tr>
-                        </thead>
-                      <tbody id="medicineStockTableBody">
-        
-                      </tbody>
-                    </table>
-                    <div id="pagination"></div>
+              <div class="col-lg-12">
+                <div class="col-lg-6">
+                  <h3>Medicines Stock</h3>
                 </div>
+                <div class="col-lg-2">
+                  <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchTable()" class="form-control mb-2">
+                </div>
+                <div class="col-lg-2">
+                  <label>Rows per page:</label>
+                </div>
+                <div class="col-lg-2">
+                  <select id="rowsPerPage" onchange="changeRowsPerPage()" class="form-control mb-2" style="width: 100px;">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                  </select>
+                </div>
+                <table id="medicineStockTable" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th onclick="sortTable(0)">Sr No. ▲</th>
+                      <th onclick="sortTable(1)">Medicine ▲</th>
+                      <th onclick="sortTable(2)">Stock Quantity ▲</th>
+                      <th onclick="sortTable(3)">Status ▲</th>
+                    </tr>
+                  </thead>
+                  <tbody id="medicineStockTableBody">
+
+                  </tbody>
+                </table>
+                <div id="pagination"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -188,7 +195,7 @@
         <div class="col-lg-12">
           <div class="box">
             <div class="box-body">
-              
+
               <!-- <div class="col-lg-6">
                 <h3>Outward Medicines</h3>
                 <table class="table table-bordered">
@@ -230,59 +237,59 @@
           </div>
         </div>
       </div>
-      
+
       <div class="row">
         <div class="col-lg-12">
-            <div class="box">
-              <div class="box-body">
-                <div class="col-lg-12">
-                  <h2>Customer-wise Data</h2>
-                  <!-- New dropdown for user selection -->
-                  <div class="col-lg-3 col-xs-6">
-                    <label for="userSelect">Select Customer:</label>
-                    <select id="userSelect" class="form-control">
-                      <option value="">-- Select Customer --</option>
-                      <?php foreach ($total_customers as $customer): ?>
-                        <option value="<?php echo $customer['id']; ?>"><?php echo $customer['name']; ?></option>
-                      <?php endforeach; ?>
-                    </select>
-                  </div>
-                  <!-- End of dropdown -->
-                    <div class="col-lg-12 mt-2" style="margin-top: 5px;">
-                    <table id="userMedicineStatsTable" class="table table-bordered table-striped">
-                        <thead>
-                          <tr>
-                            <th>Sr No.</th>
-                            <th>Medicine</th>
-                            <th>Quantity</th>
-                            <th>Created At</th>
-                          </tr>
-                        </thead>
-                      <tbody id="userMedicineStatsTableBody">
-        
-                      </tbody>
-                    </table>
-                  </div>
+          <div class="box">
+            <div class="box-body">
+              <div class="col-lg-12">
+                <h2>Manager-wise Data</h2>
+                <!-- New dropdown for user selection -->
+                <div class="col-lg-3 col-xs-6">
+                  <label for="userSelect">Select Manager:</label>
+                  <select id="userSelect" class="form-control">
+                    <option value="">-- Select manager --</option>
+                    <?php foreach ($total_customers as $customer): ?>
+                      <option value="<?php echo $customer['id']; ?>"><?php echo $customer['name']; ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <!-- End of dropdown -->
+                <div class="col-lg-12 mt-2" style="margin-top: 5px;">
+                  <table id="userMedicineStatsTable" class="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th>Sr No.</th>
+                        <th>Medicine</th>
+                        <th>Quantity</th>
+                        <th>Created At</th>
+                      </tr>
+                    </thead>
+                    <tbody id="userMedicineStatsTableBody">
+
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
           </div>
+        </div>
       </div>
 
       <div class="row" style="display: none;">
         <div class="col-lg-12">
-        <a href="<?= base_url('ReportsController/generate_customer_report/9') ?>">Download PDF</a>
+          <a href="<?= base_url('ReportsController/generate_customer_report/9') ?>">Download PDF</a>
 
         </div>
         <?php if (!empty($low_stock_medicines)): ?>
-            <div style="color: red;">
-                <h3>⚠️ Low Stock Alert</h3>
-                <ul>
-                    <?php foreach ($low_stock_medicines as $medicine): ?>
-                        <li><?= $medicine->medicine_id; ?> (Stock: <?= $medicine->stock; ?> left)</li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
+          <div style="color: red;">
+            <h3>⚠️ Low Stock Alert</h3>
+            <ul>
+              <?php foreach ($low_stock_medicines as $medicine): ?>
+                <li><?= $medicine->medicine_id; ?> (Stock: <?= $medicine->stock; ?> left)</li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
         <?php endif; ?>
 
       </div>
@@ -338,8 +345,8 @@
           </div>
       </div> -->
 
-        <!-- ./col -->
-        <!-- <div class="col-lg-3 col-xs-6">
+      <!-- ./col -->
+      <!-- <div class="col-lg-3 col-xs-6">
           small box
           <div class="small-box bg-green">
             <div class="inner">
@@ -356,7 +363,7 @@
 
 
 
-        <!-- <div class="col-lg-3 col-xs-6">
+      <!-- <div class="col-lg-3 col-xs-6">
             small box
             <div class="small-box bg-green">
               <div class="inner">
@@ -370,8 +377,8 @@
               <a href="<?php echo base_url('category/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
           </div> -->
-        <!-- ./col -->
-        <!-- <div class="col-lg-3 col-xs-6">
+      <!-- ./col -->
+      <!-- <div class="col-lg-3 col-xs-6">
             small box
             <div class="small-box bg-yellow">
               <div class="inner">
@@ -385,8 +392,8 @@
               <a href="<?php echo base_url('attributes/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
           </div> -->
-        <!-- ./col -->
-        <!-- <div class="col-lg-3 col-xs-6">
+      <!-- ./col -->
+      <!-- <div class="col-lg-3 col-xs-6">
             small box
             <div class="small-box bg-red">
               <div class="inner">
@@ -400,11 +407,11 @@
               <a href="<?php echo base_url('company/') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
           </div> -->
-        <!-- ./col -->
+      <!-- ./col -->
       <!-- /.row -->
     <?php endif; ?>
 
-       <!-- End of new section -->
+    <!-- End of new section -->
 
   </section>
   <!-- /.content -->
@@ -414,56 +421,56 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $("#userSelect").change(function() {
-      var userId = $(this).val();  // Get the selected user ID from the dropdown
+      var userId = $(this).val(); // Get the selected user ID from the dropdown
 
       if (userId) {
-          $.ajax({
-              url: "<?php echo base_url('dashboard/getUserMedicineStats/'); ?>" + userId,
-              method: "GET",
-              success: function(data) {
-                  // Assuming the response 'data' is in JSON format and contains user medicine stats
-                  var response = JSON.parse(data); 
-              
-                  // Example: Displaying the data in a table
-                  var output = '';
-                  var i = 1 ;
+        $.ajax({
+          url: "<?php echo base_url('dashboard/getUserMedicineStats/'); ?>" + userId,
+          method: "GET",
+          success: function(data) {
+            // Assuming the response 'data' is in JSON format and contains user medicine stats
+            var response = JSON.parse(data);
 
-                  if (response && response.length > 0) {
-                    
-                    $.each(response, function(index, row) {
-                      var date = new Date(row.transaction_date);
-                      var formattedDate = date.toLocaleString('en-GB', {
-                        day: '2-digit', 
-                        month: 'long', 
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true
-                      });
+            // Example: Displaying the data in a table
+            var output = '';
+            var i = 1;
 
-                        output += '<tr>';
-                        output += '<td>' + i + '</td>';
-                        output += '<td>' + row.medicine_name + '</td>';
-                        output += '<td>' + row.total_quantity_ordered  + '</td>';
-                        output += '<td>' + formattedDate  + '</td>';
-                        output += '</tr>';
-                        i++;
-                    });
+            if (response && response.length > 0) {
 
-                    $('#userMedicineStatsTableBody').html(output);
-                  }else{
-                    $('#userMedicineStatsTableBody').html('<tr><td colspan="4">No data found.</td></tr>');
-                  }
-              },
-              error: function() {
-                  alert('Error retrieving data!');
-              }
-          });
+              $.each(response, function(index, row) {
+                var date = new Date(row.transaction_date);
+                var formattedDate = date.toLocaleString('en-GB', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true
+                });
+
+                output += '<tr>';
+                output += '<td>' + i + '</td>';
+                output += '<td>' + row.medicine_name + '</td>';
+                output += '<td>' + row.total_quantity_ordered + '</td>';
+                output += '<td>' + formattedDate + '</td>';
+                output += '</tr>';
+                i++;
+              });
+
+              $('#userMedicineStatsTableBody').html(output);
+            } else {
+              $('#userMedicineStatsTableBody').html('<tr><td colspan="4">No data found.</td></tr>');
+            }
+          },
+          error: function() {
+            alert('Error retrieving data!');
+          }
+        });
       } else {
-          // If no user is selected, you can display a message or hide the container
-          $('#userMedicineStatsTableBody').html('<p>Please select a user.</p>');
+        // If no user is selected, you can display a message or hide the container
+        $('#userMedicineStatsTableBody').html('<p>Please select a user.</p>');
       }
-  });
+    });
 
   });
 </script>
@@ -473,85 +480,85 @@
 
     //Given Medicine
     $.ajax({
-        url: "<?php echo base_url('dashboard/countTotalmedineGiven/'); ?>",
-        method: "GET",
-        success: function(data) {
-            var response = JSON.parse(data); 
-            
-            var output = '';
-            var i = 1 ;
+      url: "<?php echo base_url('dashboard/countTotalmedineGiven/'); ?>",
+      method: "GET",
+      success: function(data) {
+        var response = JSON.parse(data);
 
-            if (response) {
-          
-              var tableRows = '';
-                        
-              $.each(response, function(index, item) {
-                  tableRows += `
+        var output = '';
+        var i = 1;
+
+        if (response) {
+
+          var tableRows = '';
+
+          $.each(response, function(index, item) {
+            tableRows += `
                                 <tr>  
                                   <td>${item.customer_name}</td>
                                   <td>${item.medicine_name}</td>
                                   <td>${item.qty}</td>
                                 </tr>
                   `;
-              });
-              $('#givenMedicineTableBody').html(tableRows);
-            }else{
-              $('#givenMedicineTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
-            }
-        },
-        error: function() {
-            alert('Error retrieving data!');
+          });
+          $('#givenMedicineTableBody').html(tableRows);
+        } else {
+          $('#givenMedicineTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
         }
+      },
+      error: function() {
+        alert('Error retrieving data!');
+      }
     });
 
     //Taken Medicine
     $.ajax({
-        url: "<?php echo base_url('dashboard/countTotalmedicineTaken/'); ?>",
-        method: "GET",
-        success: function(data) {
-            var response = JSON.parse(data); 
-            
-            var output = '';
-            var i = 1 ;
-            console.log(response);
+      url: "<?php echo base_url('dashboard/countTotalmedicineTaken/'); ?>",
+      method: "GET",
+      success: function(data) {
+        var response = JSON.parse(data);
 
-            if (response) {
-          
-              var tableRows = '';
-                        
-              $.each(response, function(index, item) {
-                  tableRows += `
+        var output = '';
+        var i = 1;
+        console.log(response);
+
+        if (response) {
+
+          var tableRows = '';
+
+          $.each(response, function(index, item) {
+            tableRows += `
                                 <tr>  
                                   <td>${item.customer_name}</td>
                                   <td>${item.medicine_name}</td>
                                   <td>${item.qty}</td>
                                 </tr>
                   `;
-              });
-              $('#countTotalmedicineTakenTableBody').html(tableRows);
-            }else{
-              $('#countTotalmedicineTakenTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
-            }
-        },
-        error: function() {
-            alert('Error retrieving data!');
+          });
+          $('#countTotalmedicineTakenTableBody').html(tableRows);
+        } else {
+          $('#countTotalmedicineTakenTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
         }
+      },
+      error: function() {
+        alert('Error retrieving data!');
+      }
     });
-    
+
     //most_ordered_product
     // $.ajax({
     //     url: "<?php echo base_url('dashboard/most_ordered_product/'); ?>",
     //     method: "GET",
     //     success: function(data) {
     //         var response = JSON.parse(data); 
-            
+
     //         var output = '';
     //         var i = 1 ;
 
     //         if (response) {
-          
+
     //           var tableRows = '';
-                        
+
     //           $.each(response, function(index, product) {
     //               tableRows += `
     //                   <tr>
@@ -577,14 +584,14 @@
     //     method: "GET",
     //     success: function(data) {
     //         var response = JSON.parse(data); 
-            
+
     //         var output = '';
     //         var i = 1 ;
 
     //         if (response) {
-          
+
     //           var tableRows = '';
-                        
+
     //           $.each(response, function(index, product) {
     //               tableRows += `
     //                   <tr>
@@ -607,30 +614,30 @@
     // getMedicineStock
 
     $.ajax({
-        url: "<?php echo base_url('dashboard/getMedicineStock/'); ?>",
-        method: "GET",
-        success: function(data) {
-            var response = JSON.parse(data); 
-            var output = '';
-            var i = 1 ;
+      url: "<?php echo base_url('dashboard/getMedicineStock/'); ?>",
+      method: "GET",
+      success: function(data) {
+        var response = JSON.parse(data);
+        var output = '';
+        var i = 1;
 
-            if (response) {
-          
-              var tableRows = '';
-              $.each(response, function(index, medicine) {
-                let stockStatus = '';
-                let lowStockThreshold = Number(medicine.dead_stock);
-                if (Number(medicine.stock) < 0) {
-                    stockStatus = 'Out of Stock';
-                    stockStatusClass = 'negative-stock';  
-                } else if (Number(medicine.stock) <= lowStockThreshold) {
-                    stockStatus = 'Low Stock';
-                    stockStatusClass = 'low-stock';  
-                } else {
-                    stockStatus = 'In Stock';
-                    stockStatusClass = 'in-stock'; 
-                }
-                  tableRows += `
+        if (response) {
+
+          var tableRows = '';
+          $.each(response, function(index, medicine) {
+            let stockStatus = '';
+            let lowStockThreshold = Number(medicine.dead_stock);
+            if (Number(medicine.stock) < 0) {
+              stockStatus = 'Out of Stock';
+              stockStatusClass = 'negative-stock';
+            } else if (Number(medicine.stock) <= lowStockThreshold) {
+              stockStatus = 'Low Stock';
+              stockStatusClass = 'low-stock';
+            } else {
+              stockStatus = 'In Stock';
+              stockStatusClass = 'in-stock';
+            }
+            tableRows += `
                       <tr>
                           <td>${i}</td>
                           <td>${medicine.name}</td>
@@ -638,19 +645,19 @@
                           <td class="${stockStatusClass}">${stockStatus}</td>
                       </tr>
                   `;
-                  i++;
-              });
-              $('#medicineStockTableBody').html(tableRows);
-              paginateTable();
-            }else{
-              $('#medicineStockTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
-            }
-        },
-        error: function() {
-            alert('Error retrieving data!');
+            i++;
+          });
+          $('#medicineStockTableBody').html(tableRows);
+          paginateTable();
+        } else {
+          $('#medicineStockTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
         }
+      },
+      error: function() {
+        alert('Error retrieving data!');
+      }
     });
- 
+
     //TopCustomersWithProducts
     // $.ajax({
     //     url: "<?php echo base_url('dashboard/getTopCustomersWithProducts/'); ?>",
@@ -661,9 +668,9 @@
     //         var i = 1 ;
 
     //         if (response) {
-          
+
     //           var tableRows = '';
-              
+
     //           $.each(response, function(index, product) {
     //               tableRows += `
     //                   <tr>
@@ -677,7 +684,7 @@
     //           $('#TopCustomersWithProductsTableBody').html(tableRows);
     //         }else{
     //           $('#TopCustomersWithProductsTableBody').html('<tr><td colspan="3">No data found.</td></tr>');
-              
+
     //         }
     //     },
     //     error: function() {
@@ -691,68 +698,71 @@
 <script type="text/javascript">
   $(document).ready(function() {
     // $('#medicineStockTable').dataTable();
-    
+
   });
 </script>
 <script>
-    let currentPage = 1;
-    let rowsPerPage = 5;
+  let currentPage = 1;
+  let rowsPerPage = 5;
 
-    function searchTable() {
-        let input = document.getElementById("searchInput").value.toLowerCase();
-        let rows = document.querySelectorAll("#medicineStockTableBody tr");
+  function searchTable() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let rows = document.querySelectorAll("#medicineStockTableBody tr");
 
-        rows.forEach(row => {
-            let text = row.innerText.toLowerCase();
-            row.style.display = text.includes(input) ? "" : "none";
+    rows.forEach(row => {
+      let text = row.innerText.toLowerCase();
+      row.style.display = text.includes(input) ? "" : "none";
+    });
+  }
+
+  function sortTable(columnIndex) {
+    let table = document.getElementById("medicineStockTable");
+    let rows = Array.from(table.rows).slice(1);
+    let ascending = table.getAttribute("data-sort-order") !== "asc";
+
+    rows.sort((rowA, rowB) => {
+      let cellA = rowA.cells[columnIndex].innerText;
+      let cellB = rowB.cells[columnIndex].innerText;
+
+      return ascending ? cellA.localeCompare(cellB, undefined, {
+          numeric: true
+        }) :
+        cellB.localeCompare(cellA, undefined, {
+          numeric: true
         });
+    });
+
+    table.setAttribute("data-sort-order", ascending ? "asc" : "desc");
+
+    document.getElementById("medicineStockTableBody").append(...rows);
+  }
+
+  function changeRowsPerPage() {
+    rowsPerPage = parseInt(document.getElementById("rowsPerPage").value);
+    currentPage = 1;
+    paginateTable();
+  }
+
+  function paginateTable() {
+    let rows = document.querySelectorAll("#medicineStockTableBody tr");
+    let totalRows = rows.length;
+    let totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    rows.forEach((row, index) => {
+      row.style.display = (index >= (currentPage - 1) * rowsPerPage && index < currentPage * rowsPerPage) ? "" : "none";
+    });
+
+    let paginationHTML = "";
+    for (let i = 1; i <= totalPages; i++) {
+      paginationHTML += `<button onclick="goToPage(${i})" class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-secondary'}">${i}</button> `;
     }
+    document.getElementById("pagination").innerHTML = paginationHTML;
+  }
 
-    function sortTable(columnIndex) {
-        let table = document.getElementById("medicineStockTable");
-        let rows = Array.from(table.rows).slice(1);
-        let ascending = table.getAttribute("data-sort-order") !== "asc";
-        
-        rows.sort((rowA, rowB) => {
-            let cellA = rowA.cells[columnIndex].innerText;
-            let cellB = rowB.cells[columnIndex].innerText;
-
-            return ascending ? cellA.localeCompare(cellB, undefined, { numeric: true }) 
-                             : cellB.localeCompare(cellA, undefined, { numeric: true });
-        });
-
-        table.setAttribute("data-sort-order", ascending ? "asc" : "desc");
-
-        document.getElementById("medicineStockTableBody").append(...rows);
-    }
-
-    function changeRowsPerPage() {
-        rowsPerPage = parseInt(document.getElementById("rowsPerPage").value);
-        currentPage = 1;
-        paginateTable();
-    }
-
-    function paginateTable() {
-        let rows = document.querySelectorAll("#medicineStockTableBody tr");
-        let totalRows = rows.length;
-        let totalPages = Math.ceil(totalRows / rowsPerPage);
-
-        rows.forEach((row, index) => {
-            row.style.display = (index >= (currentPage - 1) * rowsPerPage && index < currentPage * rowsPerPage) ? "" : "none";
-        });
-
-        let paginationHTML = "";
-        for (let i = 1; i <= totalPages; i++) {
-            paginationHTML += `<button onclick="goToPage(${i})" class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-secondary'}">${i}</button> `;
-        }
-        document.getElementById("pagination").innerHTML = paginationHTML;
-    }
-
-    function goToPage(page) {
-        currentPage = page;
-        paginateTable();
-    }
-
+  function goToPage(page) {
+    currentPage = page;
+    paginateTable();
+  }
 </script>
 <!-- Ensure sidebar collapse functionality is working -->
 <script type="text/javascript">
@@ -763,3 +773,24 @@
     });
   });
 </script>
+
+<!-- Add this table structure to your HTML -->
+<!-- <table id="dynamicTable" class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Quantity</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><input type="text" class="form-control" placeholder="Item Name"></td>
+      <td><input type="number" class="form-control" placeholder="Quantity"></td>
+      <td>
+        <button class="btn btn-success btn-sm add-row"><i class="fa fa-plus"></i></button>
+        <button class="btn btn-danger btn-sm remove-row"><i class="fa fa-minus"></i></button>
+      </td>
+    </tr>
+  </tbody>
+</table> -->

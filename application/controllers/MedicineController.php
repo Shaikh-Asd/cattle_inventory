@@ -5,7 +5,7 @@ class MedicineController extends Admin_Controller {
         parent::__construct();
         $this->not_logged_in();
 
-		$this->data['page_title'] = 'Manage Transaction';
+		$this->data['page_title'] = 'Manage Outward Medicine';
 
         $this->load->model('Medicine_model');
         $this->load->model('model_customers');
@@ -47,7 +47,7 @@ class MedicineController extends Admin_Controller {
         }
 
         $this->Medicine_model->add_transaction_details($data);
-        redirect('MedicineController/view_transactions');
+        redirect('MedicineController/customer_medicine_view');
     }
 
     public function view_transactions() {
