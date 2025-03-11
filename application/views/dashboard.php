@@ -243,7 +243,43 @@
           <div class="box">
             <div class="box-body">
               <div class="col-lg-12">
-                <h2>Manager-wise Data</h2>
+                <h2>Manager Current Stock</h2>
+                <!-- New dropdown for user selection -->
+                <div class="col-lg-3 col-xs-6">
+                  <label for="customerSelect">Select Manager:</label>
+                  <select id="customerSelect" class="form-control" onchange="fetchCustomerMedicine()">
+                    <option value="">-- Select manager --</option>
+                    <?php foreach ($total_customers as $customer): ?>
+                      <option value="<?php echo $customer['id']; ?>"><?php echo $customer['name']; ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <!-- End of dropdown -->
+                <div class="col-lg-12 mt-2" style="margin-top: 5px;">
+                  <table id="medicineSummary" class="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th>Sr No.</th>
+                        <th>Medicine</th>
+                        <th>Quantity</th>
+                      </tr>
+                    </thead>
+                    <tbody id="medicineSummaryBody">
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="box">
+            <div class="box-body">
+              <div class="col-lg-12">
+                <h2>Manager Wise Data</h2>
                 <!-- New dropdown for user selection -->
                 <div class="col-lg-3 col-xs-6">
                   <label for="userSelect">Select Manager:</label>
@@ -276,6 +312,7 @@
         </div>
       </div>
 
+      
       <div class="row" style="display: none;">
         <div class="col-lg-12">
           <a href="<?= base_url('ReportsController/generate_customer_report/9') ?>">Download PDF</a>
@@ -473,6 +510,34 @@
     });
 
   });
+
+
+  function fetchCustomerMedicine() {
+    let customerId = $("#customerSelect").val();
+    if (customerId) {
+        $.get("<?= base_url('MedicineController/get_customer_medicines/') ?>" + customerId, function(data) {
+            let medicines = JSON.parse(data);
+            let rows = "";
+            let i = 1; // Initialize a counter for serial numbers
+
+            if (medicines && medicines.length > 0) {
+                medicines.forEach(med => {
+                    rows += `<tr>
+                        <td>${i}</td>
+                        <td>${med.name}</td>
+                        <td>${med.total_given}</td>
+                    </tr>`;
+                    i++; // Increment the counter
+                });
+            } else {
+                rows = `<tr><td colspan="4">No medicines transaction found for this customer.</td></tr>`;
+            }
+            $("#medicineSummaryBody").html(rows);
+        });
+    } else {
+        $("#medicineSummaryBody").html("<tr><td colspan='4'>Please select a manager.</td></tr>");
+    }
+  }
 </script>
 <script type="text/javascript">
   $(document).ready(function() {
@@ -697,8 +762,27 @@
 <!-- Update for DataTables initialization to include search and pagination -->
 <script type="text/javascript">
   $(document).ready(function() {
-    // $('#medicineStockTable').dataTable();
+    // Initialize DataTables for the medicine summary table
+    $('#medicineSummary').DataTable({
+        "paging": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "lengthChange": true,
+        "pageLength": 10 // Default number of rows per page
+    });
 
+    // Initialize DataTables for other tables as needed
+    $('#userMedicineStatsTable').DataTable({
+        "paging": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "lengthChange": true,
+        "pageLength": 10
+    });
+
+    // Add similar initialization for other tables
   });
 </script>
 <script>
