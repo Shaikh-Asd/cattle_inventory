@@ -438,7 +438,7 @@
             if (response && response.length > 0) {
 
               $.each(response, function(index, row) {
-                var date = new Date(row.transaction_date);
+                var date = new Date(row.created_at);
                 var formattedDate = date.toLocaleString('en-GB', {
                   day: '2-digit',
                   month: 'long',

@@ -80,9 +80,9 @@ class Model_customers extends CI_Model
         // $query = $this->db->get();
         // return $query->result();
         // $customerName = 5;
-        $this->db->select('o.id, o.transaction_date, m.id AS medicine_id, m.transaction_id,md.name AS medicine_name, SUM(m.quantity_given) AS total_quantity_ordered');
+        $this->db->select('o.id, m.created_at, m.id AS medicine_id, m.transaction_id,md.name AS medicine_name, SUM(m.quantity_given) AS total_quantity_ordered');
         $this->db->from('medicine_transactions o');
-        $this->db->join('medicine_transaction_details m', 'FIND_IN_SET(m.transaction_id , o.id) > 0', 'inner');
+        $this->db->join('medicine_transaction_history m', 'FIND_IN_SET(m.transaction_id , o.id) > 0', 'inner');
         $this->db->join('medicines md', 'md.id = m.medicine_id', 'inner');
         $this->db->where('o.customer_id', $customerName);
         $this->db->group_by('m.id');

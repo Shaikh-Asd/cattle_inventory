@@ -43,7 +43,7 @@
                                         <th>Medicine</th>
                                         <th>Quantity Given</th>
                                         <th>Transaction Date</th>
-                                        <th>Last Updated</th>
+                                        <!-- <th>Last Updated</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -52,8 +52,8 @@
                                             <tr>
                                                 <td><?= $transaction->medicine_name; ?></td>
                                                 <td><?= $transaction->quantity_given; ?></td>
-                                                <td><?= date('Y-m-d H:i:s', strtotime($transaction->transaction_date)); ?></td>
-                                                <td><?= date('Y-m-d H:i:s', strtotime($transaction->updated_at)); ?></td>
+                                                <td><?= date('Y-m-d H:i:s', strtotime($transaction->created_at)); ?></td>
+                                                <!-- <td><?= date('Y-m-d H:i:s', strtotime($transaction->updated_at)); ?></td> -->
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>

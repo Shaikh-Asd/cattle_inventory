@@ -113,17 +113,17 @@ class Medicine_model extends CI_Model {
     public function get_customer_transactions($customer_id, $start_date = null, $end_date = null) {
         $this->db->select('
             medicine_transactions.id as transaction_id, 
-            medicine_transactions.transaction_date, 
+            medicine_transaction_history.created_at, 
             medicine_transactions.updated_at,
             medicines.name as medicine_name, 
-            medicine_transaction_details.quantity_given,
-            medicine_transaction_details.quantity_used,
-            medicine_transaction_details.quantity_returned,
-            (medicine_transaction_details.quantity_given - (medicine_transaction_details.quantity_used + medicine_transaction_details.quantity_returned)) AS balance_quantity
+            medicine_transaction_history.quantity_given,
+            medicine_transaction_history.quantity_used,
+            medicine_transaction_history.quantity_returned,
+            (medicine_transaction_history.quantity_given - (medicine_transaction_history.quantity_used + medicine_transaction_history.quantity_returned)) AS balance_quantity
         ');
-        $this->db->from('medicine_transaction_details');
-        $this->db->join('medicine_transactions', 'medicine_transactions.id = medicine_transaction_details.transaction_id');
-        $this->db->join('medicines', 'medicines.id = medicine_transaction_details.medicine_id');
+        $this->db->from('medicine_transaction_history');
+        $this->db->join('medicine_transactions', 'medicine_transactions.id = medicine_transaction_history.transaction_id');
+        $this->db->join('medicines', 'medicines.id = medicine_transaction_history.medicine_id');
         $this->db->where('medicine_transactions.customer_id', $customer_id);
     
         if ($start_date && $end_date) {
