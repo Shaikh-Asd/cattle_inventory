@@ -75,8 +75,8 @@
                     <input type="text" class="form-control" name="qty[]" placeholder="Enter Quantity" autocomplete="off" />
                   </td>
                   <td>
-                    <button type="button" class="btn btn-success addProduct">+</button>
-                    <button type="button" class="btn btn-danger removeProduct">−</button>
+                    <button type="button" class="btn btn-success addProduct">Add New row</button>
+                    <button type="button" class="btn btn-danger removeProduct">Remove row</button>
                   </td>
                 </tr>
               </tbody>
@@ -123,8 +123,8 @@
             <input type="text" class="form-control" name="qty[]" placeholder="Enter Quantity" autocomplete="off" />
           </td>
           <td>
-            <button type="button" class="btn btn-success addProduct">+</button>
-            <button type="button" class="btn btn-danger removeProduct">−</button>
+            <button type="button" class="btn btn-success addProduct">Add New row</button>
+            <button type="button" class="btn btn-danger removeProduct">Remove row</button>
           </td>
         </tr>`;
       $("#productFields").append(newProductEntry);

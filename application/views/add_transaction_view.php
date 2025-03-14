@@ -68,7 +68,7 @@
     .btn-small {
         padding: 5px 10px;
         font-size: 12px;
-        max-width: 50px;
+        max-width: 90px;
     }
 
     .table {
@@ -138,8 +138,8 @@
                                     <input type="number" class="form-control" name="quantity_given[]" placeholder="Quantity Given" required>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-success btn-small" onclick="addMedicineField(this)">+</button>
-                                    <button type="button" class="btn btn-danger btn-small" onclick="removeField(this)">−</button>
+                                    <button type="button" class="btn btn-success btn-small" onclick="addMedicineField(this)">Add New row</button>
+                                    <button type="button" class="btn btn-danger btn-small" onclick="removeField(this)">Remove row</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -174,8 +174,8 @@
                 <input type="number" name="quantity_given[]" placeholder="Quantity Given" required>
             </td>
             <td>
-                <button type="button" class="btn btn-success btn-small" onclick="addMedicineField(this)">+</button>
-                <button type="button" class="btn btn-danger btn-small" onclick="removeField(this)">−</button>
+                <button type="button" class="btn btn-success btn-small" onclick="addMedicineField(this)">Add New row</button>
+                <button type="button" class="btn btn-danger btn-small" onclick="removeField(this)">Remove row</button>
             </td>
         `;
         container.appendChild(newRow);

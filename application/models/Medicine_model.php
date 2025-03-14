@@ -2,8 +2,11 @@
 class Medicine_model extends CI_Model {
     
     public function get_customers() {
-        return $this->db->get('customers')->result();
+        $this->db->where('active', 1); 
+        $query = $this->db->get('customers'); 
+        return $query->result();
     }
+    
 
     // public function get_customers($type): mixed {
     //     // return $this->db->get('customers')->result();
@@ -86,6 +89,7 @@ class Medicine_model extends CI_Model {
         $this->db->join('medicine_transactions', 'medicine_transactions.id = medicine_transaction_details.transaction_id');
         $this->db->join('medicines', 'medicines.id = medicine_transaction_details.medicine_id');
         $this->db->join('customers', 'customers.id = medicine_transactions.customer_id');
+        $this->db->where('customers.active', 1); 
         $this->db->group_by('medicine_transactions.id, customers.name, medicine_transactions.transaction_date, medicine_transactions.updated_at');
         return $this->db->get()->result();
     }
