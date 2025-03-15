@@ -6,6 +6,14 @@ class Medicine_model extends CI_Model {
         $query = $this->db->get('customers'); 
         return $query->result();
     }
+
+    public function get_customers2()
+    {
+        $this->db->where('active', 1);
+        $this->db->where('user_type', '1');
+        $query = $this->db->get('customers');
+        return $query->result();
+    }
     
 
     // public function get_customers($type): mixed {

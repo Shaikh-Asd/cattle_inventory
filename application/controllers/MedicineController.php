@@ -13,7 +13,7 @@ class MedicineController extends Admin_Controller {
     
     public function add_transaction_form() {
        
-        $this->data['customers'] = $this->Medicine_model->get_customers();        
+        $this->data['customers'] = $this->Medicine_model->get_customers2();        
         $this->data['medicines'] = $this->Medicine_model->get_medicines();
 		$this->render_template('add_transaction_view', $this->data);	
 
@@ -193,7 +193,7 @@ class MedicineController extends Admin_Controller {
         }
 
         public function customer_medicine_view() {
-            $this->data['customers'] = $this->Medicine_model->get_customers();
+            $this->data['customers'] = $this->Medicine_model->get_customers2();
             // print_r($data);die();
             $this->render_template('customer_medicine_view', $this->data);
         }
