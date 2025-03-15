@@ -16,7 +16,10 @@ class Medicine_model extends CI_Model {
     // }
 
     public function get_medicines() {
-        return $this->db->get('medicines')->result();
+        // return $this->db->get('medicines')->result();
+        $this->db->where('active', 1);
+        $query = $this->db->get('medicines');
+        return $query->result();
     }
 
     // public function add_transaction($data) {
