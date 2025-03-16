@@ -1,3 +1,4 @@
+
 <div class="content-wrapper">
     <section class="content-header">
         <h1>
@@ -12,7 +13,7 @@
 
         <div class="row">
             <div class="col-lg-12">
-                <div class="box box-primary">
+                <div class="box box-primary" style="display: flex; flex-direction: column;">
                     <div class="form-group col-md-3">
                         <label for="customerSelect">Manager</label>
                         <select id="customerSelect" class="form-control select2" onchange="fetchCustomerMedicine()">
@@ -22,9 +23,9 @@
                             <?php endforeach ?>
                         </select>
                     </div>
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="padding: 0 15px;">
                         <h3>Medicine Summary</h3>
-                        <table class="table table-bordered">
+                        <table class="table table-bordered" id="medicineSummaryTable">
                             <thead>
                                 <tr>
                                     <th>Sr no</th>
@@ -57,7 +58,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <table class="table table-bordered table-responsive">
+                <table class="table table-bordered table-responsive" id="medicineBreakdownTable">
                     <thead>
                         <tr>
                             <th>Medicine</th>
@@ -78,6 +79,9 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
 
 <script>
     $(document).ready(function() {
@@ -85,6 +89,14 @@
             allowClear: true
         });
         fetchMedicines(); // Fetch medicines on page load
+
+        $('#medicineSummaryTable').DataTable({
+                    "paging": true,
+                    "searching": true,
+                    "responsive": true,
+                    "lengthMenu": [5, 10, 25, 50, 100], // Options for number of entries to show
+                    "pageLength": 10 // Default number of entries to show
+                });
     });
 
     function fetchMedicines() {
@@ -160,6 +172,8 @@
                     rows = `<tr><td colspan="4">No medicines Transaction found for this customer.</td></tr>`;
                 }
                 $("#medicineSummary").html(rows);
+
+
             });
         } else {
             $("#medicineSummary").html("");
@@ -212,6 +226,13 @@
             });
             $("#medicineBreakdown").html(rows);
             $("#medicineModal").modal('show');
+            $('#medicineBreakdownTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "responsive": true,
+                "lengthMenu": [5, 10, 25, 50, 100], // Options for number of entries to show
+                "pageLength": 10 // Default number of entries to show
+            });
         });
     }
 
