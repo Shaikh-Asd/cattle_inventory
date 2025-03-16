@@ -30,7 +30,7 @@
     <!-- Small boxes (Stat box) -->
     <div class="row">
       <div class="col-md-12 col-xs-12">
-        
+
         <?php //if(in_array('createGroup', $user_permission)): 
         ?>
         <button class="btn btn-primary" data-toggle="modal" data-target="#addModal">Add</button>
@@ -134,7 +134,7 @@
       </div>
 
 
-        <form role="form" action="<?php echo base_url(uri: 'Controller_Customer/update/') ?>" method="post" id="updateForm">
+      <form role="form" action="<?php echo base_url(uri: 'Controller_Customer/update/') ?>" method="post" id="updateForm">
         <input type="hidden" id="customer_id" name="customer_id" value="">
         <div class="modal-body">
           <div id="messages"></div>
@@ -219,8 +219,10 @@
               name: item[2],
               status: item[3],
               user: item[4],
-              action: '<button type="button" class="btn btn-warning btn-sm" onclick="editFunc(' + item[1] + ')" data-toggle="modal" data-target="#editModal"><i class="fa fa-pencil"></i></button>' +
-                '<button type="button" class="btn btn-danger btn-sm" onclick="removeFunc(' + item[1] + ')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>'
+              // action: '<button type="button" class="btn btn-warning btn-sm" onclick="editFunc(' + item[1] + ')" data-toggle="modal" data-target="#editModal"><i class="fa fa-pencil"></i></button>' +
+              //   '<button type="button" class="btn btn-danger btn-sm" onclick="removeFunc(' + item[1] + ')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>'
+
+              action: '<button type="button" class="btn btn-warning btn-sm" onclick="editFunc(' + item[1] + ')" data-toggle="modal" data-target="#editModal"><i class="fa fa-pencil"></i></button>'
             };
           });
         }
@@ -321,7 +323,7 @@
           $("#edit_customer_name").val(response.name); // Populate the name field
           $("#edit_active").val(response.active); // Populate the status field
           $("#edit_user_type").val(response.user_type); // Populate the user type dropdown
-          
+
           // Set the customer_id in a hidden input field
           $("#customer_id").val(response.id);
 
