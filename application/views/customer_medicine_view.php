@@ -25,19 +25,34 @@
                     </div>
                     <div class="table-responsive" style="padding: 0 15px;">
                         <h3>Medicine Summary</h3>
-                        <table class="table table-bordered" id="medicineSummaryTable">
+                        <div class="col-lg-2">
+                        <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchTable()" class="form-control mb-2">
+                        </div>
+                        <div class="col-lg-2">
+                        <label>Rows per page:</label>
+                        </div>
+                        <div class="col-lg-2" style="margin-bottom: 10px ;">
+                        <select id="rowsPerPage" onchange="changeRowsPerPage()" class="form-control mb-2" style="width: 100px;">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                        </div>
+                        <table class="table table-bordered" id="medicineSummaryTable" style="margin-top: 10px;">
                             <thead>
-                                <tr>
-                                    <th>Sr no</th>
-                                    <th>Medicine Name</th>
-                                    <th>Given</th>
+                                <tr style="cursor: pointer;">
+                                    <th onclick="sortTable(0)">Sr no  ▲</th>
+                                    <th onclick="sortTable(1)">Medicine Name  ▲</th>
+                                    <th onclick="sortTable(2)">Given  ▲</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="medicineSummary">
+                            <tbody id="medicineSummaryTableBody">
                                 <!-- Data will be filled via AJAX -->
                             </tbody>
                         </table>
+                        <div id="pagination"></div>
                     </div>
                 </div>
             </div>
@@ -58,19 +73,34 @@
                 </button>
             </div>
             <div class="modal-body">
+            <div class="col-lg-2">
+                        <input type="text" id="medicineBreakdownTableSearchInput" placeholder="Search..." onkeyup="medicineBreakdownTableSearchTable()" class="form-control mb-2">
+                        </div>
+                        <div class="col-lg-2">
+                        <label>Rows per page:</label>
+                        </div>
+                        <div class="col-lg-2" style="margin-bottom: 10px ;">
+                        <select id="rowsPerPage" onchange="medicineBreakdownTableChangeRowsPerPage()" class="form-control mb-2" style="width: 100px;">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                        </div>
                 <table class="table table-bordered table-responsive" id="medicineBreakdownTable">
                     <thead>
                         <tr>
-                            <th>Medicine</th>
-                            <th>Given</th>
-                            <th>Transaction Date</th>
+                            <th onclick="sortMedicineBreakdownTable(0)">Medicine ▲</th>
+                            <th onclick="sortMedicineBreakdownTable(1)">Given ▲</th>
+                            <th onclick="sortMedicineBreakdownTable(2)">Transaction Date ▲</th>
 
                         </tr>
                     </thead>
-                    <tbody id="medicineBreakdown">
+                    <tbody id="medicineBreakdownTableBody">
                         <!-- Data will be filled via AJAX -->
                     </tbody>
                 </table>
+                <div id="medicineBreakdownTablePagination"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
@@ -89,14 +119,6 @@
             allowClear: true
         });
         fetchMedicines(); // Fetch medicines on page load
-
-        $('#medicineSummaryTable').DataTable({
-                    "paging": true,
-                    "searching": true,
-                    "responsive": true,
-                    "lengthMenu": [5, 10, 25, 50, 100], // Options for number of entries to show
-                    "pageLength": 10 // Default number of entries to show
-                });
     });
 
     function fetchMedicines() {
@@ -115,7 +137,7 @@
                     </td>
                 </tr>`;
             });
-            $("#medicineSummary").html(rows);
+            $("#medicineSummaryTableBody").html(rows);
         });
     }
 
@@ -171,12 +193,12 @@
                 } else {
                     rows = `<tr><td colspan="4">No medicines Transaction found for this customer.</td></tr>`;
                 }
-                $("#medicineSummary").html(rows);
+                $("#medicineSummaryTableBody").html(rows);
 
 
             });
         } else {
-            $("#medicineSummary").html("");
+            $("#medicineSummaryTableBody").html("");
         }
     }
 
@@ -224,19 +246,143 @@
                 <td>${formatDateTime(med.transaction_date)}</td>
                 </tr>`;
             });
-            $("#medicineBreakdown").html(rows);
+            $("#medicineBreakdownTableBody").html(rows);
             $("#medicineModal").modal('show');
-            $('#medicineBreakdownTable').DataTable({
-                "paging": true,
-                "searching": true,
-                "responsive": true,
-                "lengthMenu": [5, 10, 25, 50, 100], // Options for number of entries to show
-                "pageLength": 10 // Default number of entries to show
-            });
+ 
         });
     }
 
     function closeModal() {
         $("#medicineModal").modal('hide');
     }
+</script>
+
+
+<script>
+ let currentPage = 1;
+  let rowsPerPage = 5;
+
+  function searchTable() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let rows = document.querySelectorAll("#medicineSummaryTableBody tr");
+
+    rows.forEach(row => {
+      let text = row.innerText.toLowerCase();
+      row.style.display = text.includes(input) ? "" : "none";
+    });
+  }
+
+  function sortTable(columnIndex) {
+    let table = document.getElementById("medicineSummaryTable");
+    let rows = Array.from(table.rows).slice(1);
+    let ascending = table.getAttribute("data-sort-order") !== "asc";
+
+    rows.sort((rowA, rowB) => {
+      let cellA = rowA.cells[columnIndex].innerText;
+      let cellB = rowB.cells[columnIndex].innerText;
+
+      return ascending ? cellA.localeCompare(cellB, undefined, {
+          numeric: true
+        }) :
+        cellB.localeCompare(cellA, undefined, {
+          numeric: true
+        });
+    });
+
+    table.setAttribute("data-sort-order", ascending ? "asc" : "desc");
+
+    document.getElementById("medicineSummaryTableBody").append(...rows);
+  }
+
+  function changeRowsPerPage() {
+    rowsPerPage = parseInt(document.getElementById("rowsPerPage").value);
+    currentPage = 1;
+    paginateTable();
+  }
+
+  function paginateTable() {
+    let rows = document.querySelectorAll("#medicineSummaryTableBody tr");
+    let totalRows = rows.length;
+    let totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    rows.forEach((row, index) => {
+      row.style.display = (index >= (currentPage - 1) * rowsPerPage && index < currentPage * rowsPerPage) ? "" : "none";
+    });
+
+    let paginationHTML = "";
+    for (let i = 1; i <= totalPages; i++) {
+      paginationHTML += `<button onclick="goToPage(${i})" class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-secondary'}">${i}</button> `;
+    }
+    document.getElementById("pagination").innerHTML = paginationHTML;
+  }
+
+  function goToPage(page) {
+    currentPage = page;
+    paginateTable();
+  }
+</script>
+
+<!-- medicine Breakdown Table -->
+<script>
+ let currentPage2 = 1;
+  let rowsPerPage2 = 5;
+
+  function medicineBreakdownTableSearchTable() {
+    let input = document.getElementById("medicineBreakdownTableSearchInput").value.toLowerCase();
+    let rows = document.querySelectorAll("#medicineBreakdownTableBody tr");
+
+    rows.forEach(row => {
+      let text = row.innerText.toLowerCase();
+      row.style.display = text.includes(input) ? "" : "none";
+    });
+  }
+
+  function sortMedicineBreakdownTable(columnIndex) {
+    let table = document.getElementById("medicineBreakdownTable");
+    let rows = Array.from(table.rows).slice(1);
+    let ascending = table.getAttribute("data-sort-order") !== "asc";
+
+    rows.sort((rowA, rowB) => {
+      let cellA = rowA.cells[columnIndex].innerText;
+      let cellB = rowB.cells[columnIndex].innerText;
+
+      return ascending ? cellA.localeCompare(cellB, undefined, {
+          numeric: true
+        }) :
+        cellB.localeCompare(cellA, undefined, {
+          numeric: true
+        });
+    });
+
+    table.setAttribute("data-sort-order", ascending ? "asc" : "desc");
+
+    document.getElementById("medicineBreakdownTableBody").append(...rows);
+  }
+
+  function medicineBreakdownTableChangeRowsPerPage() {
+    rowsPerPage2 = parseInt(document.getElementById("rowsPerPage").value);
+    currentPage2 = 1;
+    paginatemedicineBreakdownTable();
+  }
+
+  function paginatemedicineBreakdownTable() {
+    let rows = document.querySelectorAll("#medicineBreakdownTableBody tr");
+    let totalRows = rows.length;
+    let totalPages = Math.ceil(totalRows / rowsPerPage2);
+
+    rows.forEach((row, index) => {
+      row.style.display = (index >= (currentPage2 - 1) * rowsPerPage2 && index < currentPage2 * rowsPerPage2) ? "" : "none";
+    });
+
+    let paginationHTML = "";
+    for (let i = 1; i <= totalPages; i++) {
+      paginationHTML += `<button onclick="goToPage(${i})" class="btn btn-sm ${i === currentPage2 ? 'btn-primary' : 'btn-secondary'}">${i}</button> `;
+    }
+    document.getElementById("medicineBreakdownTablePagination").innerHTML = paginationHTML;
+  }
+
+  function goToPage(page) {
+    currentPage2 = page;
+    paginatemedicineBreakdownTable();
+  }
 </script>
