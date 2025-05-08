@@ -1,51 +1,69 @@
 <?php 
 
+/**
+ * Model_auth
+ * 
+ * Handles all authentication-related database operations including:
+ * - Email verification
+ * - User login
+ * - Password validation
+ * 
+ * @package     Cattle Inventory
+ * @subpackage  Models
+ * @category    Authentication
+ * @author      Your Name
+ * @link        http://your-website.com
+ */
 class Model_auth extends CI_Model
 {
+	/**
+	 * Constructor
+	 * 
+	 * Initializes the model
+	 */
 	public function __construct()
 	{
 		parent::__construct();
 	}
 
-	/* 
-		This function checks if the email exists in the database
-	*/
+	/**
+	 * Check Email
+	 * 
+	 * Verifies if an email exists in the database
+	 * 
+	 * @param string $email Email to check
+	 * @return bool
+	 */
 	public function check_email($email) 
 	{
-		if($email) {
+		if ($email) {
 			$sql = 'SELECT * FROM users WHERE email = ?';
 			$query = $this->db->query($sql, array($email));
-			$result = $query->num_rows();
-			return ($result == 1) ? true : false;
+			return ($query->num_rows() === 1);
 		}
-
 		return false;
 	}
 
-	/* 
-		This function checks if the email and password matches with the database
-	*/
-	public function login($email, $password) {
-		if($email && $password) {
+	/**
+	 * Login
+	 * 
+	 * Authenticates user credentials
+	 * 
+	 * @param string $email User email
+	 * @param string $password User password
+	 * @return array|bool User data if successful, false otherwise
+	 */
+	public function login($email, $password)
+	{
+		if ($email && $password) {
 			$sql = "SELECT * FROM users WHERE email = ?";
 			$query = $this->db->query($sql, array($email));
 
-			if($query->num_rows() == 1) {
+			if ($query->num_rows() === 1) {
 				$result = $query->row_array();
-
-				$hash_password = password_verify($password, $result['password']);
-				if($hash_password === true) {
-					return $result;	
-				}
-				else {
-					return false;
-				}
-
-				
-			}
-			else {
-				return false;
+				return password_verify($password, $result['password']) ? $result : false;
 			}
 		}
+		return false;
 	}
 }

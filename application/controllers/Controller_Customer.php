@@ -1,196 +1,322 @@
 <?php
 
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Controller_Customer
+ * 
+ * Handles all customer-related operations including:
+ * - Managing customers and vendors
+ * - Creating and updating customer information
+ * - Processing customer data
+ * - Managing customer status
+ * 
+ * @package     Cattle Inventory
+ * @subpackage  Controllers
+ * @category    Customer Management
+ * @author      Your Name
+ * @link        http://your-website.com
+ */
 class Controller_Customer extends Admin_Controller
 {
+    /**
+     * @var Model_customers
+     */
+    // protected $Model_customers;
+
+    /**
+     * @var array
+     */
+    public $data = [];
+
+    /**
+     * Constructor
+     * 
+     * Loads necessary models and libraries
+     * Checks user authentication
+     */
     public function __construct()
     {
         parent::__construct();
-
         $this->not_logged_in();
 
         $this->data['page_title'] = 'Customers';
-
         $this->load->model('Model_customers');
+        $this->Model_customers = $this->Model_customers;
     }
 
-    /* 
-	* redirect to the index page 
-	*/
+    /**
+     * Index
+     * 
+     * Displays the customers management page
+     * 
+     * @return void
+     */
     public function index()
     {
-        if (!in_array('viewCustomers', $this->permission)) {
-            redirect('dashboard', 'refresh');
-        }
+        try {
+            if (!in_array('viewCustomers', $this->permission)) {
+                redirect('dashboard', 'refresh');
+            }
 
-        $this->render_template('customers/index', $this->data);
+            $this->render_template('customers/index', $this->data);
+        } catch (Exception $e) {
+            log_message('error', 'Error in index: ' . $e->getMessage());
+            $this->session->set_flashdata('error', 'Failed to load customers page');
+            redirect('dashboard');
+        }
     }
 
-
+    /**
+     * Fetch Customer Data By ID
+     * 
+     * Retrieves customer data by ID
+     * 
+     * @param int $id The customer ID
+     * @return void
+     */
     public function fetchCustomerDataById($id)
     {
-        if ($id) {
-            $data = $this->Model_customers->getCustomerDataById($id);
-            echo json_encode($data);
+        try {
+            if ($id) {
+                $data = $this->Model_customers->getCustomerDataById($id);
+                $this->output
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode($data));
+            }
+        } catch (Exception $e) {
+            log_message('error', 'Error in fetchCustomerDataById: ' . $e->getMessage());
+            $this->output
+                ->set_status_header(500)
+                ->set_output(json_encode(['error' => 'Failed to fetch customer data']));
         }
     }
 
-    // * gets the attribute data from data and returns the attribute 
-	
-	public function fetchCustomerData()
-	{
-		$result = array('data' => array());
+    /**
+     * Fetch Customer Data
+     * 
+     * Retrieves all customer data for datatable display
+     * 
+     * @return void
+     */
+    public function fetchCustomerData()
+    {
+        try {
+            $result = array('data' => array());
+            $data = $this->Model_customers->getAllCustomerData();
 
-		$data = $this->Model_customers->getAllCustomerData();
+            foreach ($data as $key => $value) {
+                // Generate action buttons
+                $buttons = '<button type="button" class="btn btn-warning btn-sm" onclick="editFunc('.$value['id'].')" data-toggle="modal" data-target="#editModal"><i class="fa fa-pencil"></i></button>';
 
-		foreach ($data as $key => $value) {
+                // Get status labels
+                $status = ($value['active'] == 1) 
+                    ? '<span class="label label-success">Active</span>' 
+                    : '<span class="label label-warning">Inactive</span>';
+                
+                $user_type = ($value['user_type'] == 1) 
+                    ? '<span class="label label-success">User</span>' 
+                    : '<span class="label label-warning">Vendor</span>';
 
+                $count = $key + 1;
+                $result['data'][$key] = array(
+                    $count,
+                    $value['id'],
+                    $value['name'],
+                    $status,
+                    $user_type,
+                    $buttons
+                );
+            }
 
-			// button
-			$buttons = '
-			<button type="button" class="btn btn-warning btn-sm" onclick="editFunc('.$value['id'].')" data-toggle="modal" data-target="#editModal"><i class="fa fa-pencil"></i></button>
-			';
-			// <button type="button" class="btn btn-danger btn-sm" onclick="removeFunc('.$value['id'].')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode($result));
+        } catch (Exception $e) {
+            log_message('error', 'Error in fetchCustomerData: ' . $e->getMessage());
+            $this->output
+                ->set_status_header(500)
+                ->set_output(json_encode(['error' => 'Failed to fetch customer data']));
+        }
+    }
 
-			$status = ($value['active'] == 1) ? '<span class="label label-success">Active</span>' : '<span class="label label-warning">Inactive</span>';
-            $user_type = ($value['user_type'] == 1) ? '<span class="label label-success">User</span>' : '<span class="label label-warning">Vendor</span>';
-            $count = $key + 1;
-            $result['data'][$key] = array(
-				$count,
-                $value['id'],
-				$value['name'],
-				$status,
-				$user_type,
-				$buttons
-			);
-
-
-		} // /foreach
-
-		echo json_encode($result);
-	}
-    /* 
-	* create the new attribute value 
-	*/
+    /**
+     * Create Customer
+     * 
+     * Handles customer creation with validation
+     * 
+     * @return void
+     */
     public function create()
     {
-        if (!in_array('createCustomers', $this->permission)) {
-            redirect('dashboard', 'refresh');
-        }
-
-        $response = array();
-
-        $this->form_validation->set_rules('customer_name', 'Customer name', 'trim|required');
-        $this->form_validation->set_rules('user_type', 'User Type', 'trim|required');
-        $this->form_validation->set_rules('active', 'Active', 'trim|required');
-
-
-        $this->form_validation->set_error_delimiters('<p class="text-danger">', '</p>');
-
-        if ($this->form_validation->run() == TRUE) {
-            $data = array(
-                'name' => $this->input->post('customer_name'),
-                'active' => $this->input->post('active'),
-                'user_type' => $this->input->post('user_type'),
-            );
-
-            $create = $this->Model_customers->create($data);
-            if ($create == true) {
-                $response['success'] = true;
-                $response['messages'] = 'Succesfully created';
-            } else {
-                $response['success'] = false;
-                $response['messages'] = 'Error in the database while creating the customer information';
+        try {
+            if (!in_array('createCustomers', $this->permission)) {
+                redirect('dashboard', 'refresh');
             }
-        } else {
-            $response['success'] = false;
-            foreach ($_POST as $key => $value) {
-                $response['messages'][$key] = form_error($key);
-            }
-        }
 
-        echo json_encode($response);
-    }
+            $response = array();
 
-    /* 
-	* update the attribute value via attribute id 
-	*/
-    public function update()
-    {
-        if (!in_array('updateCustomers', $this->permission)) {
-            redirect('dashboard', 'refresh');
-        }
-
-        $response = array();
-
-        // if ($id) {
-            $this->form_validation->set_rules('edit_customer_name', 'Customer name', 'trim|required');
-            $this->form_validation->set_rules('edit_active', 'Active', 'trim|required');
-            $this->form_validation->set_rules('edit_user_type', 'User Type', 'trim|required');
-
+            $this->form_validation->set_rules('customer_name', 'Customer name', 'trim|required');
+            $this->form_validation->set_rules('user_type', 'User Type', 'trim|required');
+            $this->form_validation->set_rules('active', 'Active', 'trim|required');
             $this->form_validation->set_error_delimiters('<p class="text-danger">', '</p>');
 
             if ($this->form_validation->run() == TRUE) {
-                $data = array(
-                    'name' => $this->input->post('edit_customer_name'),
-                    'user_type' => $this->input->post('edit_user_type'),
-                    'active' => $this->input->post('edit_active'),
-                );
-                $id = $this->input->post('customer_id');
-                $update = $this->Model_customers->update($data, $id);
-                if ($update == true) {
-                    $response['success'] = true;
-                    $response['messages'] = 'Succesfully updated';
-                    
-                    redirect('Controller_Customer/index');
-                } else {
+                $customer_name = $this->input->post('customer_name');
+                
+                // Check if customer name already exists
+                $exists = $this->Model_customers->checkCustomerExists($customer_name);
+                
+                if ($exists) {
                     $response['success'] = false;
-                    $response['messages'] = 'Error in the database while updated the customer information';
-                }
+                    $response['messages'] = 'Customer name already exists';
+                } else {
+                    $data = array(
+                        'name' => $customer_name,
+                        'active' => $this->input->post('active'),
+                        'user_type' => $this->input->post('user_type'),
+                    );
 
+                    $create = $this->Model_customers->create($data);
+                    if ($create) {
+                        $response['success'] = true;
+                        $response['messages'] = 'Successfully created';
+                    } else {
+                        throw new Exception('Error in the database while creating the customer information');
+                    }
+                }
             } else {
                 $response['success'] = false;
                 foreach ($_POST as $key => $value) {
                     $response['messages'][$key] = form_error($key);
                 }
             }
-        // } else {
-        //     $response['success'] = false;
-        //     $response['messages'] = 'Error please refresh the page again!!';
-        // }
 
-        echo json_encode($response);
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode($response));
+        } catch (Exception $e) {
+            log_message('error', 'Error in create: ' . $e->getMessage());
+            $this->output
+                ->set_status_header(500)
+                ->set_output(json_encode([
+                    'success' => false,
+                    'messages' => 'Error occurred while creating customer'
+                ]));
+        }
     }
 
-    /* 
-	* remove the attribute value via attribute id 
-	*/
-    public function remove()
+    /**
+     * Update Customer
+     * 
+     * Handles customer updates with validation
+     * 
+     * @return void
+     */
+    public function update()
     {
-        if (!in_array('deleteCustomers', $this->permission)) {
-            redirect('dashboard', 'refresh');
-        }
+        try {
+            $response = array();
 
-        $customer_id = $this->input->post('customer_id');
+            $this->form_validation->set_rules('edit_customer_name', 'Customer name', 'trim|required');
+            $this->form_validation->set_rules('edit_active', 'Active', 'trim|required');
+            $this->form_validation->set_rules('edit_user_type', 'User Type', 'trim|required');
 
-        $response = array();
-        if ($customer_id) {
-            $delete = $this->Model_customers->remove($customer_id);
-            if ($delete == true) {
-                $response['success'] = true;
-                $response['messages'] = "Successfully removed";
+            if ($this->form_validation->run() == TRUE) {
+                $customer_name = $this->input->post('edit_customer_name');
+                $customer_id = $this->input->post('customer_id');
+                
+                // Get current customer data to check if name is being changed
+                $current_customer = $this->Model_customers->getCustomerDataById($customer_id);
+                
+                // Only check for duplicates if the name is being changed
+                if ($current_customer['name'] != $customer_name) {
+                    $exists = $this->Model_customers->checkCustomerExistsExceptThis($customer_name, $customer_id);
+                    
+                    if ($exists) {
+                        $response['success'] = false;
+                        $response['messages'] = 'Customer name already exists';
+                        $this->output
+                            ->set_content_type('application/json')
+                            ->set_output(json_encode($response));
+                        return;
+                    }
+                }
+                
+                $data = array(
+                    'name' => $customer_name,
+                    'user_type' => $this->input->post('edit_user_type'),
+                    'active' => $this->input->post('edit_active'),
+                );
+                
+                $update = $this->Model_customers->update($data, $customer_id);
+                
+                if ($update) {
+                    $response['success'] = true;
+                    $response['messages'] = 'Successfully updated';
+                } else {
+                    throw new Exception('Error in the database while updating');
+                }
             } else {
                 $response['success'] = false;
-                $response['messages'] = "Error in the database while removing the customer information";
+                $response['messages'] = validation_errors();
             }
-        } else {
-            $response['success'] = false;
-            $response['messages'] = "Refersh the page again!!";
-        }
 
-        echo json_encode($response);
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode($response));
+        } catch (Exception $e) {
+            log_message('error', 'Error in update: ' . $e->getMessage());
+            $this->output
+                ->set_status_header(500)
+                ->set_output(json_encode([
+                    'success' => false,
+                    'messages' => 'Error occurred while updating customer'
+                ]));
+        }
     }
 
-    
+    /**
+     * Remove Customer
+     * 
+     * Handles customer deletion
+     * 
+     * @return void
+     */
+    public function remove()
+    {
+        try {
+            if (!in_array('deleteCustomers', $this->permission)) {
+                redirect('dashboard', 'refresh');
+            }
+
+            $customer_id = $this->input->post('customer_id');
+            $response = array();
+
+            if ($customer_id) {
+                $delete = $this->Model_customers->remove($customer_id);
+                if ($delete) {
+                    $response['success'] = true;
+                    $response['messages'] = "Successfully removed";
+                } else {
+                    throw new Exception('Error in the database while removing the customer information');
+                }
+            } else {
+                $response['success'] = false;
+                $response['messages'] = "Refresh the page again!!";
+            }
+
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode($response));
+        } catch (Exception $e) {
+            log_message('error', 'Error in remove: ' . $e->getMessage());
+            $this->output
+                ->set_status_header(500)
+                ->set_output(json_encode([
+                    'success' => false,
+                    'messages' => 'Error occurred while removing customer'
+                ]));
+        }
+    }
 }

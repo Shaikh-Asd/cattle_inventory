@@ -97,19 +97,28 @@ class Controller_Medicines extends Admin_Controller
         $this->form_validation->set_error_delimiters('<p class="text-danger">', '</p>');
 
         if ($this->form_validation->run() == TRUE) {
-            $data = array(
-                'name' => $this->input->post('medicine_name'),
-                'active' => $this->input->post('active'),
-                'dead_stock' => $this->input->post('dead_stock'),
-            );
-
-            $create = $this->Model_medicines->create($data);
-            if ($create == true) {
-                $response['success'] = true;
-                $response['messages'] = 'Succesfully created';
-            } else {
+            // Check if medicine name already exists
+            $medicine_name = $this->input->post('medicine_name');
+            $exists = $this->Model_medicines->checkMedicineExists($medicine_name);
+            
+            if ($exists) {
                 $response['success'] = false;
-                $response['messages'] = 'Something went wrong or Medicine already exists';
+                $response['messages'] = 'Medicine name already exists! Please choose a different name.';
+            } else {
+                $data = array(
+                    'name' => $medicine_name,
+                    'active' => $this->input->post('active'),
+                    'dead_stock' => $this->input->post('dead_stock'),
+                );
+
+                $create = $this->Model_medicines->create($data);
+                if ($create == true) {
+                    $response['success'] = true;
+                    $response['messages'] = 'Medicine added successfully!';
+                } else {
+                    $response['success'] = false;
+                    $response['messages'] = 'Database error occurred!';
+                }
             }
         } else {
             $response['success'] = false;
@@ -139,19 +148,28 @@ class Controller_Medicines extends Admin_Controller
             $this->form_validation->set_error_delimiters('<p class="text-danger">', '</p>');
 
             if ($this->form_validation->run() == TRUE) {
-                $data = array(
-                    'name' => $this->input->post('edit_medicine_name'),
-                    'active' => $this->input->post('edit_active'),
-                    'dead_stock' => $this->input->post('edit_dead_stock'),
-                );
-
-                $update = $this->Model_medicines->update($data, $id);
-                if ($update == true) {
-                    $response['success'] = true;
-                    $response['messages'] = 'Succesfully updated';
-                } else {
+                // Check if medicine name already exists for other records
+                $medicine_name = $this->input->post('edit_medicine_name');
+                $exists = $this->Model_medicines->checkMedicineExistsExceptThis($medicine_name, $id);
+                
+                if ($exists) {
                     $response['success'] = false;
-                    $response['messages'] = 'Error in the database while updated the customer information';
+                    $response['messages'] = 'Medicine name already exists! Please choose a different name.';
+                } else {
+                    $data = array(
+                        'name' => $medicine_name,
+                        'active' => $this->input->post('edit_active'),
+                        'dead_stock' => $this->input->post('edit_dead_stock'),
+                    );
+
+                    $update = $this->Model_medicines->update($data, $id);
+                    if ($update == true) {
+                        $response['success'] = true;
+                        $response['messages'] = 'Medicine updated successfully!';
+                    } else {
+                        $response['success'] = false;
+                        $response['messages'] = 'No changes made or database error occurred!';
+                    }
                 }
             } else {
                 $response['success'] = false;
@@ -161,7 +179,7 @@ class Controller_Medicines extends Admin_Controller
             }
         } else {
             $response['success'] = false;
-            $response['messages'] = 'Error please refresh the page again!!';
+            $response['messages'] = 'Invalid medicine ID!';
         }
 
         echo json_encode($response);

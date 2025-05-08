@@ -3,6 +3,9 @@
   var $j = jQuery.noConflict(true);
 </script>
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -26,20 +29,7 @@
     <div class="row">
       <div class="col-md-12 col-xs-12">
 
-        <div id="messages"></div>
-
-        <?php if ($this->session->flashdata('success')): ?>
-          <div class="alert alert-success alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <?php echo $this->session->flashdata('success'); ?>
-          </div>
-        <?php elseif ($this->session->flashdata('error')): ?>
-          <div class="alert alert-error alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <?php echo $this->session->flashdata('error'); ?>
-          </div>
-        <?php endif; ?>
-
+    
 
         <div class="box">
 
@@ -49,105 +39,29 @@
 
               <?php echo validation_errors(); ?>
 
-              <!-- <div class="form-group">
-                  <label>Image Preview: </label>
-                  <img src="<?php echo base_url() . $product_data['image'] ?>" width="150" height="150" class="img-circle">
-                </div>
-
-                <div class="form-group">
-                  <label for="product_image">Update Image</label>
-                  <div class="kv-avatar">
-                      <div class="file-loading">
-                          <input id="product_image" name="product_image" type="file">
-                      </div>
-                  </div>
-                </div> -->
-
               <div class="form-group">
-                <label for="customers">Inward By</label>
+                <label for="customers">Vendor Name</label>
                 <select class="form-control" id="customers" name="customers">
                   <option value="">Select a user</option>
                   <?php foreach ($customers as $k => $v): ?>
-
-
-                    <option value="<?php echo $v['id'] ?>" <?php if ($product_data['customer_id'] == $v['id']) { echo "selected='selected'";} ?>><?php echo $v['name'] ?></option>
+                    <option value="<?php echo $v['id'] ?>" <?php if ($product_data['customer_id'] == $v['id']) {
+                      echo "selected='selected'";
+                    } ?>><?php echo $v['name'] ?></option>
                   <?php endforeach ?>
                 </select>
               </div>
-
-
-              <button type="button" id="addProduct" class="btn btn-info">+</button>
 
               <table class="table">
                 <thead>
                   <tr>
                     <th>Medicine</th>
                     <th>Qty</th>
-                    <th>Rate</th>
-                    <!-- <th>Amount</th> -->
                     <th>Action</th>
                   </tr>
                 </thead>
-                <tbody id="productFields">
-                  <?php
-                  $medicines_ids = json_decode($product_data['medicine_id']) ?? [];
-                  $qtys = json_decode($product_data['qty']) ?? [];
-                  $rates = json_decode($product_data['price']) ?? [];
-
-                  // Ensure that all variables are arrays
-                  if (!is_array($medicines_ids)) {
-                      $medicines_ids = [$medicines_ids]; // Wrap in an array if it's a single value
-                  }
-                  if (!is_array($qtys)) {
-                      $qtys = [$qtys]; // Wrap in an array if it's a single value
-                  }
-                  if (!is_array($rates)) {
-                      $rates = [$rates]; // Wrap in an array if it's a single value
-                  }
-
-                  for ($i = 0; $i < count($medicines_ids); $i++): ?>
-                    <tr class="product-entry">
-                      <td>
-                        <select class="form-control" name="product_name[]">
-                          <option value="">Select a medicine</option>
-                          <?php foreach ($medicines as $k => $v): ?>
-                            <option value="<?php echo $v['id'] ?>" <?php if ($medicines_ids[$i] == $v['id']) {
-                                                                      echo "selected='selected'";
-                                                                    } ?>><?php echo $v['name'] ?></option>
-                          <?php endforeach ?>
-                        </select>
-                      </td>
-                      <td>
-                        <input type="text" class="form-control" name="qty[]" value="<?php echo isset($qtys[$i]) ? $qtys[$i] : ''; ?>" placeholder="Enter Qty" autocomplete="off" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control" name="price[]" value="<?php echo isset($rates[$i]) ? $rates[$i] : ''; ?>" placeholder="Enter price" autocomplete="off" />
-                      </td>
-                      <!-- <td>
-                        <input type="text" class="form-control" name="amount[]" value="<?php echo isset($amounts[$i]) ? $amounts[$i] : ''; ?>" placeholder="Amount" readonly />
-                      </td> -->
-                      <td>
-                        <button type="button" class="btn btn-danger removeProduct">−</button>
-
-                      </td>
-                    </tr>
-                  <?php endfor; ?>
-                </tbody>
+                <tbody id="productFields"></tbody>
               </table>
-
-              <div class="form-group">
-                <label for="availability">Availability</label>
-                <select class="form-control" id="availability" name="availability">
-                  <option value="1" <?php if ($product_data['availability'] == 1) {
-                                      echo "selected='selected'";
-                                    } ?>>Yes</option>
-                  <option value="2" <?php if ($product_data['availability'] != 1) {
-                                      echo "selected='selected'";
-                                    } ?>>No</option>
-                </select>
-              </div>
-
-
+              <button type="button" class="btn btn-success addProduct" id="addProduct">Add New row</button>
 
             </div>
             <!-- /.box-body -->
@@ -164,129 +78,208 @@
       <!-- col-md-12 -->
     </div>
     <!-- /.row -->
-
-
   </section>
   <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
 
-<script type="text/javascript">
+<script>
   $(document).ready(function() {
-    $(".select_group").select2();
-    $("#description").wysihtml5();
+    var allMedicines = <?php echo json_encode($medicines); ?>;
 
-    $("#mainProductNav").addClass('active');
-    $("#manageProductNav").addClass('active');
+    // Helper: get medicine ID by name
+    function getMedicineIdByName(name) {
+      name = name.trim();
+      for (var i = 0; i < allMedicines.length; i++) {
+        if (allMedicines[i].name.trim() === name) {
+          return allMedicines[i].id;
+        }
+      }
+      return '';
+    }
 
-    var btnCust = '<button type="button" class="btn btn-secondary" title="Add picture tags" ' +
-      'onclick="alert(\'Call your custom code here.\')">' +
-      '<i class="glyphicon glyphicon-tag"></i>' +
-      '</button>';
-    $("#product_image").fileinput({
-      overwriteInitial: true,
-      maxFileSize: 1500,
-      showClose: false,
-      showCaption: false,
-      browseLabel: '',
-      removeLabel: '',
-      browseIcon: '<i class="glyphicon glyphicon-folder-open"></i>',
-      removeIcon: '<i class="glyphicon glyphicon-remove"></i>',
-      removeTitle: 'Cancel or reset changes',
-      elErrorContainer: '#kv-avatar-errors-1',
-      msgErrorClass: 'alert alert-block alert-danger',
-      // defaultPreviewContent: '<img src="/uploads/default_avatar_male.jpg" alt="Your Avatar">',
-      layoutTemplates: {
-        main2: '{preview} ' + btnCust + ' {remove} {browse}'
-      },
-      allowedFileExtensions: ["jpg", "png", "gif"]
-    });
+    function renderRow(selectedId, qty) {
+      var options = '<option value="">Select a medicine</option>';
+      allMedicines.forEach(function(med) {
+      
+          options += `<option value="${med.id}" ${selectedId == med.id ? 'selected' : ''}>${med.name} (Stock: ${med.stock})</option>`;
+        
+      });
+      return `
+      <tr class="product-entry">
+        <td>
+          <select class="form-control select2 medicine-select" name="product_name[]">${options}</select>
+        </td>
+        <td>
+          <input type="text" class="form-control" name="qty[]" value="${qty || ''}" placeholder="Enter Quantity" autocomplete="off" />
+        </td>
+        <td>
+          <button type="button" class="btn btn-danger removeProduct">Remove row</button>
+        </td>
+      </tr>
+    `;
+    }
 
-    // Fetch product data by ID when the page loads
-    var productId = <?php echo $product_data['id']; ?>; // Assuming you have the product ID available
+    // Fetch and render rows as per API response
+    var productId = <?php echo $product_data['id']; ?>;
     $.ajax({
       url: "<?php echo base_url('Controller_Products/fetchProductDataById/'); ?>" + productId,
       type: "GET",
       dataType: "json",
       success: function(data) {
-        // Populate the form fields with the fetched data
-        $('#customers').val(data.customer_id); // Assuming you have customer_id in the response
-
-        // Populate medicine fields
-        var medicines = data.medicine_name.split(','); // Split the medicine names
-        var qtys = data.qty;
-        var rates = data.price;
-
-        // Clear existing product fields before populating
+        $("#customers").val(data.customer_id);
         $("#productFields").empty();
 
-        for (var i = 0; i < medicines.length; i++) {
-          var newProductEntry = `
-            <tr class="product-entry">
-              <td>
-                <select class="form-control" name="product_name[]">
-                  <option value="">Select a medicine</option>
-                  <?php foreach ($medicines as $k => $v): ?>
-                    <option value="<?php echo $v['id'] ?>" ${medicines[i].trim() === '<?php echo $v['name'] ?>' ? 'selected' : ''}><?php echo $v['name'] ?></option>
-                  <?php endforeach ?>
-                </select>
-              </td>
-              <td>
-                <input type="text" class="form-control" name="qty[]" value="${qtys[i]}" placeholder="Enter Qty" autocomplete="off" />
-              </td>
-              <td>
-                <input type="text" class="form-control" name="price[]" value="${rates[i]}" placeholder="Enter price" autocomplete="off" />
-              </td>
-              <!-- <td>
-                <input type="text" class="form-control" name="amount[]" placeholder="Amount" readonly />
-              </td> -->
-              <td>
-                <button type="button" class="btn btn-danger removeProduct">−</button>
+        // Handle both single and multiple medicine_id/qty
+        var medicineIds = data.medicine_id;
+        var qtys = data.qty;
 
-              </td>
-            </tr>`;
-          $("#productFields").append(newProductEntry);
+        // Normalize medicineIds to array
+        if (!Array.isArray(medicineIds)) {
+          if (typeof medicineIds === 'string' && medicineIds.includes(',')) {
+            medicineIds = medicineIds.split(',').map(s => s.trim());
+          } else if (typeof medicineIds === 'string' && medicineIds.trim() !== '') {
+            medicineIds = [medicineIds.trim()];
+          } else {
+            medicineIds = [];
+          }
         }
+
+        // Normalize qtys to array
+        if (!Array.isArray(qtys)) {
+          if (typeof qtys === 'string' && qtys.includes(',')) {
+            qtys = qtys.split(',').map(s => s.trim());
+          } else if (typeof qtys !== 'undefined' && qtys !== null) {
+            qtys = [qtys];
+          } else {
+            qtys = [];
+          }
+        }
+
+        // Render rows
+        for (var i = 0; i < medicineIds.length; i++) {
+          var medId = medicineIds[i];
+          var qty = qtys[i] || '';
+          $("#productFields").append(renderRow(medId, qty));
+        }
+        if (!medicineIds.length) {
+          $("#productFields").append(renderRow('', ''));
+        }
+        $('.select2').select2({
+          width: '100%'
+        });
       }
     });
 
-    // Add new product entry
-    $("#addProduct").click(function() {
-      var newProductEntry = `
-        <tr class="product-entry">
-          <td>
-            <select class="form-control" name="product_name[]">
-              <option value="">Select a medicine</option>
-              <?php foreach ($medicines as $k => $v): ?>
-                <option value="<?php echo $v['id'] ?>"><?php echo $v['name'] ?></option>
-              <?php endforeach ?>
-            </select>
-          </td>
-          <td>
-            <input type="text" class="form-control" name="qty[]" placeholder="Enter Qty" autocomplete="off" />
-          </td>
-          <td>
-            <input type="text" class="form-control" name="price[]" placeholder="Enter price" autocomplete="off" />
-          </td>
-          <td>
-            <button type="button" class="btn btn-danger removeProduct">−</button>
-          </td>
-        </tr>`;
-      $("#productFields").append(newProductEntry);
+    // Add new product row
+    $("#addProduct").on('click', function() {
+      $("#productFields").append(renderRow('', ''));
+      $('.select2').select2({
+        width: '100%'
+      });
     });
 
-    // Remove product entry
+    // Remove product row (at least one must remain)
     $(document).on('click', '.removeProduct', function() {
-      $(this).closest('tr').remove();
+      if ($('#productFields tr').length > 1) {
+        $(this).closest('tr').remove();
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Cannot remove the last row!',
+          text: 'You need at least one row to proceed.',
+          confirmButtonText: 'OK'
+        });
+      }
     });
 
-    // Calculate amount on rate and qty change
-    $(document).on('input', 'input[name="qty[]"], input[name="price[]"]', function() {
-      var qty = $(this).closest('tr').find('input[name="qty[]"]').val();
-      var rate = $(this).closest('tr').find('input[name="price[]"]').val();
-      var amount = qty * rate;
-      $(this).closest('tr').find('input[name="amount[]"]').val(amount);
+    // Client-side validation on submit
+    $('form').on('submit', function(e) {
+      console.log('submit');
+      return;
+      var isValid = true;
+      var errorMessage = '';
+      var emptyFields = [];
+
+      // Validate vendor selection
+      if ($('#customers').val() === '') {
+        isValid = false;
+        errorMessage += 'Please select a user (Vendor Name).\n';
+        emptyFields.push($('#customers'));
+        $('#customers').next('.select2-container').find('.select2-selection').addClass('dropdown-focus');
+      }
+
+      // Validate each product row
+      $('.product-entry').each(function() {
+        var medicineSelect = $(this).find('select[name="product_name[]"]');
+        var quantityInput = $(this).find('input[name="qty[]"]');
+
+        if (medicineSelect.val() === '') {
+          isValid = false;
+          errorMessage += 'Please select a medicine for all rows.\n';
+          emptyFields.push(medicineSelect);
+          medicineSelect.next('.select2-container').find('.select2-selection').addClass('dropdown-focus');
+        }
+        var quantity = quantityInput.val();
+        if (quantity === '' || isNaN(quantity) || parseInt(quantity) <= 0) {
+          isValid = false;
+          errorMessage += 'Please enter a valid quantity (greater than 0) for all rows.\n';
+          emptyFields.push(quantityInput);
+        }
+
+      });
+
+      if (!isValid) {
+        e.preventDefault();
+        // Highlight empty fields
+        emptyFields.forEach(function(field) {
+          field.addClass('error-field highlight-empty');
+        });
+        Swal.fire({
+          icon: 'error',
+          title: 'Validation Error',
+          text: errorMessage,
+          confirmButtonText: 'OK'
+        });
+      }
     });
 
+    // Remove error styling when field is filled
+    $(document).on('change', 'select, input', function() {
+      if ($(this).val() !== '') {
+        $(this).removeClass('error-field highlight-empty');
+        $(this).closest('.form-group').removeClass('has-error');
+        $(this).next('.select2-container').find('.select2-selection').removeClass('dropdown-focus');
+      }
+    });
   });
 </script>
+
+<style>
+  .error-field {
+    border-color: #dc3545 !important;
+  }
+
+  .highlight-empty {
+    animation: highlight 1s ease-in-out;
+  }
+
+  @keyframes highlight {
+    0% {
+      background-color: #fff;
+    }
+
+    50% {
+      background-color: #fff3cd;
+    }
+
+    100% {
+      background-color: #fff;
+    }
+  }
+
+  .dropdown-focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.5) !important;
+  }
+</style>

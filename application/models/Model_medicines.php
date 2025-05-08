@@ -10,7 +10,9 @@ class Model_medicines extends CI_Model
     // get the active atttributes data 
     public function getActiveMedicinesData()
     {
-        $sql = "SELECT * FROM medicines WHERE active = ?";
+        $sql = "SELECT m.*, COALESCE(m.stock, 0) as qty 
+                FROM medicines m 
+                WHERE m.active = ?";
         $query = $this->db->query($sql, array(1));
         return $query->result_array();
     }
@@ -30,7 +32,7 @@ class Model_medicines extends CI_Model
 
     public function getAllMedicinesData()
     {
-        $sql = "SELECT * FROM medicines order by id desc";
+        $sql = "SELECT * FROM medicines order by name asc";
         $query = $this->db->query($sql);
         return $query->result_array();
     }
@@ -90,4 +92,18 @@ class Model_medicines extends CI_Model
     //     return $query->row(); 
     // }
     
+    public function checkMedicineExists($name)
+    {
+        $this->db->where('LOWER(name)', strtolower($name));
+        $query = $this->db->get('medicines');
+        return ($query->num_rows() > 0);
+    }
+
+    public function checkMedicineExistsExceptThis($name, $id)
+    {
+        $this->db->where('LOWER(name)', strtolower($name));
+        $this->db->where('id !=', $id);
+        $query = $this->db->get('medicines');
+        return ($query->num_rows() > 0);
+    }
 }

@@ -1,4 +1,10 @@
+<!-- First load jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Then load Bootstrap JS -->
+<script src="<?php echo base_url('assets/bootstrap/js/bootstrap.min.js') ?>"></script>
+
+<!-- Then load DataTables and other plugins -->
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
@@ -6,6 +12,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- CSS files -->
+<link rel="stylesheet" href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css') ?>">
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
 
 
@@ -134,7 +146,7 @@
       </div>
 
 
-      <form role="form" action="<?php echo base_url(uri: 'Controller_Customer/update/') ?>" method="post" id="updateForm">
+      <form role="form" action="<?php echo base_url('Controller_Customer/update') ?>" method="post" id="updateForm">
         <input type="hidden" id="customer_id" name="customer_id" value="">
         <div class="modal-body">
           <div id="messages"></div>
@@ -249,57 +261,50 @@
     // submit the create from 
     $("#createForm").unbind('submit').on('submit', function() {
       var form = $(this);
-      // Log the form data for debugging
-      console.log(form.serialize());
-      // remove the text-danger
       $(".text-danger").remove();
 
       $.ajax({
         url: form.attr('action'),
         type: form.attr('method'),
-        data: form.serialize(), // /converting the form data into array and sending it to server
+        data: form.serialize(),
         dataType: 'json',
         success: function(response) {
-
-          manageTable.ajax.reload(null, false);
-
           if (response.success === true) {
-            $("#messages").html('<div class="alert alert-success alert-dismissible" role="alert">' +
-              '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-              '<strong> <span class="glyphicon glyphicon-ok-sign"></span> </strong>' + response.messages +
-              '</div>');
+            // Properly hide modal and remove backdrop
+            $('#addModal').modal('hide');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
 
+            // Reset the form
+            form[0].reset();
 
-            //hide the modal
-            $("#addModal").modal('hide').on('hidden.bs.modal', function() {
-              console.log("Modal closed successfully.");
-            }).on('error', function() {
-              console.error("Error closing modal.");
+            // Show success message
+            Swal.fire({
+              icon: 'success',
+              title: 'Success!',
+              text: response.messages,
+              showConfirmButton: false,
+              timer: 1500
+            }).then(function() {
+              // Reload table after alert closes
+              manageTable.ajax.reload();
             });
-
-            // reset the form
-            $("#createForm")[0].reset();
-            $("#createForm .form-group").removeClass('has-error').removeClass('has-success');
-
           } else {
-
             if (response.messages instanceof Object) {
               $.each(response.messages, function(index, value) {
                 var id = $("#" + index);
-
                 id.closest('.form-group')
                   .removeClass('has-error')
                   .removeClass('has-success')
                   .addClass(value.length > 0 ? 'has-error' : 'has-success');
-
                 id.after(value);
-
               });
             } else {
-              $("#messages").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-                '<strong> <span class="glyphicon glyphicon-exclamation-sign"></span> </strong>' + response.messages +
-                '</div>');
+              Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: response.messages
+              });
             }
           }
         }
@@ -308,6 +313,51 @@
       return false;
     });
 
+    // For Edit Form
+    $("#updateForm").on('submit', function(e) {
+      e.preventDefault();
+      var form = $(this);
+
+      $.ajax({
+        url: base_url + 'Controller_Customer/update',
+        type: 'post',
+        data: form.serialize(),
+        dataType: 'json',
+        success: function(response) {
+          if (response.success === true) {
+            // Hide modal and backdrop
+            $('#editModal').modal('hide');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+
+            // Show success message
+            Swal.fire({
+              icon: 'success',
+              title: 'Success!',                
+              text: 'Updated Successfully',
+              showConfirmButton: false,
+              timer: 1500
+            });
+
+            // Reload table
+            manageTable.ajax.reload();
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error!',
+              text: response.messages
+            });
+          }
+        },
+        error: function() {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'Something went wrong!'
+          });
+        }
+      });
+    });
 
   });
 
@@ -328,6 +378,7 @@
           $("#customer_id").val(response.id);
 
           $("#editModal").modal('show'); // Show the modal after populating data
+
         } else {
           console.error("No data returned for ID:", id);
         }

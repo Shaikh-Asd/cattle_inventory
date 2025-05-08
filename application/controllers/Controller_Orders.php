@@ -2,61 +2,163 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Controller_Orders
+ * 
+ * Handles all order-related operations including:
+ * - Managing outward medicines
+ * - Creating and updating orders
+ * - Processing order transactions
+ * - Generating order reports
+ * 
+ * @package     Cattle Inventory
+ * @subpackage  Controllers
+ * @category    Order Management
+ * @author      Your Name
+ * @link        http://your-website.com
+ */
 class Controller_Orders extends Admin_Controller 
 {
+	/**
+	 * @var Model_orders
+	 */
+	// protected $model_orders;
+
+	/**
+	 * @var Model_products
+	 */
+	// protected $model_products;
+
+	/**
+	 * @var Model_company
+	 */
+	protected $model_company;
+
+	/**
+	 * @var Model_customers
+	 */
+	// protected $model_customers;
+
+	/**
+	//  * @var Model_medicines
+	 */
+	// protected $model_medicines;
+
+	/**
+	 * @var array
+	 */
+	public $data = [];
+
+	/**
+	 * Constructor
+	 * 
+	 * Loads necessary models and libraries
+	 * Checks user authentication
+	 */
 	public function __construct()
 	{
 		parent::__construct();
-
 		$this->not_logged_in();
 
 		$this->data['page_title'] = 'Outward Medicines';
-
+		
+		// Load required models
 		$this->load->model('model_orders');
 		$this->load->model('model_products');
 		$this->load->model('model_company');
 		$this->load->model('model_customers');
 		$this->load->model('model_medicines');
+
+		// Initialize models
+		$this->model_orders = $this->model_orders;
+		$this->model_products = $this->model_products;
+		$this->model_company = $this->model_company;
+		$this->model_customers = $this->model_customers;
+		$this->model_medicines = $this->model_medicines;
 	}
 
-	/* 
-	* It only redirects to the manage order page
-	*/
+	/**
+	 * Index
+	 * 
+	 * Displays the manage outward medicines page
+	 * 
+	 * @return void
+	 */
 	public function index()
 	{
-		if(!in_array('viewOrder', $this->permission)) {
-            redirect('dashboard', 'refresh');
-        }
+		try {
+			if(!in_array('viewOrder', $this->permission)) {
+				redirect('dashboard', 'refresh');
+			}
 
-		$this->data['page_title'] = 'Manage Outward Medicines';
-		$this->render_template('orders/index', $this->data);		
+			$this->data['page_title'] = 'Manage Outward Medicines';
+			$this->render_template('orders/index', $this->data);
+		} catch (Exception $e) {
+			log_message('error', 'Error in index: ' . $e->getMessage());
+			$this->session->set_flashdata('error', 'Failed to load outward medicines page');
+			redirect('dashboard');
+		}
 	}
 
-	/*
-	* Fetches the orders data from the orders table 
-	* this function is called from the datatable ajax function
-	*/
+	/**
+	 * Fetch Orders Data
+	 * 
+	 * Retrieves orders data for datatable display
+	 * 
+	 * @return void
+	 */
 	public function fetchOrdersData()
 	{
-		$result = array('data' => array());
+		try {
+			$result = array('data' => array());
+			$data = $this->model_orders->getOrdersData();
 
-		$data = $this->model_orders->getOrdersData();
-		// print_r($data);
-		// exit;
-		foreach ($data as $key => $value) {
+			foreach ($data as $key => $value) {
+				$count_total_item = $this->model_orders->countOrderItem($value['id']);
+				$date = date('d-m-Y', $value['date_time']);
+				$time = date('h:i a', $value['date_time']);
+				$date_time = $date . ' ' . $time;
 
-			$count_total_item = $this->model_orders->countOrderItem($value['id']);
-			$date = date('d-m-Y', $value['date_time']);
-			$time = date('h:i a', $value['date_time']);
+				// Generate action buttons
+				$buttons = '';
+				if(in_array('viewOrder', $this->permission)) {
+					$buttons .= '<a target="__blank" href="'.base_url('Controller_Orders/printDiv/'.$value['id']).'" class="btn btn-default btn-sm"><i class="fa fa-print"></i></a>';
+				}
+				if(in_array('updateOrder', $this->permission)) {
+					$buttons .= ' <a href="'.base_url('Controller_Orders/update/'.$value['id']).'" class="btn btn-warning btn-sm"><i class="fa fa-pencil"></i></a>';
+				}
+				if(in_array('deleteOrder', $this->permission)) {
+					$buttons .= ' <button type="button" class="btn btn-danger btn-sm" onclick="removeFunc('.$value['id'].')" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash"></i></button>';
+				}
 
-			$date_time = $date . ' ' . $time;
+				// Get payment status
+				$paid_status = ($value['paid_status'] == 1) 
+					? '<span class="label label-success">Paid</span>'
+					: '<span class="label label-warning">Not Paid</span>';
 
-			// button
-			$buttons = '';
+				// Get medicine names
+				$medicine_ids = explode(',', $value['medicine_id']);
+				$medicine_names = [];
+				foreach ($medicine_ids as $id) {
+					$medicine_data = $this->model_medicines->getMedicinesDataById($id);
+					$medicine_names[] = isset($medicine_data['name']) ? $medicine_data['name'] : 'Unknown Medicine';
+				}
+				$medicine_name = implode(', ', $medicine_names);
 
-			if(in_array('viewOrder', $this->permission)) {
-				$buttons .= '<a target="__blank" href="'.base_url('Controller_Orders/printDiv/'.$value['id']).'" class="btn btn-default btn-sm"><i class="fa fa-print"></i></a>';
-				// echo "viewOrder";
+				// Get customer name
+				$customer_data = $this->model_customers->getCustomerDataById($value['customer_name']);
+				$customer_name = $customer_data['name'];
+
+				$count = $key + 1;
+				$result['data'][$key] = array(
+					$count,
+					$customer_name,
+					$medicine_name,
+					$value['qty'],
+					$date_time,
+					$value['net_amount'],
+					$buttons
+				);
 			}
 
 			if(in_array('updateOrder', $this->permission)) {

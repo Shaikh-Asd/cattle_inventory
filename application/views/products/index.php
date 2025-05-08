@@ -43,6 +43,7 @@
                   <th>Medicine Name</th>
                   <th>Quantity</th>
                   <th>Date</th>
+                  <th>Action</th>
                 </tr>
               </thead>
             </table>
@@ -87,7 +88,32 @@
   </div><!-- /.modal -->
 <?php endif; ?>
 
-
+<!-- Modal for full details -->
+<div class="modal fade" id="fullDetailsModal" tabindex="-1" role="dialog" aria-labelledby="fullDetailsModalLabel">
+  <div class="modal-dialog" role="document" style="width: 40%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="fullDetailsModalLabel">Full Details</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table id="modalDetailsTable" class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Medicine Name</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Data will be injected here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script type="text/javascript">
   var manageTable;
@@ -153,6 +179,44 @@
       });
     }
   }
+
+  $j(document).on('click', '.view-full-details', function(e) {
+    e.preventDefault();
+    var rowData = $(this).data('row');
+    if (!rowData) {
+      alert('No data found for this row.');
+      return;
+    }
+    if (typeof rowData === "string") {
+      rowData = JSON.parse(rowData);
+    }
+    if (!rowData.medicine_names || !rowData.quantities) {
+      alert('medicine_names or quantities missing in data.');
+      return;
+    }
+
+    // Ensure both arrays are the same length
+    var medicines = rowData.medicine_names;
+    var quantities = rowData.quantities;
+    var $tbody = $('#modalDetailsTable tbody');
+    $tbody.empty();
+
+    for (var i = 0; i < medicines.length; i++) {
+      $tbody.append(
+        '<tr>' +
+          '<td>' + medicines[i] + '</td>' +
+          '<td>' + (quantities[i] !== undefined ? quantities[i] : '') + '</td>' +
+        '</tr>'
+      );
+    }
+
+    // Initialize DataTable if not already
+    if (!$.fn.DataTable.isDataTable('#modalDetailsTable')) {
+      $('#modalDetailsTable').DataTable();
+    }
+
+    $('#fullDetailsModal').modal('show');
+  });
 </script>
 <script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
